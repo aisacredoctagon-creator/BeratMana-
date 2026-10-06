@@ -16,8 +16,9 @@ export class Seesaw {
   private readonly verdict: HTMLElement;
 
   constructor(opts: { rock?: boolean; id?: string } = {}) {
-    const imgL = h('img', { alt: '', decoding: 'async', draggable: false });
-    const imgR = h('img', { alt: '', decoding: 'async', draggable: false });
+    // width/height = rasio intrinsik 1:1 (mencegah layout shift); ukuran tampil tetap diatur CSS
+    const imgL = h('img', { alt: '', decoding: 'async', draggable: false, width: 200, height: 200 });
+    const imgR = h('img', { alt: '', decoding: 'async', draggable: false, width: 200, height: 200 });
     this.imgs = { left: imgL, right: imgR };
     this.beam = h(
       'div',

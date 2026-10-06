@@ -34,6 +34,8 @@
   border-color: var(--btn-primary-line);
   background: var(--btn-primary-bg);
   color: var(--text-on-accent);
+  /* teks putih di atas koral = 3,7:1: hanya lolos sebagai teks TEBAL besar, jadi bobot 700 (bukan 600) */
+  font-weight: var(--fw-bold);
   font-size: var(--fs-button);
   box-shadow: var(--shadow-btn-primary);
 }
