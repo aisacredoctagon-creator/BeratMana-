@@ -1,0 +1,228 @@
+/* ===== Tombol: .btn (utama/sekunder), .icon-btn, .answer (tombol jawab 3D) =====
+   ATURAN: semua tombol memakai --radius-button. Tombol 3D memakai bayangan solid sedalam --_depth yang hanya
+   cat; margin-block-end = --_depth memasukkannya ke layout (jarak visual = jarak layout). */
+
+/* ---------- .btn ---------- */
+.btn {
+  --_depth: var(--depth-3d);
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-10);
+  min-height: var(--tap-min);
+  margin-block-end: var(--_depth);
+  padding: var(--space-10) var(--space-24);
+  border: var(--border-2) solid var(--btn-secondary-line);
+  border-radius: var(--radius-button);
+  background: var(--btn-secondary-bg);
+  color: var(--btn-secondary-text);
+  font-family: var(--font-display);
+  font-weight: var(--fw-semibold);
+  font-size: var(--fs-body-lg);
+  line-height: var(--lh-value);
+  text-align: center;
+  box-shadow: var(--shadow-key);
+  transition:
+    transform var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out);
+}
+
+.btn--primary {
+  --_depth: var(--depth-3d-lg);
+  padding: var(--space-14) var(--space-40);
+  border-color: var(--btn-primary-line);
+  background: var(--btn-primary-bg);
+  color: var(--text-on-accent);
+  font-size: var(--fs-button);
+  box-shadow: var(--shadow-btn-primary);
+}
+
+.btn--block {
+  inline-size: 100%;
+}
+
+@media (hover: hover) {
+  .btn:hover:not(:disabled) {
+    transform: translateY(var(--lift));
+  }
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(var(--press-travel-sm));
+  box-shadow: var(--shadow-key-pressed);
+}
+
+.btn--primary:active:not(:disabled) {
+  transform: translateY(var(--press-travel));
+  box-shadow: var(--shadow-btn-primary-pressed);
+}
+
+.btn:disabled {
+  border-color: var(--btn-off-line);
+  background: var(--btn-off-bg);
+  color: var(--text-on-accent);
+  transform: translateY(var(--press-travel-sm));
+  box-shadow: var(--shadow-btn-off);
+}
+
+/* ---------- .icon-btn ---------- */
+.icon-btn {
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex: none;
+  inline-size: var(--icon-btn);
+  block-size: var(--icon-btn);
+  padding: var(--space-2);
+  border: var(--border-2) solid var(--line-control);
+  border-radius: var(--radius-button);
+  background: var(--surface-card);
+  color: var(--icon-neutral);
+  box-shadow: var(--shadow-key);
+  transition:
+    transform var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out);
+}
+
+/* perluas area sentuh ke --tap-min tanpa mengubah tampilan */
+.icon-btn::after {
+  content: '';
+  position: absolute;
+  inset: var(--hit-outset-icon);
+}
+
+.icon-btn .icon {
+  inline-size: var(--icon-btn-glyph);
+  block-size: var(--icon-btn-glyph);
+}
+
+@media (hover: hover) {
+  .icon-btn:hover:not(:disabled) {
+    transform: translateY(var(--lift));
+  }
+}
+
+.icon-btn:active:not(:disabled) {
+  transform: translateY(var(--press-travel-sm));
+  box-shadow: var(--shadow-key-pressed);
+}
+
+.icon-btn:disabled {
+  color: var(--btn-off-solid);
+}
+
+/* ---------- .answer ---------- */
+.answer {
+  --_depth: var(--depth-3d-lg);
+  --_bg: var(--side-left-bg);
+  --_line: var(--side-left-line);
+  --_shadow: var(--shadow-answer-left);
+  --_shadow-pressed: var(--shadow-answer-left-pressed);
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex: 1 1 0;
+  min-inline-size: 0;
+  block-size: var(--answer-h);
+  margin-block-end: var(--_depth);
+  padding: var(--space-22) var(--space-12);
+  border: var(--border-2) solid var(--_line);
+  border-radius: var(--radius-button);
+  background: var(--_bg);
+  color: var(--text-on-accent);
+  box-shadow: var(--_shadow);
+  transition:
+    transform var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out);
+}
+
+.answer--right {
+  --_bg: var(--side-right-bg);
+  --_line: var(--side-right-line);
+  --_shadow: var(--shadow-answer-right);
+  --_shadow-pressed: var(--shadow-answer-right-pressed);
+}
+
+.answer__tile {
+  display: grid;
+  place-items: center;
+  inline-size: var(--answer-tile);
+  block-size: var(--answer-tile);
+  padding: var(--space-2);
+  border: var(--border-2) solid var(--alpha-white-40);
+  border-radius: var(--radius-lg);
+  background: var(--alpha-white-20);
+  box-shadow: var(--shadow-inset-tile);
+}
+
+.answer__tile .icon {
+  inline-size: var(--answer-icon);
+  block-size: var(--answer-icon);
+}
+
+@media (hover: hover) {
+  .answer:hover:not(:disabled) {
+    transform: translateY(var(--lift));
+  }
+}
+
+.answer:active:not(:disabled) {
+  transform: translateY(var(--press-travel));
+  box-shadow: var(--_shadow-pressed);
+}
+
+/* belum bisa dijawab / animasi hasil: tombol "tenggelam" dan abu-abu */
+.answer:disabled:not([data-feedback]) {
+  --_bg: var(--btn-off-bg);
+  --_line: var(--btn-off-line);
+  transform: translateY(var(--press-travel-sm));
+  box-shadow: var(--shadow-btn-off);
+}
+
+/* lencana ✓ / ✗ di pojok (feedback tidak hanya lewat warna) */
+.answer__badge {
+  position: absolute;
+  inset-block-start: calc(-1 * var(--space-12));
+  inset-inline-end: var(--space-10);
+  display: none;
+  place-items: center;
+  inline-size: var(--badge-mark);
+  block-size: var(--badge-mark);
+  border: var(--border-2) solid var(--surface-card);
+  border-radius: var(--radius-full);
+  color: var(--text-on-accent);
+  box-shadow: var(--shadow-pill);
+}
+
+.answer__badge .icon {
+  inline-size: var(--icon-badge);
+  block-size: var(--icon-badge);
+}
+
+.answer__badge .icon--cross,
+.answer[data-feedback='bad'] .answer__badge .icon--check {
+  display: none;
+}
+
+.answer[data-feedback='bad'] .answer__badge .icon--cross {
+  display: block;
+}
+
+.answer[data-feedback='good'] .answer__badge {
+  display: grid;
+  background: var(--good-bg);
+}
+
+.answer[data-feedback='bad'] .answer__badge {
+  display: grid;
+  background: var(--bad-bg);
+}
+
+.answer[data-feedback='good'] {
+  animation: pop var(--dur-pop) var(--ease-pop);
+}
+
+.answer[data-feedback='bad'] {
+  animation: shake-x var(--dur-shake) var(--ease-in-out);
+}

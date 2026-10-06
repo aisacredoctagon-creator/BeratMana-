@@ -1,0 +1,173 @@
+/* ===== Jungkat-jungkit (.seesaw). Koordinat desain 576 x 260; 1 satuan = var(--ss-u) ===== */
+.seesaw {
+  position: relative;
+  container-type: inline-size;
+  inline-size: var(--ss-w);
+  aspect-ratio: var(--ss-design-w) / var(--ss-design-h);
+}
+
+/* grup yang berputar: papan + benda. Pusat grup = pusat papan = titik tumpu */
+.seesaw__beam {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-start: calc(var(--ss-group-y) * var(--ss-u));
+  block-size: calc(var(--ss-group-h) * var(--ss-u));
+  transform-origin: 50% 50%;
+  transform: rotate(var(--tilt, 0deg));
+  transition: transform var(--dur-tilt) var(--spring);
+  will-change: transform;
+}
+
+.seesaw__plank {
+  position: absolute;
+  inset-inline-start: calc(var(--ss-beam-x) * var(--ss-u));
+  inset-block-start: calc((var(--ss-beam-y) - var(--ss-group-y)) * var(--ss-u));
+  inline-size: calc(var(--ss-beam-w) * var(--ss-u));
+  block-size: calc(var(--ss-beam-h) * var(--ss-u));
+  border: calc(var(--ss-border) * var(--ss-u)) solid var(--beam-line);
+  border-radius: var(--radius-full);
+  background: var(--beam-fill);
+  box-shadow: var(--shadow-beam);
+}
+
+.seesaw__shine {
+  position: absolute;
+  inset-inline: calc(var(--ss-beam-shine-inset-x) * var(--ss-u));
+  inset-block-start: calc((var(--ss-beam-shine-inset-y) - var(--ss-border)) * var(--ss-u));
+  block-size: calc(var(--ss-beam-shine-h) * var(--ss-u));
+  border-radius: var(--radius-full);
+  background: var(--beam-shine);
+}
+
+.seesaw__item {
+  position: absolute;
+  inset-block-start: calc((var(--ss-item-bottom) - var(--ss-item-size)) * var(--ss-u));
+  inline-size: calc(var(--ss-item-size) * var(--ss-u));
+  block-size: calc(var(--ss-item-size) * var(--ss-u));
+  opacity: 0;
+  transform-origin: 50% 100%;
+}
+
+.seesaw__item--left {
+  inset-inline-start: calc(var(--ss-item-left-x) * var(--ss-u));
+}
+
+.seesaw__item--right {
+  inset-inline-start: calc(var(--ss-item-right-x) * var(--ss-u));
+}
+
+.seesaw__item img {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: contain;
+  object-position: center bottom;
+  pointer-events: none;
+}
+
+.seesaw__stand {
+  position: absolute;
+  inset-inline-start: calc((var(--ss-design-w) / 2 - var(--ss-stand-w) / 2) * var(--ss-u));
+  inset-block-start: calc(var(--ss-stand-y) * var(--ss-u));
+  inline-size: calc(var(--ss-stand-w) * var(--ss-u));
+  block-size: calc(var(--ss-stand-h) * var(--ss-u));
+  filter: var(--shadow-stand);
+  pointer-events: none;
+}
+
+.seesaw__base {
+  position: absolute;
+  inset-inline-start: calc((var(--ss-design-w) / 2 - var(--ss-base-w) / 2) * var(--ss-u));
+  inset-block-start: calc(var(--ss-base-y) * var(--ss-u));
+  inline-size: calc(var(--ss-base-w) * var(--ss-u));
+  block-size: calc(var(--ss-base-h) * var(--ss-u));
+  border: calc(var(--ss-border) * var(--ss-u)) solid var(--base-line);
+  border-radius: var(--radius-full);
+  background: var(--base-bg);
+  box-shadow: var(--shadow-base);
+}
+
+.seesaw__pin {
+  position: absolute;
+  inset-inline-start: calc((var(--ss-design-w) / 2 - var(--ss-pin-w) / 2) * var(--ss-u));
+  inset-block-start: calc(var(--ss-pin-y) * var(--ss-u));
+  inline-size: calc(var(--ss-pin-w) * var(--ss-u));
+  block-size: calc(var(--ss-pin-h) * var(--ss-u));
+  border: calc(var(--ss-border) * var(--ss-u)) solid var(--pin-line);
+  border-radius: var(--radius-full);
+  background: var(--pin-bg);
+  box-shadow: var(--shadow-pin);
+}
+
+/* pil hasil "✓ Benar!" / "✗ Salah" di atas titik tumpu */
+.seesaw__verdict {
+  position: absolute;
+  inset-inline-start: 50%;
+  inset-block-start: calc(var(--ss-verdict-y) * var(--ss-u));
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-6);
+  padding: var(--space-6) var(--space-16);
+  border-radius: var(--radius-full);
+  color: var(--text-on-accent);
+  font-size: var(--fs-value);
+  font-weight: var(--fw-semibold);
+  line-height: var(--lh-value);
+  white-space: nowrap;
+  box-shadow: var(--shadow-pill);
+  opacity: 0;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.seesaw__verdict .icon {
+  inline-size: var(--icon-sm);
+  block-size: var(--icon-sm);
+}
+
+.seesaw__verdict[data-v='ok'] {
+  background: var(--good-bg);
+  animation: verdict-pop var(--dur-verdict) var(--ease-out) both;
+}
+
+.seesaw__verdict[data-v='bad'] {
+  background: var(--bad-bg);
+  animation: verdict-pop var(--dur-verdict) var(--ease-out) both;
+}
+
+/* ---- keadaan ---- */
+.seesaw[data-state='entering'] .seesaw__item,
+.seesaw[data-state='ready'] .seesaw__item,
+.seesaw[data-state='revealing'] .seesaw__item {
+  opacity: 1;
+}
+
+.seesaw[data-state='entering'] .seesaw__item {
+  animation: item-in var(--dur-enter) var(--ease-pop) both;
+}
+
+.seesaw[data-state='entering'] .seesaw__item--right {
+  animation-delay: var(--dur-fast);
+}
+
+.seesaw[data-state='leaving'] .seesaw__item {
+  opacity: 0;
+  transform: translateY(calc(-1 * var(--ss-item-drop) * var(--ss-u) / 2)) scale(0.85);
+  transition:
+    opacity var(--dur-base) var(--ease-out),
+    transform var(--dur-base) var(--ease-out);
+}
+
+.seesaw[data-state='leaving'] .seesaw__beam {
+  transition-duration: var(--dur-tilt-reset);
+  transition-timing-function: var(--ease-reset);
+}
+
+/* hiasan layar judul: papan bergoyang pelan */
+.seesaw--rock .seesaw__beam {
+  animation: rock var(--dur-rock) var(--ease-in-out) infinite alternate;
+}
+
+.seesaw--rock .seesaw__item {
+  opacity: 1;
+}

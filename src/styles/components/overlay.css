@@ -1,0 +1,97 @@
+/* ===== Modal / bottom sheet (.overlay + .sheet) dan .toast ===== */
+.overlay {
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-overlay);
+  display: grid;
+  place-items: center;
+  padding: var(--gutter);
+  background: var(--surface-scrim);
+  backdrop-filter: blur(var(--blur-scrim));
+}
+
+.sheet {
+  display: grid;
+  gap: var(--space-16);
+  inline-size: min(100%, var(--sheet-max-w));
+  max-block-size: 100%;
+  overflow-y: auto;
+  padding: var(--space-24);
+  border: var(--border-2) solid var(--line-bar);
+  border-radius: var(--radius-xl);
+  background: var(--surface-card);
+  box-shadow: var(--shadow-sheet);
+  animation: sheet-in var(--dur-base) var(--ease-out) both;
+}
+
+.sheet--wide {
+  inline-size: min(100%, var(--sheet-wide-max-w));
+}
+
+.sheet__title {
+  margin: 0 0 var(--space-4);
+  color: var(--text-strong);
+  font-size: var(--fs-h2);
+  font-weight: var(--fw-semibold);
+  line-height: var(--lh-h1);
+  text-align: center;
+}
+
+.sheet__list {
+  display: grid;
+  gap: var(--space-8);
+  margin: 0;
+  padding-inline-start: var(--space-22);
+  color: var(--text-body);
+  font-size: var(--fs-body-lg);
+  line-height: var(--lh-body);
+}
+
+.sheet__list kbd {
+  display: inline-block;
+  min-inline-size: var(--keycap-h);
+  padding: 0 var(--space-6);
+  border: var(--border-2) solid var(--line-control);
+  border-radius: var(--radius-sm);
+  background: var(--surface-sunken);
+  color: var(--text-strong);
+  font: inherit;
+  font-weight: var(--fw-semibold);
+  text-align: center;
+}
+
+/* layar sempit: menjadi bottom sheet menempel di bawah */
+@media (max-width: 720px) {
+  .overlay {
+    place-items: end center;
+    padding: 0;
+  }
+
+  .sheet,
+  .sheet--wide {
+    inline-size: 100%;
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    padding-block-end: calc(var(--space-24) + var(--safe-bottom));
+    animation-name: sheet-up;
+  }
+}
+
+/* ---------- toast ---------- */
+.toast {
+  position: absolute;
+  inset-inline-start: 50%;
+  inset-block-end: max(var(--space-24), var(--safe-bottom));
+  z-index: var(--z-toast);
+  max-inline-size: calc(100% - 2 * var(--gutter));
+  padding: var(--space-10) var(--space-20);
+  border-radius: var(--radius-full);
+  background: var(--text-strong);
+  color: var(--text-on-accent);
+  box-shadow: var(--shadow-toast);
+  font-size: var(--fs-body);
+  font-weight: var(--fw-semibold);
+  line-height: var(--lh-body);
+  text-align: center;
+  transform: translateX(-50%);
+  animation: toast-in var(--dur-base) var(--ease-out) both;
+}

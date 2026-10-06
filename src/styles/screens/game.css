@@ -1,0 +1,144 @@
+/* ===== Layar game ===== */
+.game {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  align-items: center;
+  min-block-size: 0;
+  inline-size: min(100%, var(--main-max-w));
+  margin-inline: auto;
+  /* + area aman bawah: saat keybar disembunyikan (mobile), tombol jawab tidak boleh tertutup home indicator */
+  padding: var(--game-pad-top) var(--gutter) calc(var(--game-pad-bottom) + var(--safe-bottom));
+}
+
+.game__head {
+  display: grid;
+  flex: none;
+  justify-items: center;
+  gap: var(--gap-title-tagline);
+}
+
+.game__cards {
+  display: flex;
+  flex: none;
+  gap: var(--space-24);
+  inline-size: min(100%, var(--cards-max-w));
+  margin-block-start: var(--gap-tagline-cards);
+}
+
+.game__board {
+  position: relative;
+  container-type: size;
+  display: grid;
+  flex: 1 1 0;
+  place-items: center;
+  inline-size: 100%;
+  min-block-size: 0;
+  margin-block: var(--gap-cards-seesaw) var(--gap-seesaw-answers);
+}
+
+/* seesaw mengecil bila kotak lebih pendek dari tingginya */
+.game__board > .seesaw {
+  inline-size: min(var(--ss-w), var(--ss-fit-h));
+}
+
+.game__answers {
+  display: flex;
+  flex: none;
+  gap: var(--space-24);
+  inline-size: min(100%, var(--answers-max-w));
+}
+
+/* lapisan efek (partikel + teks melayang) */
+.fx-layer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.fx-particle {
+  position: absolute;
+  inset: 0 auto auto 0;
+  inline-size: var(--space-10);
+  block-size: var(--space-10);
+  border-radius: var(--radius-full);
+  will-change: transform, opacity;
+}
+
+.fx-float {
+  position: absolute;
+  inset: 0 auto auto 0;
+  font-size: var(--fs-value);
+  font-weight: var(--fw-semibold);
+  line-height: var(--lh-value);
+  white-space: nowrap;
+  text-shadow: var(--shadow-fx-text);
+  will-change: transform, opacity;
+}
+
+.fx-float--good {
+  color: var(--good-bg);
+}
+
+.fx-float--bad {
+  color: var(--bad-bg);
+}
+
+.fx-float--bonus {
+  color: var(--pill-score-label);
+}
+
+.flash {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-flash);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.flash[data-kind='good'] {
+  background: var(--flash-good);
+}
+
+.flash[data-kind='bad'] {
+  background: var(--flash-bad);
+}
+
+/* ---------- landscape pendek (HP miring): kartu + papan di kiri, tombol jawab di kanan ---------- */
+@media (max-height: 520px) and (orientation: landscape) {
+  .game {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) var(--answers-col-w);
+    grid-template-rows: auto minmax(0, 1fr);
+    align-items: stretch;
+    column-gap: var(--space-24);
+    inline-size: 100%;
+    max-inline-size: none;
+  }
+
+  .game__head {
+    display: none;
+  }
+
+  .game__cards {
+    grid-column: 1;
+    grid-row: 1;
+    justify-self: center;
+    margin-block-start: 0;
+  }
+
+  .game__board {
+    grid-column: 1;
+    grid-row: 2;
+    margin-block: var(--space-8) 0;
+  }
+
+  .game__answers {
+    flex-direction: column;
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    align-self: center;
+    inline-size: 100%;
+  }
+}

@@ -1,0 +1,511 @@
+/* =====================================================================
+   TOKENS: satu-satunya tempat nilai warna, ukuran, tipografi, bayangan, gerak.
+   Sumber kebenaran visual: frame Figma "Html → Body" (node 17:248).
+   File CSS lain DILARANG menulis warna (#hex, rgb(), hsl()) atau ukuran (px, rem, vw, ...)
+   secara langsung; semuanya lewat variabel di sini (dicek oleh `npm run lint:tokens`).
+   Dokumentasi: DESIGN.md
+   ===================================================================== */
+
+:root {
+  color-scheme: light;
+
+  /* ---------- UNIT FLUID ----------
+     --u = 1px pada kanvas desain Figma (1280 x 992). Mengecil bila viewport lebih sempit/pendek
+     dan dibatasi supaya tidak terlalu besar di layar lebar. Semua ukuran desain = N * var(--u). */
+  --u: clamp(0.72px, min(0.078125vw, 0.100806dvh), 1.25px);
+
+  /* ---------- PALET PRIMITIF (nama mengikuti skala Tailwind seperti di Figma) ---------- */
+  --color-white: #ffffff;
+  --color-black: #000000;
+  --color-app-bg: #f4f7fb;
+
+  --color-slate-100: #f1f5f9;
+  --color-slate-200: #e2e8f0;
+  --color-slate-300: #cbd5e1;
+  --color-slate-400: #94a3b8; /* turunan: tombol nonaktif */
+  --color-slate-500: #64748b;
+  --color-slate-600: #475569;
+  --color-slate-700: #334155;
+  --color-slate-800: #1e293b;
+  --color-slate-900: #0f172a; /* turunan: bayangan toast */
+
+  --color-yellow-200: #fef08a;
+  --color-amber-50: #fffbeb;
+  --color-amber-200: #fde68a;
+  --color-amber-300: #fcd34d;
+  --color-amber-400: #fbbf24;
+  --color-amber-500: #f59e0b;
+  --color-amber-700: #b45309;
+  --color-amber-900: #78350f;
+  --color-orange-500: #f97316;
+  --color-orange-700: #c2410c; /* turunan: teks penekanan yang lolos kontras */
+
+  --color-emerald-50: #ecfdf5;
+  --color-emerald-300: #6ee7b7;
+  --color-emerald-500: #10b981;
+  --color-emerald-600: #059669;
+  --color-emerald-700: #047857; /* turunan: latar "Benar" */
+  --color-emerald-800: #065f46;
+
+  --color-violet-100: #ede9fe;
+  --color-purple-100: #f3e8ff;
+  --color-purple-950: #3b0764;
+  --color-indigo-50: #eef2ff;
+  --color-indigo-200: #c7d2fe;
+  --color-indigo-300: #a5b4fc;
+  --color-indigo-400: #818cf8;
+  --color-indigo-500: #6366f1;
+  --color-indigo-600: #4f46e5; /* turunan: latar badge EXP (putih 6,3:1) */
+  --color-indigo-900: #312e81;
+
+  --color-rose-50: #fff1f2;
+  --color-rose-100: #ffe4e6; /* turunan */
+  --color-rose-chip: #ffebee;
+  --color-rose-300: #fda4af;
+  --color-rose-400: #fb7185;
+  --color-rose-500: #f43f5e;
+  --color-rose-600: #e11d48;
+  --color-rose-700: #be123c; /* turunan: teks kecil lolos kontras */
+  --color-rose-800: #9f1239;
+  --color-red-pin: #c82225;
+  --color-red-pin-deep: #911517;
+
+  --color-sky-50: #f0f9ff;
+  --color-sky-100: #e0f2fe;
+  --color-sky-200: #bae6fd;
+  --color-sky-300: #7dd3fc;
+  --color-sky-400: #38bdf8;
+  --color-sky-500: #0ea5e9;
+  --color-sky-600: #0284c7;
+  --color-sky-700: #0369a1; /* turunan: teks kecil lolos kontras */
+  --color-sky-800: #075985;
+  --color-sky-900: #0c4a6e;
+  --color-sky-950: #082f49;
+
+  --color-blue-400: #60a5fa;
+  --color-blue-500: #3b82f6;
+  --color-blue-700: #1d4ed8;
+
+  /* nilai transparan dari Figma */
+  --alpha-bar: rgba(255, 255, 255, 0.9);
+  --alpha-ink-05: rgba(0, 0, 0, 0.05);
+  --alpha-ink-06: rgba(0, 0, 0, 0.06);
+  --alpha-ink-07: rgba(0, 0, 0, 0.07);
+  --alpha-white-20: rgba(255, 255, 255, 0.2);
+  --alpha-white-40: rgba(255, 255, 255, 0.4);
+  --alpha-amber-200-70: rgba(253, 230, 138, 0.7);
+  --alpha-glow-yellow: rgba(254, 240, 138, 0.4);
+  --alpha-glow-sky: rgba(186, 230, 253, 0.3);
+  --alpha-glow-blue: rgba(37, 99, 235, 0.22);
+  --alpha-glow-rose: rgba(244, 63, 94, 0.22);
+  --alpha-scrim: rgba(30, 41, 59, 0.45); /* turunan: slate-800 @45% */
+  --transparent: rgba(255, 255, 255, 0);
+
+  /* ---------- WARNA SEMANTIK ---------- */
+  --surface-app: var(--color-app-bg);
+  --surface-bar: var(--alpha-bar);
+  --surface-card: var(--color-white);
+  --surface-sunken: var(--color-slate-100);
+  --surface-scrim: var(--alpha-scrim);
+  --line-bar: var(--color-slate-200);
+  --line-control: var(--color-slate-300);
+
+  --text-strong: var(--color-slate-800);
+  --text-body: var(--color-slate-700);
+  --text-muted: var(--color-slate-500); /* di atas putih (4,8:1) */
+  --text-muted-on-app: var(--color-slate-600); /* di atas --surface-app */
+  --text-subtle: var(--color-slate-300); /* hanya dekorasi (pemisah) */
+  --text-on-accent: var(--color-white);
+  --text-emphasis: var(--color-orange-700); /* turunan: pengganti #f65540 (kontras 4,8:1) */
+  --icon-neutral: var(--color-slate-600);
+
+  --focus-ring: var(--color-indigo-500);
+
+  --good-bg: var(--color-emerald-700);
+  --good-soft: var(--color-emerald-50);
+  --good-line: var(--color-emerald-500);
+  --bad-bg: var(--color-rose-700);
+  --bad-soft: var(--color-rose-50);
+  --flash-good: var(--color-emerald-500);
+  --flash-bad: var(--color-rose-500);
+
+  /* sisi kiri = biru, sisi kanan = koral (tombol + kartu) */
+  --side-left-bg: var(--color-blue-500);
+  --side-left-line: var(--color-blue-400);
+  --side-left-solid: var(--color-blue-700);
+  --side-left-glow: var(--alpha-glow-blue);
+  --side-left-tag-bg: var(--color-sky-100);
+  --side-left-tag-line: var(--color-sky-300);
+  --side-left-tag-text: var(--color-sky-800);
+  --side-left-expr: var(--color-sky-950);
+
+  --side-right-bg: var(--color-rose-500);
+  --side-right-line: var(--color-rose-400);
+  --side-right-solid: var(--color-rose-600);
+  --side-right-glow: var(--alpha-glow-rose);
+  --side-right-tag-bg: var(--color-rose-chip);
+  --side-right-tag-line: var(--color-rose-400);
+  --side-right-tag-text: var(--color-rose-700); /* turunan: Figma #f43f5e (kontras 3,2:1) */
+  --side-right-expr: var(--color-purple-950);
+
+  /* tombol utama (memakai keluarga koral) dan sekunder */
+  --btn-primary-bg: var(--color-rose-500);
+  --btn-primary-line: var(--color-rose-400);
+  --btn-primary-solid: var(--color-rose-600);
+  --btn-primary-glow: var(--alpha-glow-rose);
+  --btn-secondary-bg: var(--color-white);
+  --btn-secondary-line: var(--color-slate-300);
+  --btn-secondary-solid: var(--color-slate-200);
+  --btn-secondary-text: var(--color-slate-700);
+  --btn-off-bg: var(--color-slate-300);
+  --btn-off-line: var(--color-slate-200);
+  --btn-off-solid: var(--color-slate-400);
+
+  /* pil HUD (tiap pil punya satu keluarga warna) */
+  --pill-score-bg: var(--color-amber-50);
+  --pill-score-line: var(--color-amber-300);
+  --pill-score-label: var(--color-amber-700);
+  --pill-score-value: var(--color-amber-900);
+  --pill-level-bg: var(--color-emerald-50);
+  --pill-level-line: var(--color-emerald-300);
+  --pill-level-text: var(--color-emerald-800);
+  --pill-level-dot: var(--color-emerald-500);
+  --pill-mode-bg: linear-gradient(90deg, var(--color-violet-100) 0%, var(--color-indigo-50) 50%, var(--color-purple-100) 100%);
+  --pill-mode-line: var(--color-indigo-200);
+  --pill-mode-text: var(--color-indigo-900);
+  --pill-mode-icon: var(--color-indigo-500);
+  --pill-mode-badge-bg: var(--color-indigo-600);
+  --pill-combo-bg: var(--color-rose-50);
+  --pill-combo-line: var(--color-rose-300);
+  --pill-combo-label: var(--color-rose-700); /* turunan: Figma #f43f5e */
+  --pill-combo-value: var(--color-rose-800);
+  --pill-combo-icon: var(--color-rose-500);
+  --pill-combo-warm-bg: var(--color-amber-50); /* combo x2-x3 (turunan) */
+  --pill-combo-warm-line: var(--color-amber-300);
+  --pill-combo-warm-icon: var(--color-orange-500);
+  --pill-combo-hot-bg: var(--color-rose-100); /* combo x4-x5 (turunan) */
+  --pill-combo-hot-line: var(--color-rose-400);
+  --pill-combo-hot-icon: var(--color-rose-600);
+  --pill-combo-hot-glow: var(--alpha-glow-rose);
+  --pill-time-bg: var(--color-sky-50);
+  --pill-time-line: var(--color-sky-300);
+  --pill-time-label: var(--color-sky-700); /* turunan: Figma #0284c7 */
+  --pill-time-value: var(--color-sky-900);
+  --pill-time-ring: var(--color-sky-500);
+  --pill-time-ring-track: var(--color-sky-200);
+  --pill-lives-bg: var(--color-white);
+  --pill-lives-line: var(--color-slate-300);
+  --pill-lives-label: var(--color-slate-600);
+  --pill-lives-value: var(--color-rose-500);
+  --star-tile-bg: var(--color-amber-400);
+  --star-tile-line: var(--color-amber-500);
+  --star-tile-icon: var(--color-amber-700);
+
+  /* jungkat-jungkit */
+  --beam-fill: linear-gradient(90deg, var(--color-amber-400) 0%, var(--color-amber-300) 50%, var(--color-amber-400) 100%);
+  --beam-line: var(--color-amber-500);
+  --beam-solid: var(--color-amber-700);
+  --beam-shine: var(--alpha-amber-200-70);
+  --pin-bg: var(--color-rose-500);
+  --pin-line: var(--color-red-pin);
+  --pin-solid: var(--color-red-pin-deep);
+  --base-bg: var(--color-emerald-500);
+  --base-line: var(--color-emerald-600);
+
+  /* gradasi kata "Berat?" pada judul */
+  /* Figma: gradasi amber→oranye→merah muda membentang di SELURUH judul; kata "Berat?" hanya menampilkan 73–100%
+     (diukur dari screenshot: dimulai koral). Titik awal = campuran oranye 54% + merah muda 46%. */
+  --title-accent: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--color-orange-500) 54%, var(--color-rose-500)) 0%,
+    var(--color-rose-500) 100%
+  );
+
+  /* latar: tiga cahaya radial halus dari Figma */
+  --app-glows:
+    radial-gradient(ellipse calc(768 * var(--u)) calc(397 * var(--u)) at 50% -10%, var(--alpha-glow-yellow) 0%, var(--transparent) 60%),
+    radial-gradient(circle calc(1457 * var(--u)) at 10% 90%, var(--alpha-glow-sky) 0%, var(--transparent) 40%);
+
+  /* ---------- TIPOGRAFI ---------- */
+  --font-display: 'Fredoka Variable', 'Fredoka', ui-rounded, 'Nunito', system-ui, sans-serif;
+  --font-body: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+
+  /* ukuran = desain * u, dengan lantai agar tetap terbaca di HP */
+  --fs-h1: clamp(1.625rem, 8.2vw, calc(60 * var(--u))); /* judul pertanyaan: tetap satu baris di 360px */
+  --fs-hero: max(2.125rem, calc(60 * var(--u))); /* judul layar judul */
+  --fs-h2: max(1.75rem, calc(40 * var(--u)));
+  --fs-expr: clamp(1.125rem, 17.4cqi, calc(48 * var(--u))); /* cqi = lebar isi kartu */
+  --fs-score-hero: max(2.5rem, calc(64 * var(--u)));
+  --fs-value: max(1.25rem, calc(24 * var(--u)));
+  --fs-body: max(0.9375rem, calc(16 * var(--u)));
+  --fs-body-lg: max(1.0625rem, calc(18 * var(--u)));
+  --fs-button: max(1.375rem, calc(28 * var(--u)));
+  --fs-tag: max(0.8125rem, calc(14 * var(--u)));
+  --fs-eyebrow: max(0.75rem, calc(12 * var(--u)));
+
+  --lh-h1: 1;
+  --lh-expr: 1;
+  --lh-value: 1.2;
+  --lh-body: 1.4;
+  --lh-tag: 1.3;
+  --lh-eyebrow: 1.2;
+
+  --ls-h1: -0.01em;
+  --ls-expr: 0.02em;
+  --ls-tag: 0.05em;
+  --ls-eyebrow: 0.05em;
+  --ls-pill: 0.025em;
+  --ls-time: 0.05em;
+  --ls-none: 0;
+
+  /* pecahan bertumpuk & akar di dalam ekspresi (relatif terhadap ukuran font ekspresi) */
+  --frac-size: 0.82em;
+  --frac-lh: 1.1;
+  --frac-margin: 0.12em;
+  --frac-pad-x: 0.2em;
+  --frac-pad-y: 0.06em;
+  --frac-bar: 0.09em;
+  --sqrt-bar: 0.08em;
+  --sqrt-pad-x: 0.12em;
+  --sqrt-gap: 0.04em;
+
+  /* pengecil ukuran ekspresi panjang (di-set lewat data-size pada kartu) */
+  --expr-scale-s: 1;
+  --expr-scale-m: 0.86;
+  --expr-scale-l: 0.72;
+  --expr-scale-xl: 0.6;
+
+  /* ---------- SPASI (nama = px pada kanvas desain) ---------- */
+  --space-0: 0;
+  --space-2: calc(2 * var(--u));
+  --space-4: calc(4 * var(--u));
+  --space-6: calc(6 * var(--u));
+  --space-8: calc(8 * var(--u));
+  --space-10: calc(10 * var(--u));
+  --space-12: calc(12 * var(--u));
+  --space-14: calc(14 * var(--u));
+  --space-16: calc(16 * var(--u));
+  --space-20: calc(20 * var(--u));
+  --space-22: calc(22 * var(--u));
+  --space-24: calc(24 * var(--u));
+  --space-30: calc(30 * var(--u));
+  --space-40: calc(40 * var(--u));
+  --space-64: calc(64 * var(--u));
+  --space-128: calc(128 * var(--u));
+
+  /* ---------- RADIUS ---------- */
+  --radius-sm: calc(8 * var(--u));
+  --radius-md: calc(12 * var(--u));
+  --radius-lg: calc(16 * var(--u));
+  --radius-xl: calc(24 * var(--u));
+  --radius-full: 9999px;
+  /* SATU radius untuk semua tombol (tombol utama/sekunder, ikon, jawab, toggle, segmented, chip) = radius tombol
+     paling membulat yang ada saat audit (24). Pil/tag/lencana BUKAN tombol dan tidak memakainya. */
+  --radius-button: var(--radius-xl);
+
+  /* ---------- GARIS ---------- */
+  --border-1: max(1px, calc(1 * var(--u)));
+  --border-2: max(1.5px, calc(2 * var(--u)));
+  --ring-width: max(3px, calc(4 * var(--u)));
+  --ring-offset: max(2px, calc(3 * var(--u)));
+
+  /* ---------- BAYANGAN ---------- */
+  /* Kedalaman bayangan SOLID tombol 3D. Bagian ini hanya cat (tidak masuk ukuran layout), jadi setiap tombol 3D
+     wajib menambah margin-block-end sebesar kedalamannya (`--_depth` di button.css/controls.css) supaya jarak
+     visual antar-elemen sama dengan jarak layout. Kecuali tombol ikon HUD (posisinya ditentukan baris HUD). */
+  --depth-3d: calc(4 * var(--u)); /* tombol standar: sekunder, chip, segmented, toggle, nonaktif */
+  --depth-3d-lg: calc(8 * var(--u)); /* tombol besar: utama (merah) dan tombol jawab */
+  --shadow-pill: 0 calc(1 * var(--u)) calc(1 * var(--u)) var(--alpha-ink-05);
+  --shadow-bar: 0 calc(1 * var(--u)) calc(2 * var(--u)) var(--alpha-ink-05);
+  --shadow-key: 0 var(--depth-3d) 0 var(--color-slate-200);
+  --shadow-key-pressed: 0 0 0 var(--color-slate-200);
+  --shadow-inset-tile: inset 0 calc(2 * var(--u)) calc(4 * var(--u)) var(--alpha-ink-05);
+  --shadow-card: 0 calc(1 * var(--u)) calc(1 * var(--u)) var(--alpha-ink-05);
+  --shadow-sheet: 0 calc(8 * var(--u)) 0 var(--color-slate-200), 0 calc(16 * var(--u)) calc(24 * var(--u)) var(--alpha-ink-07);
+  --shadow-ribbon: 0 calc(4 * var(--u)) 0 var(--beam-solid);
+  --shadow-toast: 0 calc(4 * var(--u)) 0 var(--color-slate-900);
+  --shadow-answer-left: 0 var(--depth-3d-lg) 0 var(--side-left-solid), 0 calc(16 * var(--u)) calc(20 * var(--u)) var(--side-left-glow);
+  --shadow-answer-left-pressed: 0 0 0 var(--side-left-solid), 0 calc(4 * var(--u)) calc(8 * var(--u)) var(--side-left-glow);
+  --shadow-answer-right: 0 var(--depth-3d-lg) 0 var(--side-right-solid), 0 calc(16 * var(--u)) calc(20 * var(--u)) var(--side-right-glow);
+  --shadow-answer-right-pressed: 0 0 0 var(--side-right-solid), 0 calc(4 * var(--u)) calc(8 * var(--u)) var(--side-right-glow);
+  --shadow-btn-primary: 0 var(--depth-3d-lg) 0 var(--btn-primary-solid), 0 calc(16 * var(--u)) calc(20 * var(--u)) var(--btn-primary-glow);
+  --shadow-btn-primary-pressed: 0 0 0 var(--btn-primary-solid), 0 calc(4 * var(--u)) calc(8 * var(--u)) var(--btn-primary-glow);
+  --shadow-btn-off: 0 var(--depth-3d) 0 var(--btn-off-solid);
+  /* bagian jungkat-jungkit memakai --ss-u (skala kotak jungkat-jungkit), bukan --u */
+  --shadow-beam: 0 calc(4 * var(--ss-u)) 0 var(--beam-solid);
+  --shadow-pin: 0 calc(4 * var(--ss-u)) 0 var(--pin-solid);
+  --shadow-base: 0 calc(2 * var(--ss-u)) 0 var(--base-line);
+  --shadow-stand: drop-shadow(0 calc(2 * var(--ss-u)) calc(1 * var(--ss-u)) var(--alpha-ink-06))
+    drop-shadow(0 calc(4 * var(--ss-u)) calc(1.5 * var(--ss-u)) var(--alpha-ink-07));
+  --shadow-fx-text: 0 calc(2 * var(--u)) calc(6 * var(--u)) var(--alpha-ink-07);
+  --shadow-combo-hot: 0 0 calc(12 * var(--u)) var(--pill-combo-hot-glow);
+  --shadow-title: drop-shadow(0 calc(1 * var(--u)) calc(0.5 * var(--u)) var(--alpha-ink-05));
+  --blur-bar: 6px;
+  --blur-scrim: 3px;
+
+  /* ---------- UKURAN KOMPONEN ---------- */
+  --app-h: 100dvh;
+  --tap-min: 48px; /* area sentuh minimum (WCAG 2.5.5 / aturan proyek) */
+  --hud-pad-top: calc(14 * var(--u));
+  --hud-pad-bottom: calc(16 * var(--u));
+  --hud-max-w: calc(1152 * var(--u));
+  --hud-pill-h: calc(59 * var(--u));
+  --hud-mode-h: calc(42 * var(--u));
+  --footer-pad-top: calc(16 * var(--u));
+  --footer-pad-bottom: calc(14 * var(--u));
+  --main-max-w: calc(1024 * var(--u));
+  --cards-max-w: calc(672 * var(--u));
+  --card-pad: calc(24 * var(--u));
+  --card-min-h: calc(130 * var(--u));
+  --answers-max-w: calc(473 * var(--u));
+  --answers-col-w: calc(224 * var(--u));
+  --answer-h: calc(131 * var(--u));
+  --answer-tile: calc(64 * var(--u));
+  --answer-icon: calc(40 * var(--u));
+  --icon-btn: max(40px, calc(40 * var(--u)));
+  --icon-btn-glyph: calc(20 * var(--u));
+  --icon-sm: calc(20 * var(--u));
+  --icon-md: calc(24 * var(--u));
+  --icon-badge: calc(18 * var(--u));
+  --star-glyph: calc(18 * var(--u));
+  --hit-outset-icon: calc(-1 * max(0px, calc((var(--tap-min) - var(--icon-btn)) / 2)));
+  --sr-size: 1px;
+  --star-tile: calc(31 * var(--u));
+  --dot-size: calc(10 * var(--u));
+  --keycap-h: calc(36 * var(--u));
+  --control-min-h: var(--tap-min);
+  --panel-max-w: calc(520 * var(--u));
+  --keybar-max-w: calc(896 * var(--u));
+  --title-hero-max-w: calc(576 * var(--u));
+  --sheet-max-w: calc(420 * var(--u));
+  --sheet-wide-max-w: calc(560 * var(--u));
+  --check-box: calc(24 * var(--u));
+  --badge-mark: calc(32 * var(--u));
+
+  /* jarak vertikal tata letak layar game (mengikuti Figma) */
+  --gap-title-tagline: calc(24 * var(--u));
+  --gap-tagline-cards: calc(30 * var(--u));
+  --gap-cards-seesaw: calc(40 * var(--u));
+  --gap-seesaw-answers: calc(50 * var(--u));
+  --game-pad-top: calc(40 * var(--u));
+  --game-pad-bottom: calc(48 * var(--u)); /* 56 (Figma) − 8 kedalaman tombol jawab yang kini masuk layout */
+
+  /* ---------- JUNGKAT-JUNGKIT (koordinat desain 576 x 260; 1 satuan = --ss-u) ---------- */
+  --ss-design-w: 576;
+  --ss-design-h: 260;
+  --ss-u: calc(100cqw / var(--ss-design-w));
+  --ss-w: min(calc(576 * var(--u)), 100%);
+  --ss-fit-h: calc(100cqh * var(--ss-design-w) / var(--ss-design-h)); /* lebar maksimum agar muat di tinggi kotak (cqh) */
+  --ss-beam-x: 24;
+  --ss-beam-w: 528;
+  --ss-beam-h: 20;
+  --ss-beam-y: 119.5; /* sisi atas papan */
+  --ss-beam-shine-inset-x: 2;
+  --ss-beam-shine-inset-y: 4;
+  --ss-beam-shine-h: 6;
+  --ss-group-y: 67.5; /* grup yang berputar (tinggi 124, pusat = pusat papan) */
+  --ss-group-h: 124;
+  --ss-pin-w: 28;
+  --ss-pin-h: 25;
+  --ss-pin-y: 116.5;
+  --ss-stand-w: 80;
+  --ss-stand-h: 112;
+  --ss-stand-y: 129;
+  --ss-base-w: 162;
+  --ss-base-h: 12;
+  --ss-base-y: 236.5;
+  --ss-item-size: 72;
+  --ss-item-left-x: 46;
+  --ss-item-right-x: 463;
+  --ss-item-bottom: 56; /* tepi bawah benda di dalam grup (papan mulai di 52, +4 menancap) */
+  --ss-item-drop: 36;
+  --ss-border: 2;
+  --ss-beam-radius: 10;
+  --ss-tilt: 12deg;
+  --ss-verdict-y: 26;
+  --ss-verdict-size: 16;
+
+  /* ---------- Z-INDEX ---------- */
+  --z-bar: 10;
+  --z-overlay: 30;
+  --z-toast: 40;
+  --z-flash: 50;
+
+  /* ---------- GERAK ---------- */
+  --dur-instant: 0.01ms;
+  --dur-fast: 120ms;
+  --dur-base: 200ms;
+  --dur-slow: 400ms;
+  --dur-tilt: 950ms;
+  --dur-tilt-reset: 400ms;
+  --dur-enter: 550ms;
+  --dur-verdict: 900ms;
+  --dur-shake: 420ms;
+  --dur-pop: 320ms;
+  --dur-rock: 5.5s;
+  --ease-out: cubic-bezier(0.2, 0.7, 0.4, 1);
+  --ease-in-out: ease-in-out;
+  --ease-pop: cubic-bezier(0.2, 1.3, 0.4, 1);
+  --ease-reset: cubic-bezier(0.3, 0.7, 0.4, 1);
+  --spring: cubic-bezier(0.34, 1.56, 0.64, 1); /* diganti linear() pegas oleh JS bila didukung */
+  --press-travel: var(--depth-3d-lg); /* tombol 3D turun sebesar tinggi bayangan solidnya */
+  --press-travel-sm: var(--depth-3d);
+  --lift: calc(-2 * var(--u));
+  --shake-amp: calc(12 * var(--u));
+
+  /* ---------- AREA AMAN ---------- */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --gutter: max(var(--space-16), var(--safe-left));
+
+  /* padding atas/bawah layar yang bisa di-scroll (judul, game over): ruang napas + area aman (home indicator) */
+  --screen-pad-start: calc(var(--space-24) + var(--safe-top));
+  --screen-pad-end: calc(var(--space-40) + var(--safe-bottom));
+}
+
+/* ---------- VARIAN RESPONSIF: layar sempit (portrait HP) ----------
+   Hanya token yang berubah; komponen otomatis mengikuti. */
+@media (max-width: 720px) {
+  :root {
+    --hud-pad-top: calc(8 * var(--u));
+    --hud-pad-bottom: calc(10 * var(--u));
+    --hud-pill-h: calc(52 * var(--u));
+    --gap-title-tagline: calc(8 * var(--u));
+    --gap-tagline-cards: calc(14 * var(--u));
+    --gap-cards-seesaw: calc(14 * var(--u));
+    --gap-seesaw-answers: calc(14 * var(--u));
+    --game-pad-top: calc(16 * var(--u));
+    --game-pad-bottom: calc(16 * var(--u));
+    --card-pad: calc(16 * var(--u));
+    --fs-expr: clamp(1.125rem, 24cqi, calc(48 * var(--u)));
+    --gutter: max(var(--space-12), var(--safe-left));
+  }
+}
+
+/* Portrait (HP/tablet): papan, kartu, dan tombol jawab memakai lebar penuh isi supaya tidak terlihat kecil. */
+@media (orientation: portrait) {
+  :root {
+    --ss-w: 100%;
+    --cards-max-w: 100%;
+    --answers-max-w: 100%;
+  }
+}
+
+/* Landscape pendek (HP miring): tata letak dua kolom setinggi ±560 satuan desain, jadi --u mengikuti
+   tinggi 560 (bukan 992) dan lantainya diturunkan. */
+@media (max-height: 520px) and (orientation: landscape) {
+  :root {
+    --u: clamp(0.4px, min(0.078125vw, 0.178571dvh), 1.25px);
+    --answers-col-w: calc(224 * var(--u));
+    --game-pad-top: calc(8 * var(--u));
+    --game-pad-bottom: calc(8 * var(--u));
+    --hud-pad-top: calc(6 * var(--u));
+    --hud-pad-bottom: calc(8 * var(--u));
+  }
+}

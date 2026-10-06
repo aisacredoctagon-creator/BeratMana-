@@ -1,0 +1,84 @@
+/* ===== Layar game over ===== */
+.screen--over {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: var(--screen-pad-start) var(--gutter) var(--screen-pad-end);
+}
+
+.over {
+  flex: none;
+  justify-items: center;
+  inline-size: min(100%, var(--panel-max-w));
+  margin: auto;
+  text-align: center;
+}
+
+.over__reason {
+  min-block-size: var(--lh-body);
+}
+
+/* pita "REKOR BARU!" */
+.ribbon {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-8);
+  padding: var(--space-6) var(--space-20);
+  border: var(--border-2) solid var(--beam-line);
+  border-radius: var(--radius-full);
+  background: var(--beam-fill);
+  color: var(--pill-score-value);
+  box-shadow: var(--shadow-ribbon);
+  font-size: var(--fs-value);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--ls-tag);
+  line-height: var(--lh-value);
+  animation: record-pop var(--dur-slow) var(--ease-pop) both;
+}
+
+.score-hero {
+  justify-content: center;
+  gap: var(--space-16);
+  padding: var(--space-12) var(--space-40);
+  border-radius: var(--radius-xl);
+}
+
+.score-hero .pill__value {
+  font-size: var(--fs-score-hero);
+  line-height: var(--lh-h1);
+}
+
+.score-hero .star-tile {
+  inline-size: var(--answer-tile);
+  block-size: var(--answer-tile);
+  border-radius: var(--radius-lg);
+}
+
+.score-hero .star-tile .icon {
+  inline-size: var(--answer-icon);
+  block-size: var(--answer-icon);
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-8);
+  inline-size: 100%;
+  margin: 0;
+}
+
+.stats .pill {
+  justify-content: flex-start;
+  text-align: start;
+}
+
+.stats dt,
+.stats dd {
+  margin: 0;
+}
+
+.over__actions {
+  display: grid;
+  gap: var(--space-12);
+  inline-size: 100%;
+  margin-block-start: var(--space-8);
+}

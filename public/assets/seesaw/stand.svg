@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 112">
+  <svg x="3.25" y="10.39" width="73.5" height="97.354" viewBox="0 0 73.5 97.355" preserveAspectRatio="none" overflow="visible" fill="none">
+<g id="Vector">
+<path d="M36.75 0.604984L71.75 95.605H1.75001L36.75 0.604984" fill="#38BDF8"/>
+<path d="M36.75 0.604984L71.75 95.605H1.75001L36.75 0.604984" stroke="#0284C7" stroke-width="3.5" stroke-linejoin="round"/>
+</g>
+</svg>
+  <svg x="40" y="14.997" width="20.496" height="87.998" viewBox="0 0 20.5 88" preserveAspectRatio="none" overflow="visible" fill="none">
+<path id="Vector" opacity="0.25" d="M0 0L20.5 88H0V0Z" fill="#0284C7"/>
+</svg>
+  <svg x="38.75" y="14.997" width="2.5" height="87.998" viewBox="0 0 2.5 88" preserveAspectRatio="none" overflow="visible" fill="none">
+<g id="Vector" opacity="0.6">
+<path d="M1.25 0V88V0" fill="black"/>
+<path d="M1.25 0V88V0" stroke="white" stroke-width="2.5"/>
+</g>
+</svg>
+</svg>

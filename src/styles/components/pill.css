@@ -1,0 +1,211 @@
+/* ===== Pil HUD: .pill (--score --level --mode --combo --time --lives), .star-tile, .badge ===== */
+.pill {
+  --_bg: var(--pill-score-bg);
+  --_line: var(--pill-score-line);
+  --_label: var(--pill-score-label);
+  --_value: var(--pill-score-value);
+  --_icon: var(--pill-score-label);
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  min-inline-size: 0;
+  padding: var(--space-8) var(--space-16);
+  border: var(--border-2) solid var(--_line);
+  border-radius: var(--radius-lg);
+  background: var(--_bg);
+  color: var(--_value);
+  box-shadow: var(--shadow-pill);
+  white-space: nowrap;
+}
+
+.pill__icon {
+  flex: none;
+  color: var(--_icon);
+}
+
+.pill__text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-inline-size: 0;
+}
+
+.pill__label {
+  color: var(--_label);
+}
+
+.pill__value {
+  color: var(--_value);
+  font-size: var(--fs-value);
+  font-weight: var(--fw-semibold);
+  line-height: var(--lh-value);
+  font-variant-numeric: tabular-nums;
+}
+
+/* skor (kuning) */
+.pill--score {
+  gap: var(--space-10);
+}
+
+.star-tile {
+  display: grid;
+  place-items: center;
+  flex: none;
+  inline-size: var(--star-tile);
+  block-size: var(--star-tile);
+  border: var(--border-2) solid var(--star-tile-line);
+  border-radius: var(--radius-md);
+  background: var(--star-tile-bg);
+  color: var(--star-tile-icon);
+  box-shadow: var(--shadow-inset-tile);
+}
+
+.star-tile .icon {
+  inline-size: var(--star-glyph);
+  block-size: var(--star-glyph);
+}
+
+/* tingkat + kesulitan (hijau) */
+.pill--level {
+  --_bg: var(--pill-level-bg);
+  --_line: var(--pill-level-line);
+  --_label: var(--pill-level-text);
+  --_value: var(--pill-level-text);
+  --_icon: var(--pill-level-dot);
+}
+
+.pill--level .pill__value {
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+}
+
+.pill__dot {
+  flex: none;
+  inline-size: var(--dot-size);
+  block-size: var(--dot-size);
+  border-radius: var(--radius-full);
+  background: var(--pill-level-dot);
+}
+
+/* mode (ungu) */
+.pill--mode {
+  --_bg: var(--pill-mode-bg);
+  --_line: var(--pill-mode-line);
+  --_value: var(--pill-mode-text);
+  --_icon: var(--pill-mode-icon);
+  gap: var(--space-12);
+  min-block-size: var(--hud-mode-h);
+}
+
+.pill--mode .pill__value {
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  letter-spacing: var(--ls-pill);
+}
+
+.badge,
+.pill__badge {
+  padding: var(--space-2) var(--space-8);
+  border-radius: var(--radius-sm);
+  background: var(--pill-mode-badge-bg);
+  color: var(--text-on-accent);
+  box-shadow: var(--shadow-pill);
+  white-space: nowrap;
+}
+
+/* combo (merah muda; makin hangat bila combo naik) */
+.pill--combo {
+  --_bg: var(--pill-combo-bg);
+  --_line: var(--pill-combo-line);
+  --_label: var(--pill-combo-label);
+  --_value: var(--pill-combo-value);
+  --_icon: var(--pill-combo-icon);
+  padding-inline: var(--space-14);
+  transition:
+    background-color var(--dur-base) var(--ease-out),
+    border-color var(--dur-base) var(--ease-out);
+}
+
+.pill--combo[data-level='2'],
+.pill--combo[data-level='3'] {
+  --_bg: var(--pill-combo-warm-bg);
+  --_line: var(--pill-combo-warm-line);
+  --_icon: var(--pill-combo-warm-icon);
+}
+
+.pill--combo[data-level='4'],
+.pill--combo[data-level='5'] {
+  --_bg: var(--pill-combo-hot-bg);
+  --_line: var(--pill-combo-hot-line);
+  --_icon: var(--pill-combo-hot-icon);
+  box-shadow: var(--shadow-combo-hot);
+}
+
+.pill--combo[data-level='5'] .pill__icon {
+  animation: flicker var(--dur-slow) var(--ease-in-out) infinite alternate;
+}
+
+/* waktu (biru langit) + cincin */
+.pill--time {
+  --_bg: var(--pill-time-bg);
+  --_line: var(--pill-time-line);
+  --_label: var(--pill-time-label);
+  --_value: var(--pill-time-value);
+  --_icon: var(--pill-time-ring);
+}
+
+.pill--time .pill__value {
+  letter-spacing: var(--ls-time);
+}
+
+.timer-ring {
+  --timer-progress: 1;
+}
+
+.timer-ring__track {
+  stroke: var(--pill-time-ring-track);
+}
+
+.timer-ring__bar {
+  stroke: var(--pill-time-ring);
+  stroke-dasharray: 100;
+  stroke-dashoffset: calc(100 * (1 - var(--timer-progress)));
+}
+
+.pill--time.is-low {
+  --_icon: var(--bad-bg);
+  --_value: var(--bad-bg);
+}
+
+.pill--time.is-low .timer-ring__bar {
+  stroke: var(--bad-bg);
+}
+
+.pill--time.is-low .pill__value {
+  animation: low-time var(--dur-slow) var(--ease-in-out) infinite alternate;
+}
+
+/* nyawa (mode Normal) */
+.pill--lives {
+  --_bg: var(--pill-lives-bg);
+  --_line: var(--pill-lives-line);
+  --_label: var(--pill-lives-label);
+  --_value: var(--pill-lives-value);
+  --_icon: var(--pill-lives-value);
+}
+
+.hearts {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.hearts .icon {
+  inline-size: var(--icon-sm);
+  block-size: var(--icon-sm);
+}
+
+.hearts .icon--heart-lost {
+  opacity: 0.35;
+}

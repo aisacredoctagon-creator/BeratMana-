@@ -1,0 +1,189 @@
+/* ===== HUD atas (.hud) dan bar petunjuk keyboard (.keybar) ===== */
+.hud {
+  position: relative;
+  z-index: var(--z-bar);
+  flex: none;
+  padding: calc(var(--hud-pad-top) + var(--safe-top)) max(var(--space-64), var(--safe-right)) var(--hud-pad-bottom)
+    max(var(--space-64), var(--safe-left));
+  border-block-end: var(--border-2) solid var(--line-bar);
+  background: var(--surface-bar);
+  box-shadow: var(--shadow-bar);
+  -webkit-backdrop-filter: blur(var(--blur-bar));
+  backdrop-filter: blur(var(--blur-bar));
+}
+
+.hud__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-12);
+  max-inline-size: var(--hud-max-w);
+  min-block-size: var(--hud-pill-h);
+  margin-inline: auto;
+}
+
+.hud__group {
+  display: flex;
+  align-items: stretch;
+  gap: var(--space-12);
+  min-inline-size: 0;
+}
+
+.hud__group--left {
+  justify-self: start;
+}
+
+.hud__group--right {
+  justify-self: end;
+}
+
+.hud__group .icon-btn {
+  align-self: center;
+}
+
+/* mode Time Attack / Normal: tampilkan pil waktu atau pil nyawa */
+.screen[data-mode='time'] .pill--lives,
+.screen[data-mode='normal'] .pill--time {
+  display: none;
+}
+
+/* ---------- layar sempit (HP, tablet portrait): dua baris ---------- */
+@media (max-width: 960px) {
+  .hud {
+    padding-inline: max(var(--space-12), var(--safe-left)) max(var(--space-12), var(--safe-right));
+  }
+
+  .hud__inner {
+    grid-template-columns: minmax(0, 1fr) auto auto auto;
+    grid-template-areas:
+      'score combo time pause'
+      'level mode mode sound';
+    gap: var(--space-8);
+    min-block-size: 0;
+  }
+
+  .hud__group {
+    display: contents;
+  }
+
+  .hud__inner [data-hud='score'] {
+    grid-area: score;
+    justify-self: start;
+  }
+
+  .hud__inner [data-hud='level'] {
+    grid-area: level;
+    justify-self: start;
+  }
+
+  .hud__inner [data-hud='mode'] {
+    grid-area: mode;
+  }
+
+  .hud__inner [data-hud='combo'] {
+    grid-area: combo;
+  }
+
+  .hud__inner [data-hud='time'],
+  .hud__inner [data-hud='lives'] {
+    grid-area: time;
+  }
+
+  .hud__inner [data-hud='sound'] {
+    grid-area: sound;
+    justify-self: end;
+  }
+
+  .hud__inner [data-hud='pause'] {
+    grid-area: pause;
+    justify-self: end;
+  }
+
+  .hud .pill {
+    padding: var(--space-6) var(--space-10);
+  }
+
+  .hud .pill--level,
+  .hud .pill--mode {
+    min-block-size: 0;
+  }
+
+  .hud .pill--mode {
+    justify-self: start;
+  }
+
+  .hud .pill--combo .pill__icon,
+  .hud .pill--time .pill__icon,
+  .hud .pill--mode .pill__icon {
+    display: none;
+  }
+
+  .hud .pill--score .star-tile {
+    display: grid;
+  }
+
+  .hud .pill--lives .hearts .icon {
+    inline-size: var(--icon-badge);
+    block-size: var(--icon-badge);
+  }
+}
+
+@media (max-width: 480px) {
+  .pill__badge--exp {
+    display: none;
+  }
+}
+
+/* ---------- landscape pendek: HUD tetap satu baris, tanpa pil mode ---------- */
+@media (max-height: 520px) and (orientation: landscape) {
+  .hud__inner {
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    grid-template-areas: none;
+    min-block-size: var(--hud-pill-h);
+  }
+
+  .hud__group {
+    display: flex;
+  }
+
+  .hud__inner [data-hud] {
+    grid-area: auto;
+  }
+
+  .hud .pill--mode {
+    display: none;
+  }
+
+  .keybar {
+    display: none;
+  }
+}
+
+/* ---------- bar petunjuk keyboard (footer) ---------- */
+.keybar {
+  flex: none;
+  padding: var(--footer-pad-top) max(var(--space-64), var(--safe-right)) calc(var(--footer-pad-bottom) + var(--safe-bottom))
+    max(var(--space-64), var(--safe-left));
+  border-block-start: var(--border-2) solid var(--line-bar);
+  background: var(--surface-bar);
+  -webkit-backdrop-filter: blur(var(--blur-bar));
+  backdrop-filter: blur(var(--blur-bar));
+}
+
+.keybar__inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-8) var(--space-20);
+  max-inline-size: var(--keybar-max-w);
+  margin-inline: auto;
+}
+
+/* petunjuk keyboard disembunyikan di perangkat sentuh dan di semua layar "mobile" (≤ 960px = breakpoint HUD dua
+   baris; landscape pendek disembunyikan di blok landscape di atas). Desktop tetap menampilkannya. */
+@media (hover: none), (max-width: 960px) {
+  .keybar {
+    display: none;
+  }
+}

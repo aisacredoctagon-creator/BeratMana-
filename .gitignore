@@ -1,0 +1,24 @@
+# dependensi & hasil build
+node_modules/
+dist/
+
+# rahasia & konfigurasi lokal (repo ini PUBLIK)
+.env
+.env.*
+!.env.example
+*.local
+.claude/
+
+# bahan kerja lokal, tidak untuk dipublikasikan
+references/
+feedback/
+.shots/
+
+# sistem, log, cache
+.DS_Store
+Thumbs.db
+*.log
+npm-debug.log*
+.vite/
+.cache/
+coverage/

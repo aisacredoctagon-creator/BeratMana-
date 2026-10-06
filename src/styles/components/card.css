@@ -1,0 +1,189 @@
+/* ===== Kartu ekspresi: .expr-card (--left / --right) ===== */
+.expr-card {
+  --_line: var(--side-left-line);
+  --_tag-bg: var(--side-left-tag-bg);
+  --_tag-line: var(--side-left-tag-line);
+  --_tag-text: var(--side-left-tag-text);
+  --_expr: var(--side-left-expr);
+  position: relative;
+  container-type: inline-size;
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  align-items: center;
+  min-inline-size: 0;
+  min-block-size: var(--card-min-h);
+  padding: var(--card-pad);
+  border: var(--border-1) solid var(--_line);
+  border-radius: var(--radius-xl);
+  background: var(--surface-card);
+  box-shadow: var(--shadow-card);
+  transition:
+    opacity var(--dur-base) var(--ease-out),
+    background-color var(--dur-base) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out);
+}
+
+.expr-card--right {
+  --_line: var(--side-right-line);
+  --_tag-bg: var(--side-right-tag-bg);
+  --_tag-line: var(--side-right-tag-line);
+  --_tag-text: var(--side-right-tag-text);
+  --_expr: var(--side-right-expr);
+}
+
+/* "SISI KIRI" / "SISI KANAN" */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-4) var(--space-12);
+  border: var(--border-1) solid var(--_tag-line);
+  border-radius: var(--radius-full);
+  background: var(--_tag-bg);
+  color: var(--_tag-text);
+  font-size: var(--fs-tag);
+  font-weight: var(--fw-semibold);
+  line-height: var(--lh-tag);
+  letter-spacing: var(--ls-tag);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.expr-card__expr {
+  display: block;
+  max-inline-size: 100%;
+  padding-block: var(--space-4);
+  color: var(--_expr);
+  font-size: calc(var(--fs-expr) * var(--expr-scale, 1));
+  font-weight: var(--fw-semibold);
+  line-height: var(--lh-expr);
+  letter-spacing: var(--ls-expr);
+  text-align: center;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.expr-card[data-size='m'] {
+  --expr-scale: var(--expr-scale-m);
+}
+
+.expr-card[data-size='l'] {
+  --expr-scale: var(--expr-scale-l);
+}
+
+.expr-card[data-size='xl'] {
+  --expr-scale: var(--expr-scale-xl);
+}
+
+.expr-card[data-size='xl'] .expr-card__expr {
+  white-space: normal;
+  text-wrap: balance;
+}
+
+/* nilai hasil hitungan, menempel di tepi bawah kartu (tidak menggeser tata letak) */
+.expr-card__value {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: 0;
+  display: flex;
+  justify-content: center;
+  transform: translateY(50%);
+  pointer-events: none;
+}
+
+.expr-card__value-text {
+  padding: var(--space-2) var(--space-12);
+  border-radius: var(--radius-full);
+  background: var(--text-strong);
+  color: var(--text-on-accent);
+  font-size: var(--fs-body);
+  font-weight: var(--fw-semibold);
+  line-height: var(--lh-body);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateY(var(--space-4)) scale(0.9);
+  transition:
+    opacity var(--dur-base) var(--ease-out),
+    transform var(--dur-base) var(--ease-pop);
+}
+
+.expr-card[data-result] .expr-card__value-text {
+  opacity: 1;
+  transform: none;
+}
+
+/* ✓ pada kartu yang lebih berat */
+.expr-card__mark {
+  position: absolute;
+  inset-block-start: calc(-1 * var(--space-12));
+  inset-inline-end: var(--space-16);
+  display: none;
+  place-items: center;
+  inline-size: var(--badge-mark);
+  block-size: var(--badge-mark);
+  border: var(--border-2) solid var(--surface-card);
+  border-radius: var(--radius-full);
+  background: var(--good-bg);
+  color: var(--text-on-accent);
+  box-shadow: var(--shadow-pill);
+}
+
+.expr-card__mark .icon {
+  inline-size: var(--icon-badge);
+  block-size: var(--icon-badge);
+}
+
+.expr-card[data-result='win'] {
+  background: var(--good-soft);
+  border-color: var(--good-line);
+  box-shadow: 0 0 0 var(--border-2) var(--good-line);
+}
+
+.expr-card[data-result='win'] .expr-card__mark {
+  display: grid;
+}
+
+.expr-card[data-result='lose'] .expr-card__expr,
+.expr-card[data-result='lose'] .tag {
+  opacity: 0.6;
+}
+
+/* pecahan bertumpuk dan akar */
+.frac {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  margin-inline: var(--frac-margin);
+  font-size: var(--frac-size);
+  line-height: var(--frac-lh);
+  vertical-align: middle;
+}
+
+.frac__n {
+  padding: 0 var(--frac-pad-x) var(--frac-pad-y);
+  border-bottom: var(--frac-bar) solid currentColor;
+}
+
+.frac__d {
+  padding: var(--frac-pad-y) var(--frac-pad-x) 0;
+}
+
+.sqrt {
+  display: inline-flex;
+  align-items: baseline;
+}
+
+.sqrt__rad {
+  margin-inline-start: var(--sqrt-gap);
+  padding: 0 var(--sqrt-pad-x);
+  border-top: var(--sqrt-bar) solid currentColor;
+}
+
+.op {
+  white-space: pre;
+}
+
+.expr-card[data-size='xl'] .op {
+  white-space: pre-wrap;
+}

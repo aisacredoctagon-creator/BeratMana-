@@ -1,0 +1,92 @@
+/* ===== Layar judul ===== */
+.screen--title {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  padding: var(--screen-pad-start) var(--gutter) var(--screen-pad-end);
+}
+
+.title {
+  /* flex: none = tinggi mengikuti isi. Tanpa ini .title ikut menyusut ke tinggi layar (min-block-size: 100% membuat
+     penyusutan flex diizinkan), isi meluber, dan padding bawah layar tidak ikut terhitung saat di-scroll. */
+  flex: none;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: center;
+  gap: var(--space-24);
+  inline-size: min(100%, var(--main-max-w));
+  min-block-size: 100%;
+  margin-inline: auto;
+}
+
+.title__hero {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: var(--space-14);
+}
+
+.title__hero .seesaw {
+  inline-size: min(var(--ss-w), var(--title-hero-max-w));
+  margin-block-start: var(--space-10);
+}
+
+.title__panel {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: var(--space-14);
+  inline-size: min(100%, var(--panel-max-w));
+  margin-inline: auto;
+}
+
+.play-block {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-8);
+  margin-block-start: var(--space-12);
+}
+
+.best {
+  margin: 0;
+  color: var(--text-muted-on-app);
+  font-size: var(--fs-body-lg);
+  line-height: var(--lh-body);
+}
+
+.best strong {
+  color: var(--pill-score-value);
+  font-variant-numeric: tabular-nums;
+}
+
+.settings-toggle[aria-expanded='false'] .icon--chevron {
+  transform: rotate(-90deg);
+}
+
+.settings-toggle .icon--chevron {
+  transition: transform var(--dur-base) var(--ease-out);
+}
+
+.toggles {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-8);
+  inline-size: 100%;
+}
+
+/* ---------- layar lebar: dua kolom, pengaturan selalu terbuka ---------- */
+@media (min-width: 900px) and (min-height: 620px) {
+  .title {
+    grid-template-columns: minmax(0, 1fr) minmax(0, var(--panel-max-w));
+    align-items: center;
+    gap: var(--space-64);
+  }
+
+  .title__panel {
+    margin-inline: 0;
+  }
+
+  .settings-toggle {
+    display: none;
+  }
+}
