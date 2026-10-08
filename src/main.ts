@@ -14,9 +14,12 @@ import './styles/screens/over.css';
 import './styles/motion.css';
 
 import { preloadItems } from './config/items';
+import { GameSession } from './game/session';
+import type { EndReason } from './game/session';
 import { AudioManager } from './services/audio';
+import { getBest, migrateLegacyBest, submitScore } from './services/records';
 import { shareText } from './services/share';
-import { loadBest, loadSettings, saveBest, saveSettings } from './services/storage';
+import { loadSettings, saveSettings } from './services/storage';
 import { setSwitch } from './ui/components/controls';
 import { toast } from './ui/components/toast';
 import { $, h } from './ui/dom';
@@ -32,6 +35,12 @@ import { createTitleScreen } from './ui/screens/title-screen';
 
 installSpringEasing();
 void preloadItems();
+
+// rekor format lama (bm.best) → key per kombinasi; hanya entri yang PASTI terpetakan, sisanya dilaporkan
+const migration = migrateLegacyBest();
+if (migration.skipped.length > 0) {
+  console.warn('Rekor lama sebagian tidak dimigrasi (tidak pasti):', migration.skipped.join(', '));
+}
 
 /* ================= merakit layar dari komponen ================= */
 const audio = new AudioManager();
@@ -98,12 +107,24 @@ let lastOver: OverData | null = null;
 
 const game = new GameView(audio, gameScreen, pause, onGameEnd);
 
+/* Sesi rekor: kombinasi mode × kesulitan di-snapshot saat sesi dimulai (bukan dibaca dari panel beranda). */
+let session: GameSession | null = null;
+
+/** Satu-satunya pintu perekaman rekor saat sesi berakhir. Idempoten: sesi hanya direkam sekali. */
+function endSession(reason: EndReason) {
+  return session?.end(reason) ?? null;
+}
+
 function startGame(): void {
+  endSession('restart'); // sesi sebelumnya (mis. "Main Lagi" dari jeda) direkam dulu
   showScreen('game');
-  game.start({ ...title.panel.value, types: [...title.panel.value.types] });
+  const snapshot = { ...title.panel.value, types: [...title.panel.value.types] };
+  const engine = game.start(snapshot);
+  session = new GameSession(snapshot, { getBest, submitScore, getScore: () => engine.score });
 }
 
 function toTitle(): void {
+  endSession('quit'); // keluar sebelum tuntas: skor terakhir tetap direkam (tanpa notifikasi)
   game.stop();
   title.refresh();
   showScreen('title');
@@ -111,11 +132,13 @@ function toTitle(): void {
 }
 
 function onGameEnd({ summary, engine }: GameEnd): void {
-  const { mode, difficulty } = engine.settings;
-  const previous = loadBest(mode, difficulty);
-  const isRecord = summary.score > previous && summary.score > 0;
-  if (isRecord) saveBest(mode, difficulty, summary.score);
-  lastOver = { summary, settings: engine.settings, best: Math.max(previous, summary.score), isRecord };
+  const result = endSession('gameover');
+  lastOver = {
+    summary,
+    settings: engine.settings,
+    best: result?.best ?? 0,
+    isRecord: result?.isNewRecord ?? false, // "REKOR BARU!" hanya tampil di layar game over
+  };
   over.render(lastOver);
   showScreen('over');
   over.againBtn.focus({ preventScroll: true });
@@ -141,6 +164,7 @@ howto.modal.el.addEventListener('click', (e) => {
 
 pause.resumeBtn.addEventListener('click', () => game.resume());
 pause.restartBtn.addEventListener('click', () => {
+  endSession('restart');
   game.stop();
   startGame();
 });
@@ -189,12 +213,16 @@ document.addEventListener('keydown', (e) => {
 /* ================= tab disembunyikan ================= */
 document.addEventListener('visibilitychange', () => {
   if (document.hidden) {
+    session?.checkpoint(); // tab disembunyikan/ditutup: rekam skor saat ini, sesi tetap terbuka (pemain bisa kembali)
     game.pause();
     audio.setActive(false);
   } else {
     audio.setActive(!game.isPaused);
   }
 });
+
+// penutupan tab / navigasi pergi: penulisan localStorage sinkron, best-effort
+window.addEventListener('pagehide', () => session?.checkpoint());
 
 /* ================= PWA ================= */
 if ('serviceWorker' in navigator && import.meta.env.PROD) {

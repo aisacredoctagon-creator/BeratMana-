@@ -1,4 +1,3 @@
-import type { Difficulty, Mode } from '../config/difficulty';
 import { DEFAULT_SETTINGS, sanitizeSettings } from '../game/settings';
 import type { GameSettings } from '../game/settings';
 
@@ -53,7 +52,6 @@ function readJSON<T>(key: string): T | null {
 
 const KEY = {
   settings: 'bm.settings',
-  best: 'bm.best',
   audio: 'bm.audio',
 } as const;
 
@@ -78,19 +76,4 @@ export function loadAudioPrefs(): AudioPrefs {
 
 export function saveAudioPrefs(p: AudioPrefs): void {
   write(KEY.audio, JSON.stringify(p));
-}
-
-const bestKey = (mode: Mode, difficulty: Difficulty): string => `${mode}:${difficulty}`;
-
-/** Rekor terpisah per kombinasi mode × kesulitan (6 rekor). Tipe soal tidak memecah rekor. */
-export function loadBest(mode: Mode, difficulty: Difficulty): number {
-  const all = readJSON<Record<string, number>>(KEY.best);
-  const v = all?.[bestKey(mode, difficulty)];
-  return typeof v === 'number' && Number.isFinite(v) && v > 0 ? Math.floor(v) : 0;
-}
-
-export function saveBest(mode: Mode, difficulty: Difficulty, score: number): void {
-  const all = readJSON<Record<string, number>>(KEY.best) ?? {};
-  all[bestKey(mode, difficulty)] = Math.floor(score);
-  write(KEY.best, JSON.stringify(all));
 }
