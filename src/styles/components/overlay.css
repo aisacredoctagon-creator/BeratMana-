@@ -47,6 +47,11 @@
   line-height: var(--lh-body);
 }
 
+/* teks tebal di "Cara Main" memakai SemiBold (600), bukan Bold bawaan browser */
+.sheet__list b {
+  font-weight: var(--fw-semibold);
+}
+
 .sheet__list kbd {
   display: inline-block;
   min-inline-size: var(--keycap-h);

@@ -149,7 +149,7 @@
   opacity: 0.6;
 }
 
-/* pecahan bertumpuk dan akar */
+/* pecahan bertumpuk */
 .frac {
   display: inline-flex;
   flex-direction: column;
@@ -167,17 +167,6 @@
 
 .frac__d {
   padding: var(--frac-pad-y) var(--frac-pad-x) 0;
-}
-
-.sqrt {
-  display: inline-flex;
-  align-items: baseline;
-}
-
-.sqrt__rad {
-  margin-inline-start: var(--sqrt-gap);
-  padding: 0 var(--sqrt-pad-x);
-  border-top: var(--sqrt-bar) solid currentColor;
 }
 
 .op {

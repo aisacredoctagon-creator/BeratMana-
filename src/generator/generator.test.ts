@@ -27,30 +27,11 @@ function evaluate(label: string): number {
     pos += m[0].length;
     return parseFloat(m[0].replace(',', '.'));
   };
-  const atom = (): number => {
-    if (peek() === '√') {
-      pos++;
-      return Math.sqrt(num());
-    }
-    if (peek() === '(') {
-      pos++;
-      const v = expr();
-      if (peek() !== ')') throw new Error(`kurung tidak tertutup: ${label}`);
-      pos++;
-      return v;
-    }
+  const factor = (): number => {
     let v = num();
     if (peek() === '/') {
       pos++;
       v /= num();
-    }
-    return v;
-  };
-  const factor = (): number => {
-    let v = atom();
-    while (peek() === '²' || peek() === '³') {
-      v = v ** (peek() === '²' ? 2 : 3);
-      pos++;
     }
     return v;
   };
@@ -170,12 +151,8 @@ describe('generator soal: aturan wajib', () => {
         });
 
         it('hanya tipe yang dipilih yang muncul', () => {
-          const mix = QTYPES.every((t) => set.types.includes(t));
           for (const q of qs) {
-            for (const e of [q.left, q.right]) {
-              if (e.kind === 'bonus') expect(mix).toBe(true);
-              else expect(set.types).toContain(e.kind);
-            }
+            for (const e of [q.left, q.right]) expect(set.types).toContain(e.kind);
           }
         });
 
@@ -360,22 +337,30 @@ describe('generator soal: mode Mix', () => {
     }
   });
 
-  it('ekspresi bonus hanya muncul di Medium/Hard dan dengan porsi kecil', () => {
-    const easy = run([...QTYPES], 'easy', ITER, 41);
-    expect(easy.some((q) => q.left.kind === 'bonus' || q.right.kind === 'bonus')).toBe(false);
-    for (const difficulty of ['medium', 'hard'] as const) {
-      const qs = run([...QTYPES], difficulty, ITER, 41);
-      const bonus = qs.flatMap((q) => [q.left, q.right]).filter((e) => e.kind === 'bonus');
-      expect(bonus.length).toBeGreaterThan(0);
-      expect(bonus.length / (ITER * 2)).toBeLessThan(0.3);
+  it('soal akar, pangkat, dan kurung sudah dihapus: tidak ada label berisi √ ² ³ ( )', () => {
+    const PER_COMBO = 1000; // 3 kesulitan × 10 set tipe × 1000 soal = 30.000 soal
+    const banned = /[√²³()]/;
+    let checked = 0;
+    for (const difficulty of DIFFICULTIES) {
+      for (const set of TYPE_SETS) {
+        for (const q of run(set.types, difficulty, PER_COMBO, 77 + set.name.length)) {
+          for (const e of [q.left, q.right]) {
+            expect(banned.test(e.label), `${difficulty}/${set.name}: "${e.label}"`).toBe(false);
+            expect(e.tokens.every((k) => k.t === 'txt' || k.t === 'frac')).toBe(true);
+            expect(QTYPES).toContain(e.kind);
+            checked++;
+          }
+        }
+      }
     }
-  });
+    expect(checked).toBeGreaterThanOrEqual(PER_COMBO * 2 * DIFFICULTIES.length * TYPE_SETS.length);
+  }, 60_000);
 
-  it('Hard menampilkan akar (√) dan pangkat', () => {
-    const labels = run([...QTYPES], 'hard', ITER * 2, 43).flatMap((q) => [q.left.label, q.right.label]);
-    expect(labels.some((l) => l.startsWith('√'))).toBe(true);
-    expect(labels.some((l) => /[²³]/.test(l))).toBe(true);
-    expect(labels.some((l) => l.startsWith('('))).toBe(true);
+  it('konfigurasi kesulitan tidak lagi punya rentang bonus', () => {
+    for (const difficulty of DIFFICULTIES) {
+      expect(Object.keys(DIFFICULTY_CONFIG[difficulty])).not.toContain('bonus');
+      expect(Object.keys(DIFFICULTY_CONFIG[difficulty])).not.toContain('bonusChance');
+    }
   });
 });
 

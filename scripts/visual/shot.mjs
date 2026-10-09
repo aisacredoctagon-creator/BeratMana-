@@ -37,10 +37,7 @@ const evalLabel = (s) =>
         .replace(/×/g, '*')
         .replace(/÷/g, '/')
         .replace(/−/g, '-')
-        .replace(/,/g, '.')
-        .replace(/√(\d+)/g, 'Math.sqrt($1)')
-        .replace(/(\d+)²/g, '($1**2)')
-        .replace(/(\d+)³/g, '($1**3)'),
+        .replace(/,/g, '.'),
   )();
 
 async function answer(wrong = false) {

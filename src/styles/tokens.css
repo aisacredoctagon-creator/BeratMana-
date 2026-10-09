@@ -262,16 +262,13 @@
   --ls-time: 0.05em;
   --ls-none: 0;
 
-  /* pecahan bertumpuk & akar di dalam ekspresi (relatif terhadap ukuran font ekspresi) */
+  /* pecahan bertumpuk di dalam ekspresi (relatif terhadap ukuran font ekspresi) */
   --frac-size: 0.82em;
   --frac-lh: 1.1;
   --frac-margin: 0.12em;
   --frac-pad-x: 0.2em;
   --frac-pad-y: 0.06em;
   --frac-bar: 0.09em;
-  --sqrt-bar: 0.08em;
-  --sqrt-pad-x: 0.12em;
-  --sqrt-gap: 0.04em;
 
   /* pengecil ukuran ekspresi panjang (di-set lewat data-size pada kartu) */
   --expr-scale-s: 1;

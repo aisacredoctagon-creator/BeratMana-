@@ -94,9 +94,7 @@ medium: {
   levelMax: 10,           // level intensitas tertinggi
   gap: { start: 0.5, end: 0.2 },  // batas ATAS selisih relatif: level 0 → levelMax
   magnitudeStart: 0.4,    // porsi rentang nilai yang dipakai di level 0 (naik ke 1)
-  bonusChance: 0.1,       // peluang ekspresi bonus (kurung/²/³/√) per sisi, hanya Mix
   ranges: { add, sub, mul, div, fraction, decimal },  // rentang angka per tipe
-  bonus: { square, cube, root, paren },               // rentang ekspresi bonus
 }
 ```
 
