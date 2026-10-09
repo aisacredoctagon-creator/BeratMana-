@@ -61,22 +61,26 @@ wide.addEventListener('change', () => title.setSettingsOpen(wide.matches));
 title.settingsToggle.addEventListener('click', () => title.setSettingsOpen(!title.settingsOpen));
 
 /* ================= audio ================= */
+// toggle Musik/SFX ada di dua tempat (beranda dan pop-up Dijeda) dan selalu searah
+const switchPairs = [
+  { music: title.musicSwitch, sfx: title.sfxSwitch },
+  { music: pause.musicSwitch, sfx: pause.sfxSwitch },
+];
 const syncAudio = (): void => {
-  setSwitch(title.musicSwitch, audio.prefs.music);
-  setSwitch(title.sfxSwitch, audio.prefs.sfx);
-  gameScreen.hud.setSound(audio.prefs.music || audio.prefs.sfx);
+  for (const pair of switchPairs) {
+    setSwitch(pair.music, audio.prefs.music);
+    setSwitch(pair.sfx, audio.prefs.sfx);
+  }
 };
 audio.onChange(syncAudio);
 syncAudio();
-title.musicSwitch.addEventListener('click', () => audio.setMusic(!audio.prefs.music));
-title.sfxSwitch.addEventListener('click', () => {
-  audio.setSfx(!audio.prefs.sfx);
-  audio.play('click');
-});
-gameScreen.hud.soundBtn.addEventListener('click', () => {
-  audio.toggleAll();
-  toast(audio.prefs.music || audio.prefs.sfx ? 'Suara menyala' : 'Suara dimatikan', 1200);
-});
+for (const pair of switchPairs) {
+  pair.music.addEventListener('click', () => audio.setMusic(!audio.prefs.music));
+  pair.sfx.addEventListener('click', () => {
+    audio.setSfx(!audio.prefs.sfx);
+    audio.play('click');
+  });
+}
 
 // audio hanya aktif setelah gestur pertama
 const unlock = (): void => audio.unlock();
@@ -84,11 +88,11 @@ for (const type of ['pointerdown', 'keydown', 'touchend'] as const) {
   document.addEventListener(type, unlock, { capture: true, passive: true });
 }
 
-// bunyi klik untuk tombol UI (tombol jawab, jeda, dan suara punya bunyi/aturan sendiri)
+// bunyi klik untuk tombol UI (tombol jawab, jeda, dan toggle SFX punya bunyi/aturan sendiri)
 document.addEventListener('click', (e) => {
   const btn = (e.target as HTMLElement).closest('button');
   if (!btn || btn.classList.contains('answer')) return;
-  if (['btn-pause', 'btn-resume', 'tgl-sfx', 'btn-sound'].includes(btn.id)) return;
+  if (['btn-pause', 'btn-resume', 'tgl-sfx', 'tgl-sfx-pause'].includes(btn.id)) return;
   audio.play('click');
 });
 title.panel.el.addEventListener('change', () => audio.play('click'));
@@ -165,11 +169,6 @@ document.addEventListener('keydown', (e) => {
   }
 
   const key = e.key.toLowerCase();
-  if (key === 'm' && !e.repeat) {
-    audio.toggleAll();
-    toast(audio.prefs.music || audio.prefs.sfx ? 'Suara menyala' : 'Suara dimatikan', 1200);
-    return;
-  }
   if (currentScreen() !== 'game' || e.repeat) return;
   if (key === 'arrowleft' || key === 'a') {
     e.preventDefault();

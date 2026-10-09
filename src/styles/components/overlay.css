@@ -37,6 +37,19 @@
   text-align: center;
 }
 
+/* tombol pop-up Dijeda (Lanjut / Ulangi / Keluar) */
+.sheet__actions {
+  display: grid;
+  gap: var(--space-12);
+}
+
+/* landscape pendek: tiga tombol sejajar supaya pop-up tidak melebihi tinggi layar */
+@media (max-height: 520px) and (orientation: landscape) {
+  .sheet__actions {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
 .sheet__list {
   display: grid;
   gap: var(--space-8);

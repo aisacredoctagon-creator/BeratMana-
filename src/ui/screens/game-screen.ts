@@ -16,7 +16,7 @@ export interface GameScreen {
   btnRight: HTMLButtonElement;
 }
 
-/** Layar game sesuai frame Figma: HUD, judul, tagline, dua kartu, jungkat-jungkit, tombol jawab, bar keyboard. */
+/** Layar game: HUD, judul, dua kartu, jungkat-jungkit, tombol jawab, bar keyboard. */
 export function createGameScreen(): GameScreen {
   const hud = new Hud();
   const seesaw = new Seesaw({ id: 'seesaw' });
@@ -35,8 +35,6 @@ export function createGameScreen(): GameScreen {
       createKeyHint([{ key: '←' }, { key: '→' }, 'atau', { key: 'A' }, { key: 'D' }, 'untuk menjawab']),
       sep(),
       createKeyHint([{ key: 'Spasi' }, '/', { key: 'P' }, 'untuk jeda']),
-      sep(),
-      createKeyHint([{ key: 'M' }, 'bisukan suara']),
     ),
   );
 
@@ -51,7 +49,6 @@ export function createGameScreen(): GameScreen {
         'div',
         { class: 'game__head' },
         h('h1', { id: 'question', class: 'h1' }, 'Mana yang Lebih ', h('span', { class: 'h1__accent' }, 'Berat?')),
-        h('p', { class: 'tagline' }, 'Berat = ', h('strong', {}, 'hasil hitungan,'), ' bukan ukuran visual objek!'),
       ),
       h('div', { class: 'game__cards' }, cardLeft.el, cardRight.el),
       h('div', { class: 'game__board' }, seesaw.el, h('div', { id: 'fx-layer', class: 'fx-layer', 'aria-hidden': 'true' })),

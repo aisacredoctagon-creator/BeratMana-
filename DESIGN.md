@@ -11,7 +11,7 @@ Figma tidak punya variables/styles, jadi nama token diturunkan dari nama layer d
 ## 1. Prinsip
 
 1. **Mainan, bukan dasbor.** Bentuk bulat besar (radius 16–24), garis tebal 2px, permukaan putih di atas latar biru-abu muda, dan tombol **3D "chunky"** yang benar-benar turun saat ditekan.
-2. **Satu keluarga warna = satu makna.** Kuning = skor, hijau = tingkat/benar, ungu = mode, merah muda = combo/kanan, biru langit = waktu, biru = kiri. Jangan memakai warna itu untuk makna lain.
+2. **Satu keluarga warna = satu makna.** Kuning = skor, hijau = benar/pengaturan aktif, ungu = pilihan terpilih, merah muda = combo (game over)/kanan, biru langit = waktu, biru = kiri. Jangan memakai warna itu untuk makna lain.
 3. **Kiri biru, kanan koral.** Tombol jawab, kartu ekspresi, dan label sisi memakai pasangan warna yang sama.
 4. **Warna tidak pernah satu-satunya penanda.** Selalu disertai ikon (✓/✗), teks, atau bentuk.
 5. **Satu kanvas, skala fluid.** Desain dibuat di 1280 × 992; semua ukuran = `N × var(--u)` sehingga tampil sama di 1280px dan mengecil rapi sampai 360px.
@@ -49,7 +49,8 @@ Warna berlabel **"turunan"** di `tokens.css` tidak ada di Figma (lihat §10).
 | Sisi kiri | `--side-left-{bg,line,solid,glow,tag-bg,tag-line,tag-text,expr}` |
 | Sisi kanan | `--side-right-{bg,line,solid,glow,tag-bg,tag-line,tag-text,expr}` |
 | Tombol | `--btn-primary-*` `--btn-secondary-*` `--btn-off-*` |
-| Pil HUD | `--pill-{score,level,mode,combo,time,lives}-*` `--star-tile-*` |
+| Pil | `--pill-{score,level,mode,combo,time}-*` `--star-tile-*` (HUD memakai skor dan waktu; level/combo hanya di game over) |
+| Hati (nyawa) | `--heart-{full,lost}` `--heart-size` `--heart-gap` |
 | Jungkat-jungkit | `--beam-*` `--pin-*` `--base-*` |
 | Judul | `--title-accent` (gradasi "Berat?") |
 
@@ -109,7 +110,7 @@ State yang wajib ada pada komponen interaktif: **default · hover · pressed · 
 Tinggi minimum `--tap-min`.
 
 ### 4.2 Tombol ikon — `.icon-btn`
-40 × 40 (`--icon-btn`), putih, garis 2px slate-300, radius 16, `--shadow-key`, ikon 20. Area sentuh diperluas ke ≥ 48px lewat `::after`. Pressed: turun + bayangan hilang. Pakai untuk Suara, Jeda.
+40 × 40 (`--icon-btn`), putih, garis 2px slate-300, radius 16, `--shadow-key`, ikon 20. Area sentuh diperluas ke ≥ 48px lewat `::after`. Pressed: turun + bayangan hilang. Pakai untuk Jeda (HUD).
 
 ### 4.3 Tombol jawab "<" dan ">" — `.answer`
 Kiri biru (`--side-left-*`), kanan koral (`--side-right-*`). Tinggi `--answer-h`, radius 24, garis 2px, bayangan 3D (`--shadow-answer-*`). Ubin ikon 64 (`--answer-tile`): latar `--alpha-white-20`, garis `--alpha-white-40`, radius 16, inset; ikon chevron putih 40.
@@ -133,10 +134,13 @@ Putih, garis 1px (`--side-*-line`), radius 24, padding 24, isi: tag "SISI KIRI/K
 | `data-result="lose"` | nilai "= N" tampil, kartu agak pudar |
 | Tersembunyi (antar ronde) | `opacity` 0 |
 
-### 4.5 Pil HUD — `.pill` (+ `--score`, `--level`, `--mode`, `--combo`, `--time`, `--lives`)
-Latar & garis 2px per keluarga warna, radius 16, `--shadow-pill`, padding 8 × 16. Bagian: `.pill__icon`, `.pill__text` > `.pill__label` (eyebrow) + `.pill__value`; `.pill__badge` (mis. "X2 EXP"). Lencana bintang skor = `.star-tile`.
-Combo: `data-level="1…5"` menghangatkan warna dan membesarkan ikon api; naik level → animasi pop.
+### 4.5 Pil — `.pill` (+ `--score`, `--time` di HUD; `--level`, `--combo` di statistik game over)
+Latar & garis 2px per keluarga warna, radius 16, `--shadow-pill`, padding 8 × 16. Bagian: `.pill__icon`, `.pill__text` > `.pill__label` (eyebrow) + `.pill__value`. Lencana bintang skor = `.star-tile`.
+HUD saat bermain **hanya**: skor, waktu (Time Attack) atau hati (Normal), dan tombol jeda. Tingkat, mode, pengali EXP, dan combo tetap dihitung engine tetapi tidak ditampilkan.
 Waktu: `.is-low` (≤ 10 detik) → nilai berdenyut + warna bahaya; cincin timer berkurang.
+
+### 4.5b Nyawa — `.hearts` > `.heart` (mode Normal)
+Hanya ikon hati, tanpa wadah dan tanpa tulisan. Penuh = hati terisi (`--heart-full`), hilang = hati outline (`--heart-lost`): beda bentuk, bukan hanya warna. Ukuran `--heart-size` (≥ 20px), jarak `--heart-gap`; 5 hati (Easy) muat di 360px. Pembungkus `role="img"` dengan `aria-label` "Nyawa N dari M". Saat nyawa berkurang, hati yang hilang mengecil + bergetar (`heart-hit`, hanya `transform`/`opacity`; instan bila `prefers-reduced-motion`).
 
 ### 4.6 Toggle — `.switch` (`role="switch"`)
 Pil dengan ikon + label + teks status "Nyala/Mati". Nyala = keluarga hijau; mati = putih + coret + ikon redup. Min tinggi 48. Fokus: cincin.
@@ -154,7 +158,7 @@ Latar slate-100, garis 2px slate-300, radius 8, teks 14. Dipakai di footer petun
 Pil info kecil (mis. lencana kesulitan di game over/ringkasan) memakai keluarga pil level.
 
 ### 4.11 Modal / bottom sheet — `.overlay` + `.sheet`
-Scrim `--surface-scrim` + blur. Desktop: kartu tengah (radius 24, `--shadow-sheet`). Layar sempit: **bottom sheet** menempel di bawah (radius atas 24, area aman bawah). Fokus terkunci di dalam dialog, Esc menutup.
+Scrim `--surface-scrim` + blur. Desktop: kartu tengah (radius 24, `--shadow-sheet`). Layar sempit: **bottom sheet** menempel di bawah (radius atas 24, area aman bawah). Fokus terkunci di dalam dialog, Esc menutup. Pop-up Dijeda: judul, dua toggle Musik/SFX (`.switch`, 2 kolom, ≥ 48px), lalu `.sheet__actions` (Lanjut / Ulangi / Keluar ke Menu; di landscape pendek tiga kolom sejajar agar tidak melebihi tinggi layar).
 
 ### 4.12 Toast — `.toast`
 Pil gelap (slate-800), teks putih, `--shadow-toast`, muncul dari bawah. `role="status"`.
@@ -168,25 +172,24 @@ Koordinat desain 576 × 260 (`--ss-*`, unit `--ss-u`). Papan kayu (gradasi kunin
 
 ```
 ┌───────────────────────── HUD (bar putih 90%, blur) ─────────────────────────┐
-│ [Skor][Tingkat]            [Mode • EXP]            [Combo][Waktu][🔊][⏸]    │
+│ [Skor]                  [Waktu] atau [♥♥♥♥♥]                      [⏸]    │
 ├──────────────────────────────────────────────────────────────────────────────┤
 │                    Mana yang Lebih Berat?   (H1, "Berat?" bergradasi)         │
-│            Berat = hasil hitungan, bukan ukuran visual objek!  (tagline)      │
 │              [ SISI KIRI  32 + 15 ]     [ SISI KANAN  23 × 3 ]                │
 │                     ── jungkat-jungkit 576 × 260 ──                           │
 │                    [   <  (biru)  ]   [  >  (koral)  ]                        │
 ├──────────────────────────────────────────────────────────────────────────────┤
-│  [←][→] atau [A][D] untuk menjawab  •  [Spasi]/[P] untuk jeda  •  [M] bisukan │
+│        [←][→] atau [A][D] untuk menjawab  •  [Spasi]/[P] untuk jeda           │
 └──────────────────────────────────────────────────────────────────────────────┘
 ```
 - Isi utama dibatasi `--main-max-w` (1024) dan rata tengah. Kartu `--cards-max-w` (672), tombol jawab `--answers-max-w` (473).
-- Tinggi HUD 89, footer 62. Footer (petunjuk keyboard) disembunyikan di perangkat sentuh (`hover: none`), di semua layar ≤ 960px, dan di landscape pendek; hanya desktop yang menampilkannya. Setelah footer hilang, `.game` menambah `env(safe-area-inset-bottom)` pada padding bawah agar tombol jawab tidak tertutup home indicator.
+- HUD satu baris di semua lebar (skor kiri, waktu/hati tepat di tengah, jeda kanan); tinggi mengikuti tombol jeda (≥ 48px). Tagline tidak ada di layar game (infonya ada di Cara Main dan beranda); ruangnya dipakai kartu soal yang lebih tinggi (`--card-min-h`, ekspresi di tengah kartu). Footer 62. Footer (petunjuk keyboard) disembunyikan di perangkat sentuh (`hover: none`), di semua layar ≤ 960px, dan di landscape pendek; hanya desktop yang menampilkannya. Setelah footer hilang, `.game` menambah `env(safe-area-inset-bottom)` pada padding bawah agar tombol jawab tidak tertutup home indicator.
 - Layar yang bisa di-scroll (judul, game over) memakai `--screen-pad-start` / `--screen-pad-end` (padding bawah = 40 + area aman) dan kontainer isinya `flex: none` supaya padding bawah ikut terhitung saat di-scroll.
-- Layar sempit (≤ 720px): HUD menjadi dua baris, kartu mengecil dengan teks mengikuti lebar kartu (`cqi`), judul pertanyaan mengikuti lebar viewport (tetap satu baris di 360px), tombol jawab tetap besar.
-- **Landscape pendek** (tinggi ≤ 520px, mis. HP miring): tata letak dua kolom. Kiri = kartu di atas jungkat-jungkit; kanan = tombol jawab bertumpuk. Judul/tagline, pil mode, dan footer disembunyikan; HUD satu baris. `--u` mengikuti tinggi 560 (bukan 992).
+- Layar sempit (≤ 720px): kartu mengecil dengan teks mengikuti lebar kartu (`cqi`), judul pertanyaan mengikuti lebar viewport (tetap satu baris di 360px), tombol jawab tetap besar.
+- **Landscape pendek** (tinggi ≤ 520px, mis. HP miring): tata letak dua kolom. Kiri = kartu di atas jungkat-jungkit; kanan = tombol jawab bertumpuk. Judul dan footer disembunyikan. `--u` mengikuti tinggi 560 (bukan 992).
 
 ```
-┌ HUD: [Skor][Tingkat]            [Combo][Waktu][🔊][⏸] ┐
+┌ HUD: [Skor]              [Waktu / ♥♥♥]            [⏸] ┐
 │  [ SISI KIRI ] [ SISI KANAN ]              [ < ]       │
 │      ── jungkat-jungkit ──                 [ > ]       │
 └────────────────────────────────────────────────────────┘
@@ -207,7 +210,7 @@ Koordinat desain 576 × 260 (`--ss-*`, unit `--ss-u`). Papan kayu (gradasi kunin
 - Area sentuh di bawah 48px.
 
 ## 7. Aksesibilitas
-- Kontras teks ≥ 4,5:1 (token "turunan" untuk teks kecil: `--pill-combo-label`, `--pill-time-label`, `--side-right-tag-text`, `--text-emphasis`). Ikon besar ≥ 3:1.
+- Kontras teks ≥ 4,5:1 (token "turunan" untuk teks kecil: `--pill-combo-label` (game over), `--pill-time-label`, `--side-right-tag-text`, `--text-emphasis`). Ikon besar ≥ 3:1.
 - Fokus selalu terlihat (`--focus-ring`). Radio/checkbox/switch memakai elemen asli atau ARIA yang benar.
 - `prefers-reduced-motion`: animasi dipangkas ke `--dur-instant`, tanpa goyang/partikel, wobble papan dimatikan.
 - Hasil dibacakan lewat `role="status"`.
@@ -215,10 +218,10 @@ Koordinat desain 576 × 260 (`--ss-*`, unit `--ss-u`). Papan kayu (gradasi kunin
 ## 8. Responsif
 | Lebar | Perubahan |
 | --- | --- |
-| ≥ 1280 × 992 | persis Figma (diverifikasi piksel); HUD satu baris |
-| 961–1279 | `--u` mengecil mengikuti viewport; HUD satu baris |
-| 721–960 (tablet portrait) | HUD dua baris (pil rata kiri); papan, kartu, tombol jawab selebar isi (orientasi portrait) |
-| ≤ 720 | token padding/jarak mengecil; HUD dua baris (sejak 960); lencana EXP disembunyikan di ≤ 480; footer petunjuk keyboard disembunyikan; modal menjadi bottom sheet |
+| ≥ 1280 × 992 | persis Figma kecuali bagian HUD/tagline yang disederhanakan (A40) |
+| 961–1279 | `--u` mengecil mengikuti viewport |
+| 721–960 (tablet portrait) | padding HUD mengecil; papan, kartu, tombol jawab selebar isi (orientasi portrait) |
+| ≤ 720 | token padding/jarak mengecil; kartu soal lebih tinggi (`--card-min-h` 190); footer petunjuk keyboard disembunyikan; modal menjadi bottom sheet |
 | Landscape pendek (tinggi ≤ 520) | tata letak dua kolom (lihat §5), `--u` mengikuti tinggi 560 |
 
 ## 9. Aset
@@ -236,9 +239,7 @@ Koordinat desain 576 × 260 (`--ss-*`, unit `--ss-u`). Papan kayu (gradasi kunin
 | A3 | Umpan balik jawaban: lencana ✓/✗ di tombol, kartu pemenang hijau, pil "Benar!/Salah" di atas pin | aturan "jangan hanya warna" |
 | A4 | Latar "Benar" emerald-700 dan "Salah" rose-700 (teks putih) | emerald/rose Figma terlalu terang untuk teks putih kecil |
 | A5 | Teks kecil memakai varian lebih gelap (rose-700, sky-700, orange-700) | kontras Figma 3,1–3,8:1 < 4,5:1 |
-| A6 | Pil nyawa (mode Normal) menggantikan pil waktu; putih + garis slate, hati merah | slot waktu tidak dipakai di Normal; keluarga warna HUD sudah terpakai semua |
-| A7 | "X2 EXP" = pengali skor kesulitan (×1, ×1,5, ×2) | arti di Figma tidak jelas |
-| A8 | "Tingkat N" = level intensitas + 1 | selaras mekanik game |
+| A6 | Nyawa (mode Normal) menggantikan pil waktu; hanya ikon hati (A40) | slot waktu tidak dipakai di Normal |
 | A9 | Skor berformat Indonesia (3.650), bukan "3,650" | bahasa UI Indonesia |
 | A10 | Ikon bintang SVG, bukan glyph font | glyph FreeSans tidak konsisten antar perangkat |
 | A11 | Judul layar judul memakai gaya H1; H2 (40) dan skor besar (64) adalah ukuran turunan | layar tidak ada di Figma |
@@ -246,7 +247,6 @@ Koordinat desain 576 × 260 (`--ss-*`, unit `--ss-u`). Papan kayu (gradasi kunin
 | A13 | Panel pengaturan = kartu putih 24px; segmented terpilih = gradasi pil mode; chip tercentang = keluarga biru langit; switch nyala = keluarga hijau | memakai keluarga warna yang sudah ada |
 | A14 | Game over: kartu putih tengah, pita "REKOR BARU!" gradasi kuning, statistik berupa pil per keluarga warna | konsisten dengan pil HUD |
 | A15 | Pause/Cara Main = modal; di layar sempit = bottom sheet | pola mobile umum |
-| A16 | HUD dua baris di layar sempit; EXP disembunyikan ≤ 480px | lebar HUD Figma (±1150px) tidak muat |
 | A17 | Tombol ikon 40px diperluas ke 48px lewat area transparan | aturan area sentuh 48px |
 | A18 | Spasi menjeda game hanya bila fokus tidak di tombol/input | footer Figma menyebut "Spasi / P"; tidak merusak keyboard standar |
 | A19 | Cincin timer dijadikan indikator progres (`stroke-dashoffset`, diperbarui tiap detik) | ikon Figma berupa cincin |
@@ -256,10 +256,9 @@ Koordinat desain 576 × 260 (`--ss-*`, unit `--ss-u`). Papan kayu (gradasi kunin
 | A23 | Tilt papan 12° (sebelumnya 14°) | papan Figma lebih lebar |
 | A24 | Gradasi "Berat?" mulai dari koral (campuran oranye 54% + merah muda), bukan kuning | diukur dari screenshot Figma: gradasi membentang di seluruh judul, kata terakhir hanya menampilkan 73–100% |
 | A25 | Ukuran judul pertanyaan `--fs-h1` ikut lebar viewport di layar sempit; judul layar judul memakai `--fs-hero` (60) | satu baris di 360px |
-| A26 | Layout landscape pendek dua kolom (kartu+papan kiri, tombol jawab kanan), pil mode dan footer disembunyikan | Figma hanya 1280 × 992 |
-| A27 | Tagline "Berat = hasil hitungan…" selalu tampil (menggantikan tutorial ronde pertama) | ada permanen di Figma |
+| A26 | Layout landscape pendek dua kolom (kartu+papan kiri, tombol jawab kanan), footer disembunyikan | Figma hanya 1280 × 992 |
+| A27 | Tagline "Berat = hasil hitungan…" hanya di beranda; dihapus dari layar game (A40) | permintaan pemilik proyek |
 | A28 | Kartu menang: cincin hijau + ✓ di pojok + latar hijau muda; kalah: ekspresi memudar; nilai "= N" sebagai pil gelap menempel di tepi bawah | umpan balik tidak hanya warna |
-| A29 | Pil combo 3 tingkat: dasar (merah muda), hangat ×2–×3 (kuning, api oranye), panas ×4–×5 (merah muda tua + cahaya, api berkedip) | efek combo tidak ada di Figma |
 | A30 | Pil statistik game over memakai keluarga warna pil HUD (rekor=kuning, akurasi=biru langit, streak=merah muda, benar/salah=hijau) | konsisten dengan HUD |
 | A31 | Tombol jawab: yang tidak dipilih menjadi abu-abu saat hasil ditampilkan; yang dipilih memakai lencana ✓/✗ | feedback tidak hanya warna |
 | A34 | Layar judul: tombol Main + ringkasan + rekor berada di kolom kiri di bawah jungkat-jungkit; kolom kanan hanya pengaturan, toggle suara, Cara Main (dua kolom seimbang). Pesan "Pilih minimal 1 tipe soal" sebaris dengan link Pilih/Hapus semua | rapi, tanpa baris kosong |
@@ -268,11 +267,13 @@ Koordinat desain 576 × 260 (`--ss-*`, unit `--ss-u`). Papan kayu (gradasi kunin
 | A37 | Semua tombol 3D mengompensasi kedalaman bayangan lewat margin (lihat §4); tombol jawab di desktop turun 8 → `--game-pad-bottom` 56 → 48 agar posisinya tetap sama dengan Figma | tombol merah terlihat dempet dengan elemen di sekitarnya |
 | A38 | Satu `--radius-button` (24) untuk semua tombol; tombol ikon HUD 40px menjadi bulat penuh di desktop | konsistensi radius |
 | A39 | Footer keyboard disembunyikan di ≤ 960px (breakpoint HUD dua baris), selain perangkat sentuh | emulator/jendela sempit dengan mouse masih `hover: hover` |
+| A40 | HUD game disederhanakan: tidak ada pil Tingkat, pil Mode (+ badge EXP), pil Combo, tombol Mute, dan wadah/tulisan "Nyawa"; tagline dihapus dari layar game. Level, combo, dan pengali tetap berjalan di engine. Nyawa = hanya ikon hati (penuh terisi, hilang outline) | permintaan pemilik proyek (bar ringkas); Figma menang diganti keputusan ini |
+| A41 | Musik/SFX dipindah ke pop-up Dijeda (komponen `.switch` yang sama dengan beranda, dua toggle terpisah, tersimpan); pintasan keyboard M dan petunjuknya dihapus | mute tidak lagi di bar; M membisukan keduanya sehingga tidak sejalan dengan dua toggle terpisah |
 | A33 | Skala font teks kecil dinaikkan dari Figma: eyebrow 10→12, tag 12→14, badan/tagline/pil 14→16, nilai HUD 20→24, tombol utama 24→28 (keycap 32→36). Proporsi komponen ikut menyesuaikan lewat padding/tinggi isi | permintaan: font terlalu kecil di Figma, terutama di HP |
 | A32 | Gambar OG dan ikon aplikasi digambar ulang dalam palet Figma | produk harus konsisten |
 
 ## 11. Verifikasi visual & fungsional
 - `references/Figma_17-248_game.png` = screenshot sumber; `references/impl_game_1280x992.png` = hasil implementasi (folder `references/` hanya lokal, tidak di-commit) pada ukuran yang sama (selisih geometri ≤ 1–2px; selisih sisanya hanya data berbeda: skor, ekspresi, benda).
 - `node scripts/visual/shot.mjs <nama> <lebar> <tinggi> <skenario>` menangkap layar piksel-akurat (Chrome headless, hasil ke `.shots/`); skenario: `title game game-wrong verdict-ok pause settings howto over normal streak`.
-- `npm run e2e` (server dev harus berjalan) menjalankan ±25 pemeriksaan fungsional: pengaturan, mode, jeda, keyboard (Spasi/P/Esc/M), suara, game over, rekor, area sentuh ≥ 48px, tanpa error konsol.
+- `npm run e2e` (server dev harus berjalan) menjalankan ±25 pemeriksaan fungsional: pengaturan, mode, jeda, keyboard (Spasi/P/Esc), toggle suara di Dijeda, game over, rekor, area sentuh ≥ 48px, tanpa error konsol.
 - `npm run lint:tokens` memastikan tidak ada warna/ukuran yang di-hardcode di luar `tokens.css`.

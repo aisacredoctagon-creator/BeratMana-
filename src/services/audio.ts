@@ -85,13 +85,6 @@ export class AudioManager {
     this.commit();
   }
 
-  /** Tombol M: bila ada yang menyala, matikan semuanya; bila keduanya mati, nyalakan keduanya. */
-  toggleAll(): void {
-    const anyOn = this.prefs.music || this.prefs.sfx;
-    this.prefs = { music: !anyOn, sfx: !anyOn };
-    this.commit();
-  }
-
   private commit(): void {
     saveAudioPrefs(this.prefs);
     this.applyPrefs(false);

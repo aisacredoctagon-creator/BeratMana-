@@ -172,9 +172,7 @@ export class GameView {
     const { hud, seesaw, cardLeft, cardRight } = this.ui;
     const where = seesaw.center();
     hud.setScore(engine.score);
-    hud.setCombo(engine.streak, engine.multiplier);
     hud.setLives(engine.lives, engine.maxLives);
-    hud.setLevel(engine.level + 1, engine.settings);
     if (engine.settings.mode === 'time') hud.setTime(engine.timeLeft);
 
     const q = res.question;

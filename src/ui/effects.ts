@@ -100,8 +100,10 @@ export function shake(): void {
   el.addEventListener('animationend', () => el.classList.remove('shake'), { once: true });
 }
 
-export function popElement(el: HTMLElement): void {
-  el.classList.remove('pop');
+/** Memutar ulang animasi CSS yang dipicu sebuah kelas. */
+export function restartClass(el: HTMLElement, cls: string): void {
+  el.classList.remove(cls);
   void el.offsetWidth;
-  el.classList.add('pop');
+  el.classList.add(cls);
 }
+
