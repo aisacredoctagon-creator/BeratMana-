@@ -16,7 +16,6 @@ export const ITEMS: readonly Item[] = [
   { id: 'landasan', name: 'Landasan besi', src: base('landasan.svg') },
   { id: 'balon', name: 'Balon', src: base('balon.svg') },
   { id: 'bola-bowling', name: 'Bola bowling', src: base('bola-bowling.svg') },
-  { id: 'gajah', name: 'Gajah', src: base('gajah.svg') },
   { id: 'kapas', name: 'Kapas', src: base('kapas.svg') },
   { id: 'batu', name: 'Batu', src: base('batu.svg') },
   { id: 'bantal', name: 'Bantal', src: base('bantal.svg') },

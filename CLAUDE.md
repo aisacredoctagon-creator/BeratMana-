@@ -22,7 +22,7 @@ Minigame browser (Vite + TypeScript strict + CSS, tanpa framework). UI berbahasa
 
 ## Perintah
 - `npm run dev` · `npm run build` (lint token + tsc + vite) · `npm test` (lint token + vitest) · `npm run typecheck`
-- Aset Figma: `node scripts/build-figma-art.mjs` (merakit bulu, gajah, penyangga dari `scripts/figma-src/`).
+- Aset Figma: `node scripts/build-figma-art.mjs` (merakit penyangga jungkat-jungkit dari `scripts/figma-src/`).
 - Verifikasi: `npm run e2e` (butuh `npm run dev` berjalan + Chrome), `node scripts/visual/shot.mjs <nama> <lebar> <tinggi> <skenario>` untuk screenshot piksel-akurat ke `.shots/`. Setelah mengubah UI, tangkap layar di 1280×992 dan 360×740 dan bandingkan dengan `references/Figma_17-248_game.png` (berkas lokal, tidak di-commit; ambil ulang dari Figma `17:248` bila tidak ada).
 
 ## Arsitektur singkat

@@ -222,7 +222,7 @@ Koordinat desain 576 × 260 (`--ss-*`, unit `--ss-u`). Papan kayu (gradasi kunin
 | Landscape pendek (tinggi ≤ 520) | tata letak dua kolom (lihat §5), `--u` mengikuti tinggi 560 |
 
 ## 9. Aset
-- **Benda**: SVG persegi (viewBox 200 × 200), latar transparan, benda menempel di **dasar** gambar. Gaya (dari gajah/bulu Figma) = isi datar berwarna lembut + garis lebih gelap sewarna ±3% lebar + sorotan putih tipis, tanpa gradasi. `bulu.svg` dan `gajah.svg` dirakit dari vektor Figma (`node scripts/build-figma-art.mjs`, sumber di `scripts/figma-src/`). **Placeholder** selaras gaya: `landasan`, `balon`, `bola-bowling`, `kapas`, `batu`, `bantal`, `dumbel`, `mobil`. Ganti dengan menimpa file bernama sama di `public/assets/items/`, atau ubah `src/config/items.ts`.
+- **Benda**: SVG persegi (viewBox 200 × 200), latar transparan, benda menempel di **dasar** gambar. Gaya (awalnya dari bulu/gajah Figma; kini semua benda digambar ulang di gaya yang sama, A45) = isi datar berwarna lembut + garis lebih gelap sewarna ±3% lebar + sorotan putih tipis, tanpa gradasi. `bulu.svg` dan `gajah.svg` dirakit dari vektor Figma (`node scripts/build-figma-art.mjs`, sumber di `scripts/figma-src/`). **Placeholder** selaras gaya: `landasan`, `balon`, `bola-bowling`, `kapas`, `batu`, `bantal`, `dumbel`, `mobil`. Ganti dengan menimpa file bernama sama di `public/assets/items/`, atau ubah `src/config/items.ts`.
 - **Ikon aplikasi / OG**: `public/favicon.svg` + `icons/icon-maskable.svg` (PNG dibuat `node scripts/make-icons.mjs`); `public/og-image.png` ditangkap dari komponen asli (judul, dua kartu, jungkat-jungkit).
 - **Penyangga**: `public/assets/seesaw/stand.svg` (dari Figma).
 - **Ikon UI**: SVG inline (`src/ui/components/icons.ts`) berwarna `currentColor`/token.
@@ -250,7 +250,7 @@ Koordinat desain 576 × 260 (`--ss-*`, unit `--ss-u`). Papan kayu (gradasi kunin
 | A17 | Tombol ikon 40px diperluas ke 48px lewat area transparan | aturan area sentuh 48px |
 | A18 | Spasi menjeda game hanya bila fokus tidak di tombol/input | footer Figma menyebut "Spasi / P"; tidak merusak keyboard standar |
 | A19 | Cincin timer dijadikan indikator progres (`stroke-dashoffset`, diperbarui tiap detik) | ikon Figma berupa cincin |
-| A20 | Benda selain bulu & gajah adalah SVG placeholder gaya Figma | aset tidak tersedia |
+| A20 | Semua benda adalah SVG yang digambar untuk proyek ini dalam satu gaya (A45) | aset Figma hanya tersedia untuk bulu/gajah |
 | A21 | Elips abu-abu tengah latar dan persegi `#f4f7fb` di belakang bulu (`17:657`) diabaikan | tidak terlihat di screenshot / artefak |
 | A22 | Durasi & easing animasi diwarisi dari implementasi sebelumnya | Figma statis |
 | A23 | Tilt papan 12° (sebelumnya 14°) | papan Figma lebih lebar |
@@ -268,6 +268,7 @@ Koordinat desain 576 × 260 (`--ss-*`, unit `--ss-u`). Papan kayu (gradasi kunin
 | A37 | Semua tombol 3D mengompensasi kedalaman bayangan lewat margin (lihat §4); tombol jawab di desktop turun 8 → `--game-pad-bottom` 56 → 48 agar posisinya tetap sama dengan Figma | tombol merah terlihat dempet dengan elemen di sekitarnya |
 | A38 | Satu `--radius-button` (24) untuk semua tombol; tombol ikon HUD 40px menjadi bulat penuh di desktop | konsistensi radius |
 | A39 | Footer keyboard disembunyikan di ≤ 960px (breakpoint HUD dua baris), selain perangkat sentuh | emulator/jendela sempit dengan mouse masih `hover: hover` |
+| A45 | Gajah dihapus dari daftar benda (sulit dikenali) dan dekorasi beranda memakai bulu + batu. Bulu, kapas, bantal, dumbel digambar ulang agar jelas di ±42px: bulu bergerigi dengan tangkai, kapas = buah kapas dengan kelopak cokelat + batang + daun, bantal lavender berumbai + lipatan tengah, dumbel hijau tebal. `og-image.png` dibuat ulang tanpa gajah (`scripts/make-og.mjs`) | benda lama mirip daun / awan / mentega; bantal kuning menyatu dengan papan kuning |
 | A33 | Skala font teks kecil dinaikkan dari Figma: eyebrow 10→12, tag 12→14, badan/tagline/pil 14→16, nilai HUD 20→24, tombol utama 24→28 (keycap 32→36). Proporsi komponen ikut menyesuaikan lewat padding/tinggi isi | permintaan: font terlalu kecil di Figma, terutama di HP |
 | A32 | Gambar OG dan ikon aplikasi digambar ulang dalam palet Figma | produk harus konsisten |
 

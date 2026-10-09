@@ -29,7 +29,7 @@ const findItem = (id: string): Item => ITEMS.find((i) => i.id === id) ?? (ITEMS[
 /** Layar judul: logo, tagline, hiasan jungkat-jungkit, tombol Main, pengaturan, toggle suara, Cara Main. */
 export function createTitleScreen(settings: GameSettings, onChange: (s: GameSettings) => void): TitleScreen {
   const deco = new Seesaw({ rock: true });
-  deco.showStatic([findItem('bulu'), findItem('gajah')]);
+  deco.showStatic([findItem('bulu'), findItem('batu')]);
 
   const summary = h('p', { id: 'play-summary', class: 'muted', 'aria-live': 'polite' });
   const bestValue = h('strong', { id: 'title-best' }, '0');
