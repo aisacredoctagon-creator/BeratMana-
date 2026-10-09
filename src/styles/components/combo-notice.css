@@ -1,0 +1,176 @@
+/* ===== Notifikasi combo: .combo-notice (data-level 1–5, data-kind warmup|rise|max) =====
+   Pojok kanan atas area main, dekoratif (tidak menangkap sentuhan). Animasi hanya transform/opacity
+   (keyframes di motion.css). Lihat DESIGN.md §4.12. */
+.combo-notice {
+  --_bg: var(--combo-notice-bg-1);
+  --_line: var(--combo-notice-line-1);
+  --_text: var(--combo-notice-text-1);
+  --_icon: var(--combo-notice-icon-1);
+  --_scale: var(--combo-notice-scale-1);
+  --_shadow: var(--shadow-combo-notice);
+  position: absolute;
+  z-index: var(--z-combo-notice);
+  inset-block-start: var(--combo-notice-top);
+  inset-inline-end: max(var(--gutter), var(--safe-right));
+  display: none;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+.combo-notice[data-level='2'],
+.combo-notice[data-level='3'] {
+  --_bg: var(--combo-notice-bg-2);
+  --_line: var(--combo-notice-line-2);
+  --_text: var(--combo-notice-text-2);
+  --_icon: var(--combo-notice-icon-2);
+}
+
+.combo-notice[data-level='4'],
+.combo-notice[data-level='5'] {
+  --_bg: var(--combo-notice-bg-4);
+  --_line: var(--combo-notice-line-4);
+  --_text: var(--combo-notice-text-4);
+  --_icon: var(--combo-notice-icon-4);
+  --_shadow: var(--shadow-combo-notice-hot);
+}
+
+.combo-notice[data-level='2'] {
+  --_scale: var(--combo-notice-scale-2);
+}
+
+.combo-notice[data-level='3'] {
+  --_scale: var(--combo-notice-scale-3);
+}
+
+.combo-notice[data-level='4'] {
+  --_scale: var(--combo-notice-scale-4);
+}
+
+.combo-notice[data-level='5'] {
+  --_scale: var(--combo-notice-scale-5);
+}
+
+.combo-notice.is-on {
+  display: block;
+}
+
+.combo-notice.is-enter {
+  animation: combo-notice-in var(--dur-combo-notice) both;
+}
+
+.combo-notice.is-swap {
+  animation: combo-notice-swap var(--dur-combo-notice) both;
+}
+
+.combo-notice__face {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-8);
+  overflow: hidden; /* menahan kilau di dalam kapsul */
+  padding: var(--space-6) var(--space-14) var(--space-6) var(--space-10);
+  border: var(--border-2) solid var(--_line);
+  border-radius: var(--radius-lg);
+  background: var(--_bg);
+  color: var(--_text);
+  box-shadow: var(--_shadow);
+  font-size: calc(var(--fs-combo-notice) * var(--_scale));
+  font-weight: var(--fw-semibold);
+  line-height: var(--lh-value);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.combo-notice.is-on .combo-notice__face {
+  animation: combo-pulse var(--dur-combo-pulse) var(--ease-in-out) calc(var(--dur-combo-notice) * 0.26) 2 alternate both;
+}
+
+/* kilau: pita terang menyapu kapsul sekali */
+.combo-notice__face::after {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  inline-size: 35%;
+  background: linear-gradient(90deg, transparent, var(--alpha-white-40), transparent);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.combo-notice.is-on .combo-notice__face::after {
+  animation: combo-shine var(--dur-combo-shine) var(--ease-out) calc(var(--dur-combo-notice) * 0.2) 1 both;
+}
+
+.combo-notice__icon {
+  display: grid;
+  flex: none;
+  color: var(--_icon);
+}
+
+.combo-notice__icon .icon {
+  inline-size: var(--combo-notice-icon);
+  block-size: var(--combo-notice-icon);
+}
+
+.combo-notice[data-level='5'].is-on .combo-notice__icon {
+  animation: combo-flicker var(--dur-slow) var(--ease-in-out) infinite alternate;
+}
+
+/* partikel kecil: terbang ke kiri/atas/bawah dari tengah kapsul (jumlah dibatasi di TS) */
+.combo-notice__sparks {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.combo-notice__spark {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  inline-size: var(--combo-spark-size);
+  block-size: var(--combo-spark-size);
+  margin: calc(var(--combo-spark-size) / -2);
+  border-radius: var(--radius-full);
+  background: var(--combo-spark-1);
+  opacity: 0;
+  animation: combo-spark var(--dur-combo-spark) var(--ease-out)
+    calc(var(--dur-combo-spark-delay) + var(--kd, 0) * var(--dur-combo-spark-stagger)) 1 both;
+  will-change: transform, opacity;
+}
+
+.combo-notice__spark:nth-child(5n + 2) {
+  background: var(--combo-spark-2);
+}
+
+.combo-notice__spark:nth-child(5n + 3) {
+  background: var(--combo-spark-3);
+}
+
+.combo-notice__spark:nth-child(5n + 4) {
+  background: var(--combo-spark-4);
+}
+
+.combo-notice__spark:nth-child(5n) {
+  background: var(--combo-spark-5);
+}
+
+/* prefers-reduced-motion: hanya fade (tanpa geser, denyut, kilau, partikel). !important diperlukan karena
+   aturan global di motion.css mempersingkat semua animasi menjadi instan. */
+@media (prefers-reduced-motion: reduce) {
+  .combo-notice.is-enter,
+  .combo-notice.is-swap {
+    animation: combo-notice-fade var(--dur-combo-notice) both !important;
+    animation-duration: var(--dur-combo-notice) !important;
+  }
+
+  .combo-notice.is-on .combo-notice__face,
+  .combo-notice.is-on .combo-notice__face::after,
+  .combo-notice.is-on .combo-notice__icon,
+  .combo-notice__sparks {
+    animation: none !important;
+  }
+
+  .combo-notice__sparks {
+    display: none;
+  }
+}

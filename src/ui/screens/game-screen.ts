@@ -1,4 +1,6 @@
 import { createAnswerButton } from '../components/button';
+import { createComboNotice } from '../components/combo-notice';
+import type { ComboNoticeView } from '../components/combo-notice';
 import { createKeyHint } from '../components/controls';
 import { createExpressionCard } from '../components/expression-card';
 import type { ExpressionCard } from '../components/expression-card';
@@ -14,6 +16,7 @@ export interface GameScreen {
   cardRight: ExpressionCard;
   btnLeft: HTMLButtonElement;
   btnRight: HTMLButtonElement;
+  comboNotice: ComboNoticeView;
 }
 
 /** Layar game: HUD, judul, dua kartu, jungkat-jungkit, tombol jawab, bar keyboard. */
@@ -24,6 +27,7 @@ export function createGameScreen(): GameScreen {
   const cardRight = createExpressionCard('right', 'card-right');
   const btnLeft = createAnswerButton('left', 'btn-left', 'Kiri lebih berat (←)');
   const btnRight = createAnswerButton('right', 'btn-right', 'Kanan lebih berat (→)');
+  const comboNotice = createComboNotice();
 
   const sep = () => h('span', { class: 'keyhint__sep', 'aria-hidden': 'true' }, '•');
   const keybar = h(
@@ -45,6 +49,7 @@ export function createGameScreen(): GameScreen {
     h(
       'div',
       { class: 'game' },
+      comboNotice.el,
       h(
         'div',
         { class: 'game__head' },
@@ -57,5 +62,5 @@ export function createGameScreen(): GameScreen {
     keybar,
   );
 
-  return { el, hud, seesaw, cardLeft, cardRight, btnLeft, btnRight };
+  return { el, hud, seesaw, cardLeft, cardRight, btnLeft, btnRight, comboNotice };
 }

@@ -1,7 +1,8 @@
+import { comboNotes } from './combo-sfx';
 import { loadAudioPrefs, saveAudioPrefs } from './storage';
 import type { AudioPrefs } from './storage';
 
-export type Sfx = 'click' | 'correct' | 'wrong' | 'combo' | 'gameover' | 'tick' | 'thud' | 'bonus';
+export type Sfx = 'click' | 'correct' | 'wrong' | 'combo' | 'gameover' | 'tick' | 'thud';
 
 const MUSIC_VOLUME = 0.16;
 const SFX_VOLUME = 0.9;
@@ -215,7 +216,7 @@ export class AudioManager {
     osc.stop(o.start + o.dur + 0.05);
   }
 
-  /** Memainkan efek. `level` (1–5) hanya dipakai untuk 'combo'. */
+  /** Memainkan efek. `level` (1–5, tingkat combo) hanya dipakai untuk 'combo'. */
   play(name: Sfx, level = 1): void {
     const ctx = this.ctx;
     if (!ctx || !this.prefs.sfx || !this.active || ctx.state !== 'running') return;
@@ -233,17 +234,11 @@ export class AudioManager {
         this.tone({ freq: 220, slideTo: 90, start: t, dur: 0.32, type: 'sawtooth', vol: 0.35, bus, lowpass: 900 });
         this.tone({ freq: 165, slideTo: 70, start: t + 0.05, dur: 0.3, type: 'square', vol: 0.15, bus, lowpass: 600 });
         break;
-      case 'combo': {
-        const seq = [523.25, 659.25, 783.99, 1046.5, 1318.5];
-        const n = Math.min(seq.length, 2 + level);
-        for (let i = 0; i < n; i++) {
-          this.tone({ freq: seq[i] as number, start: t + 0.1 + i * 0.065, dur: 0.14, type: 'square', vol: 0.18, bus, lowpass: 3200 });
+      case 'combo':
+        // arpeggio naik (lihat services/combo-sfx.ts); dimulai sesudah bunyi 'correct' selesai
+        for (const n of comboNotes(level)) {
+          this.tone({ freq: n.freq, start: t + n.start, dur: n.dur, type: n.type, vol: n.vol, bus, lowpass: 6000 });
         }
-        break;
-      }
-      case 'bonus':
-        this.tone({ freq: 1174.66, start: t, dur: 0.1, type: 'sine', vol: 0.3, bus });
-        this.tone({ freq: 1567.98, start: t + 0.07, dur: 0.18, type: 'sine', vol: 0.3, bus });
         break;
       case 'gameover': {
         const seq = [392.0, 349.23, 311.13, 261.63];

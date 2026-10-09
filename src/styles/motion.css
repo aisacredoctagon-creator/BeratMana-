@@ -175,3 +175,104 @@
     transform: rotate(calc(-0.5 * var(--ss-tilt)));
   }
 }
+
+/* ---------- notifikasi combo (transform/opacity saja) ----------
+   masuk dari pinggir dengan pegas → tahan → keluar menggeser dan memudar. 'swap' = menggantikan yang masih tampil. */
+@keyframes combo-notice-in {
+  0% {
+    opacity: 0;
+    transform: translateX(var(--combo-notice-in-x)) scale(0.6);
+    animation-timing-function: var(--ease-pop);
+  }
+  16% {
+    opacity: 1;
+    transform: translateX(0) scale(1.12);
+    animation-timing-function: var(--ease-out);
+  }
+  26%,
+  78% {
+    opacity: 1;
+    transform: none;
+    animation-timing-function: ease-in;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(var(--combo-notice-out-x)) scale(0.92);
+  }
+}
+
+@keyframes combo-notice-swap {
+  0% {
+    opacity: 1;
+    transform: scale(0.86);
+    animation-timing-function: var(--ease-pop);
+  }
+  16% {
+    opacity: 1;
+    transform: scale(1.14);
+    animation-timing-function: var(--ease-out);
+  }
+  26%,
+  78% {
+    opacity: 1;
+    transform: none;
+    animation-timing-function: ease-in;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(var(--combo-notice-out-x)) scale(0.92);
+  }
+}
+
+@keyframes combo-notice-fade {
+  0% {
+    opacity: 0;
+  }
+  12%,
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes combo-flicker {
+  to {
+    transform: scale(1.18) rotate(-6deg);
+  }
+}
+
+@keyframes combo-pulse {
+  to {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes combo-shine {
+  0% {
+    opacity: 0;
+    transform: translateX(-120%);
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(380%);
+  }
+}
+
+@keyframes combo-spark {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) scale(0.4);
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(calc(var(--kx) * var(--combo-spark-reach)), calc(var(--ky) * var(--combo-spark-reach))) scale(0.2);
+  }
+}

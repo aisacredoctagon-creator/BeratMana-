@@ -188,6 +188,25 @@
   /* nyawa = hanya ikon hati (turunan): penuh = isi merah, hilang = outline abu (beda bentuk, bukan hanya warna) */
   --heart-full: var(--color-rose-500);
   --heart-lost: var(--color-slate-500);
+  /* notifikasi combo (turunan; 1 = pemanasan, 2–3 hangat, 4–5 panas) */
+  --combo-notice-bg-1: var(--color-rose-50);
+  --combo-notice-line-1: var(--color-rose-300);
+  --combo-notice-text-1: var(--color-rose-800);
+  --combo-notice-icon-1: var(--color-rose-500);
+  --combo-notice-bg-2: var(--color-amber-50);
+  --combo-notice-line-2: var(--color-amber-300);
+  --combo-notice-text-2: var(--color-amber-900);
+  --combo-notice-icon-2: var(--color-orange-500);
+  --combo-notice-bg-4: var(--color-rose-100);
+  --combo-notice-line-4: var(--color-rose-400);
+  --combo-notice-text-4: var(--color-rose-800);
+  --combo-notice-icon-4: var(--color-rose-600);
+  --combo-notice-glow: var(--alpha-glow-rose);
+  --combo-spark-1: var(--color-amber-400);
+  --combo-spark-2: var(--color-rose-400);
+  --combo-spark-3: var(--color-sky-400);
+  --combo-spark-4: var(--color-emerald-500);
+  --combo-spark-5: var(--color-indigo-400);
   --star-tile-bg: var(--color-amber-400);
   --star-tile-line: var(--color-amber-500);
   --star-tile-icon: var(--color-amber-700);
@@ -332,6 +351,8 @@
   --shadow-stand: drop-shadow(0 calc(2 * var(--ss-u)) calc(1 * var(--ss-u)) var(--alpha-ink-06))
     drop-shadow(0 calc(4 * var(--ss-u)) calc(1.5 * var(--ss-u)) var(--alpha-ink-07));
   --shadow-fx-text: 0 calc(2 * var(--u)) calc(6 * var(--u)) var(--alpha-ink-07);
+  --shadow-combo-notice: 0 calc(3 * var(--u)) 0 var(--alpha-ink-07);
+  --shadow-combo-notice-hot: 0 calc(3 * var(--u)) 0 var(--alpha-ink-07), 0 0 calc(14 * var(--u)) var(--combo-notice-glow);
   --shadow-title: drop-shadow(0 calc(1 * var(--u)) calc(0.5 * var(--u)) var(--alpha-ink-05));
   --blur-bar: 6px;
   --blur-scrim: 3px;
@@ -366,6 +387,18 @@
   --heart-size: max(20px, calc(28 * var(--u))); /* tidak lebih kecil dari 20px di layar kecil/landscape */
   --heart-gap: calc(6 * var(--u));
   --keycap-h: calc(36 * var(--u));
+  --fs-combo-notice: max(1rem, calc(22 * var(--u)));
+  --combo-notice-top: var(--space-8);
+  --combo-notice-icon: 1.2em;
+  --combo-notice-scale-1: 0.82;
+  --combo-notice-scale-2: 1;
+  --combo-notice-scale-3: 1.06;
+  --combo-notice-scale-4: 1.12;
+  --combo-notice-scale-5: 1.18;
+  --combo-notice-in-x: 140%;
+  --combo-notice-out-x: 45%;
+  --combo-spark-size: max(4px, calc(8 * var(--u)));
+  --combo-spark-reach: max(40px, calc(84 * var(--u)));
   --control-min-h: var(--tap-min);
   --panel-max-w: calc(520 * var(--u));
   --keybar-max-w: calc(896 * var(--u));
@@ -420,6 +453,7 @@
   /* ---------- Z-INDEX ---------- */
   --z-bar: 10;
   --z-overlay: 30;
+  --z-combo-notice: 20; /* di atas isi game, di bawah modal */
   --z-toast: 40;
   --z-flash: 50;
 
@@ -434,6 +468,12 @@
   --dur-verdict: 900ms;
   --dur-shake: 420ms;
   --dur-pop: 320ms;
+  --dur-combo-notice: 1200ms; /* seluruh notifikasi combo: masuk, tahan, keluar */
+  --dur-combo-pulse: 420ms;
+  --dur-combo-shine: 700ms;
+  --dur-combo-spark: 650ms;
+  --dur-combo-spark-delay: 160ms;
+  --dur-combo-spark-stagger: 220ms;
   --dur-rock: 5.5s;
   --ease-out: cubic-bezier(0.2, 0.7, 0.4, 1);
   --ease-in-out: ease-in-out;
@@ -471,6 +511,11 @@
     --game-pad-bottom: calc(16 * var(--u));
     --card-pad: calc(16 * var(--u));
     --card-min-h: calc(190 * var(--u));
+    --combo-notice-scale-1: 0.8;
+    --combo-notice-scale-2: 0.9;
+    --combo-notice-scale-3: 0.94;
+    --combo-notice-scale-4: 0.98;
+    --combo-notice-scale-5: 1.02;
     --fs-expr: clamp(1.125rem, 24cqi, calc(48 * var(--u)));
     --gutter: max(var(--space-12), var(--safe-left));
   }

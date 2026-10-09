@@ -160,7 +160,15 @@ Pil info kecil (mis. lencana kesulitan di game over/ringkasan) memakai keluarga 
 ### 4.11 Modal / bottom sheet — `.overlay` + `.sheet`
 Scrim `--surface-scrim` + blur. Desktop: kartu tengah (radius 24, `--shadow-sheet`). Layar sempit: **bottom sheet** menempel di bawah (radius atas 24, area aman bawah). Fokus terkunci di dalam dialog, Esc menutup. Pop-up Dijeda: judul, dua toggle Musik/SFX (`.switch`, 2 kolom, ≥ 48px), lalu `.sheet__actions` (Lanjut / Ulangi / Keluar ke Menu; di landscape pendek tiga kolom sejajar agar tidak melebihi tinggi layar).
 
-### 4.12 Toast — `.toast`
+### 4.12 Notifikasi combo — `.combo-notice` (`data-level="1…5"`, `data-kind="warmup|rise|max"`)
+Kapsul kecil berisi ikon (api untuk tingkat ≥ 2, bintang untuk pemanasan) + teks ("COMBO 3", "COMBO ×2!" … "COMBO ×5!", "MAKS ×5 · 25"). Dipasang di dalam `.game` (pojok kanan atas, tepat di bawah HUD; `inset-inline-end` memakai `--gutter` dan `--safe-right`), dekoratif (`aria-hidden`, `pointer-events: none`); pembaca layar mendapat teksnya lewat live region game.
+- **Kapan muncul** (`game/combo-notice.ts`, konfigurasi `config/combo.ts`): streak 3 (pemanasan, tingkat 1), tiap pengali naik (streak 5, 10, 15, 20 = tingkat 2–5), lalu tiap +5 setelah ×5 (25, 30, …; tingkat 5). Jawaban salah tidak memunculkan apa pun. Hanya presentasi: skor, timer, dan logika combo tidak disentuh.
+- **Tingkat**: warna (`--combo-notice-{bg,line,text,icon}-{1,2,4}`: 1 rose muda, 2–3 hangat/amber, 4–5 panas/rose + cahaya), ukuran (`--combo-notice-scale-1…5`, lebih kecil di ≤ 720px), dan partikel (`COMBO_NOTICE.particles` = 0/6/8/10/14, maks 14) naik bersama tingkat. Bukan hanya warna: teks dan ikon selalu ada.
+- **Animasi** (`--dur-combo-notice` 1200 ms, hanya `transform`/`opacity`, keyframes di `motion.css`): `combo-notice-in` (masuk dari kanan dengan pegas) → tahan dengan denyut (`combo-pulse`) dan kilau (`combo-shine`) → keluar menggeser + memudar. Notifikasi baru saat yang lama masih tampil memakai `combo-notice-swap` (pop di tempat, timer keluar diulang), tidak menumpuk. Partikel (`.combo-notice__spark`) terbang ke kiri/atas (tidak keluar tepi kanan layar dan tidak turun ke kartu), jangkauan `--combo-spark-reach`. `prefers-reduced-motion`: hanya fade (`combo-notice-fade`), tanpa geser, denyut, kilau, dan partikel.
+- **Bunyi dan getar**: `'combo'` di `services/audio.ts` memainkan `comboNotes(level)` (`services/combo-sfx.ts`): arpeggio naik triangle + lapisan oktaf sinus, 3 nada (pemanasan, lebih lembut) sampai 7 nada + denting kilau (tingkat ≥ 4), akar naik per tingkat, dimulai `COMBO_SFX.delay` setelah bunyi jawaban benar. Volume `COMBO_SFX.volume` (< volume 'correct'). Mengikuti toggle SFX dan aturan autoplay. Haptic berjenjang (`COMBO_HAPTIC`).
+- **Posisi aman**: tidak menimpa kartu, benda/jungkat-jungkit, atau tombol jawab di semua ukuran uji (360–1920, landscape HP). Di HP portrait ia menutupi sebagian ujung kanan judul "Mana yang Lebih Berat?" selama ±1,2 detik (A42).
+
+### 4.13 Toast — `.toast`
 Pil gelap (slate-800), teks putih, `--shadow-toast`, muncul dari bawah. `role="status"`.
 
 ### 4.13 Jungkat-jungkit — `.seesaw`
@@ -269,6 +277,9 @@ Koordinat desain 576 × 260 (`--ss-*`, unit `--ss-u`). Papan kayu (gradasi kunin
 | A39 | Footer keyboard disembunyikan di ≤ 960px (breakpoint HUD dua baris), selain perangkat sentuh | emulator/jendela sempit dengan mouse masih `hover: hover` |
 | A40 | HUD game disederhanakan: tidak ada pil Tingkat, pil Mode (+ badge EXP), pil Combo, tombol Mute, dan wadah/tulisan "Nyawa"; tagline dihapus dari layar game. Level, combo, dan pengali tetap berjalan di engine. Nyawa = hanya ikon hati (penuh terisi, hilang outline) | permintaan pemilik proyek (bar ringkas); Figma menang diganti keputusan ini |
 | A41 | Musik/SFX dipindah ke pop-up Dijeda (komponen `.switch` yang sama dengan beranda, dua toggle terpisah, tersimpan); pintasan keyboard M dan petunjuknya dihapus | mute tidak lagi di bar; M membisukan keduanya sehingga tidak sejalan dengan dua toggle terpisah |
+| A42 | Notifikasi combo di pojok kanan atas area main; di HP portrait menutupi sebagian judul sesaat karena tidak ada ruang kosong lain pada lebar 360–430 | judul bukan elemen interaktif/informatif; kartu, papan, dan tombol tetap bebas |
+| A43 | SFX `bonus` (+2 detik) dihapus: ia selalu jatuh di streak yang sama dengan notifikasi combo, sehingga menyatu ke arpeggio combo (teks "+2 detik" tetap melayang) | mencegah tiga bunyi bertumpuk (benar + combo + bonus) |
+| A44 | Tingkat notifikasi: 1 = pemanasan (streak 3), 2–5 = pengali; setelah ×5 tetap tingkat 5 sebagai pengingat tiap +5 streak | konsisten dengan SFX combo lama yang berbunyi tiap kelipatan 5 |
 | A33 | Skala font teks kecil dinaikkan dari Figma: eyebrow 10→12, tag 12→14, badan/tagline/pil 14→16, nilai HUD 20→24, tombol utama 24→28 (keycap 32→36). Proporsi komponen ikut menyesuaikan lewat padding/tinggi isi | permintaan: font terlalu kecil di Figma, terutama di HP |
 | A32 | Gambar OG dan ikon aplikasi digambar ulang dalam palet Figma | produk harus konsisten |
 

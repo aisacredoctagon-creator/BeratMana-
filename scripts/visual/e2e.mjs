@@ -64,6 +64,19 @@ check('kartu pemenang ditandai', (await page.$$eval('.expr-card[data-result="win
 await page.waitForTimeout(1300);
 await ready();
 
+// ---- notifikasi combo: streak 3 = pemanasan, hilang sendiri, tidak menangkap sentuhan ----
+check('belum ada notifikasi combo di streak 1', !(await page.$eval('.combo-notice', (n) => n.classList.contains('is-on'))));
+await answer(false);
+await page.waitForTimeout(1300);
+await ready();
+await answer(false);
+await page.waitForTimeout(350);
+check('notifikasi combo muncul di streak 3 ("COMBO 3")', (await page.$eval('.combo-notice', (n) => n.classList.contains('is-on'))) && (await page.textContent('.combo-notice__text')) === 'COMBO 3');
+check('notifikasi combo tidak menangkap sentuhan', (await page.$eval('.combo-notice', (n) => getComputedStyle(n).pointerEvents)) === 'none');
+await page.waitForTimeout(1500);
+check('notifikasi combo hilang sendiri (~1,2 dtk)', !(await page.$eval('.combo-notice', (n) => n.classList.contains('is-on'))));
+await ready();
+
 // ---- jeda ----
 await page.keyboard.press('Space');
 check('Spasi menjeda (fokus bukan tombol)', await page.isVisible('#overlay-pause'));

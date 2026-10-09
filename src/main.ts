@@ -6,6 +6,7 @@ import './styles/components/card.css';
 import './styles/components/pill.css';
 import './styles/components/controls.css';
 import './styles/components/hud.css';
+import './styles/components/combo-notice.css';
 import './styles/components/seesaw.css';
 import './styles/components/overlay.css';
 import './styles/screens/title.css';
