@@ -311,7 +311,7 @@
 }
 
 /* ---------- mode ringkas (HP: ≤ 720px, dan landscape pendek) ----------
-   Chip tipe soal hanya berupa ikon, 3 per baris; pil Nyala/Mati pada toggle disembunyikan supaya Musik + SFX + "?"
+   Chip tipe soal hanya berupa ikon (tanpa kotak centang), 3 per baris; pil Nyala/Mati pada toggle disembunyikan supaya Musik + SFX + "?"
    muat satu baris di 360px (status tetap jelas: ikon redup + label dicoret + latar putih saat mati). */
 @media (max-width: 720px), (max-height: 520px) and (orientation: landscape) {
   .chips {
@@ -344,18 +344,15 @@
     white-space: nowrap;
   }
 
-  /* kotak ✓ menjadi lencana di pojok: hollow = mati, terisi + ✓ = aktif */
+  /* tanpa kotak centang: status tercentang dibaca dari chip yang "rata" (bayangan 3D hilang) + garis ganda + latar */
   .chip__box {
-    position: absolute;
-    inset-block-start: var(--space-4);
-    inset-inline-end: var(--space-4);
-    inline-size: var(--chip-badge);
-    block-size: var(--chip-badge);
+    display: none;
   }
 
-  .chip__box .icon {
-    inline-size: var(--chip-badge-icon);
-    block-size: var(--chip-badge-icon);
+  .chip input:checked + .chip__face {
+    box-shadow:
+      var(--shadow-key-pressed),
+      inset 0 0 0 var(--border-2) var(--pill-time-line);
   }
 
   .switch__state {

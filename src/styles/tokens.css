@@ -404,8 +404,6 @@
   --sheet-wide-max-w: calc(560 * var(--u));
   --check-box: calc(24 * var(--u));
   --chip-icon: max(24px, calc(30 * var(--u))); /* ikon tipe soal di mode ringkas (HP) */
-  --chip-badge: max(16px, calc(20 * var(--u))); /* lencana ✓ di pojok chip (HP) */
-  --chip-badge-icon: max(12px, calc(14 * var(--u)));
   --badge-mark: calc(32 * var(--u));
 
   /* jarak vertikal tata letak layar game (mengikuti Figma) */
