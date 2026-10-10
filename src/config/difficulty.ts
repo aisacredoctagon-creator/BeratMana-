@@ -49,8 +49,6 @@ export interface DifficultyConfig {
   gap: { start: number; end: number };
   /** Porsi rentang nilai (skala log) yang dipakai di level 0; naik menjadi 1 di levelMax. */
   magnitudeStart: number;
-  /** Peluang ekspresi bonus (kurung, kuadrat, akar) per sisi. Hanya berlaku di mode Mix. */
-  bonusChance: number;
   ranges: {
     add: Range;
     sub: Range;
@@ -70,12 +68,6 @@ export interface DifficultyConfig {
       ops: readonly DecimalOp[];
     };
   };
-  bonus: {
-    square: Range | null;
-    cube: Range | null;
-    root: Range | null;
-    paren: { sum: Range; factor: Range } | null;
-  };
 }
 
 /** Level intensitas naik tiap sekian jawaban benar. */
@@ -92,7 +84,6 @@ export const DIFFICULTY_CONFIG: Record<Difficulty, DifficultyConfig> = {
     levelMax: 6,
     gap: { start: 0.65, end: 0.3 },
     magnitudeStart: 0.5,
-    bonusChance: 0,
     ranges: {
       add: { min: 1, max: 20 },
       sub: { min: 1, max: 20 },
@@ -101,7 +92,6 @@ export const DIFFICULTY_CONFIG: Record<Difficulty, DifficultyConfig> = {
       fraction: { denominators: [2, 3, 4, 5, 10], maxValue: 1, sums: false },
       decimal: { places: { min: 1, max: 1 }, min: 0.1, max: 20, ops: ['plain'] },
     },
-    bonus: { square: null, cube: null, root: null, paren: null },
   },
   medium: {
     label: 'Medium',
@@ -113,7 +103,6 @@ export const DIFFICULTY_CONFIG: Record<Difficulty, DifficultyConfig> = {
     levelMax: 10,
     gap: { start: 0.5, end: 0.2 },
     magnitudeStart: 0.4,
-    bonusChance: 0.1,
     ranges: {
       add: { min: 10, max: 100 },
       sub: { min: 10, max: 100 },
@@ -121,12 +110,6 @@ export const DIFFICULTY_CONFIG: Record<Difficulty, DifficultyConfig> = {
       div: { divisor: { min: 2, max: 12 }, result: { min: 2, max: 20 } },
       fraction: { denominators: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], maxValue: 2, sums: false },
       decimal: { places: { min: 2, max: 2 }, min: 0.5, max: 100, ops: ['plain', 'plain', 'add', 'sub'] },
-    },
-    bonus: {
-      square: { min: 3, max: 12 },
-      cube: null,
-      root: { min: 4, max: 15 },
-      paren: { sum: { min: 4, max: 20 }, factor: { min: 2, max: 9 } },
     },
   },
   hard: {
@@ -139,7 +122,6 @@ export const DIFFICULTY_CONFIG: Record<Difficulty, DifficultyConfig> = {
     levelMax: 14,
     gap: { start: 0.35, end: 0.08 },
     magnitudeStart: 0.35,
-    bonusChance: 0.15,
     ranges: {
       add: { min: 50, max: 999 },
       sub: { min: 50, max: 999 },
@@ -152,12 +134,6 @@ export const DIFFICULTY_CONFIG: Record<Difficulty, DifficultyConfig> = {
         max: 999,
         ops: ['plain', 'add', 'sub', 'mulInt'],
       },
-    },
-    bonus: {
-      square: { min: 5, max: 30 },
-      cube: { min: 2, max: 9 },
-      root: { min: 10, max: 40 },
-      paren: { sum: { min: 10, max: 99 }, factor: { min: 2, max: 9 } },
     },
   },
 };

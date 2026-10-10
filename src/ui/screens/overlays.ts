@@ -32,8 +32,8 @@ export function createHowtoModal(): HowtoModal {
   const list = h(
     'ol',
     { class: 'sheet__list' },
-    h('li', {}, 'Tiap sisi punya ', h('b', {}, 'hitungan'), '. ', h('b', {}, 'Berat = hasil hitungan'), ', bukan ukuran gambar. Bulu bisa lebih berat dari landasan!'),
-    h('li', {}, 'Tekan tombol biru ', key('<'), ' bila sisi ', h('b', {}, 'kiri'), ' lebih berat, tombol koral ', key('>'), ' bila sisi ', h('b', {}, 'kanan'), ' lebih berat.'),
+    h('li', {}, 'Tiap sisi punya ', h('b', {}, 'hitungan'), '. ', h('b', {}, 'Berat = hasil hitungan'), ', bukan ukuran gambar. Bulu bisa lebih berat dari Batu!'),
+    h('li', {}, 'Tekan tombol biru ', key('<'), ' bila sisi ', h('b', {}, 'kiri'), ' lebih berat, tombol merah ', key('>'), ' bila sisi ', h('b', {}, 'kanan'), ' lebih berat.'),
     h('li', {}, h('b', {}, 'Time Attack:'), ' 60 detik. Salah = waktu berkurang. Streak 5 = +2 detik.'),
     h('li', {}, h('b', {}, 'Normal:'), ' tanpa timer, nyawa terbatas. Habis nyawa = game over.'),
     h('li', {}, 'Combo naik tiap 5 jawaban benar berturut-turut (×2, ×3, … maks ×5). Salah = combo kembali ke ×1.'),

@@ -4,7 +4,7 @@ import { cmp, isInt, sub, abs, toNumber } from './rational';
 import type { Expr } from './expression';
 import { clamp, lerp } from './random';
 import type { Rng } from './random';
-import { TYPE_DEFS, bonusType } from './types/registry';
+import { TYPE_DEFS } from './types/registry';
 import type { GenCtx, QuestionTypeDef } from './types/def';
 
 export type Side = 'left' | 'right';
@@ -71,8 +71,7 @@ export function relativeGap(a: Expr, b: Expr): number {
 const questionKey = (q: { left: Expr; right: Expr }): string =>
   [q.left.label, q.right.label].sort().join('|');
 
-function pickDef(types: readonly QType[], mix: boolean, cfg: DifficultyConfig, rng: Rng): QuestionTypeDef {
-  if (mix && cfg.bonusChance > 0 && bonusType.span(cfg) && rng() < cfg.bonusChance) return bonusType;
+function pickDef(types: readonly QType[], rng: Rng): QuestionTypeDef {
   const t = types[Math.floor(rng() * types.length)] as QType;
   return TYPE_DEFS[t];
 }
@@ -106,7 +105,6 @@ export function generateQuestion(input: GenerateInput): Question {
   const types = input.types.length > 0 ? input.types : (['add'] as readonly QType[]);
   const cfg = DIFFICULTY_CONFIG[difficulty];
   const ctx: GenCtx = { cfg, rng };
-  const mix = isMixTypes(types);
 
   const level = clamp(Math.floor(input.level), 0, cfg.levelMax);
   const progress = cfg.levelMax > 0 ? level / cfg.levelMax : 1;
@@ -117,13 +115,13 @@ export function generateQuestion(input: GenerateInput): Question {
   let best: { a: Expr; b: Expr; gap: number } | null = null;
 
   for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
-    const defA = pickDef(types, mix, cfg, rng);
-    let defB = pickDef(types, mix, cfg, rng);
+    const defA = pickDef(types, rng);
+    let defB = pickDef(types, rng);
     const spanA = defA.span(cfg);
     if (!spanA) continue;
     let spanB = defB.span(cfg);
     for (let r = 0; r < 3 && spanB && !overlaps(spanA, spanB); r++) {
-      defB = pickDef(types, mix, cfg, rng);
+      defB = pickDef(types, rng);
       spanB = defB.span(cfg);
     }
     if (!spanB) continue;

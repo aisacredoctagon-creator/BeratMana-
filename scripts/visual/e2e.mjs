@@ -18,7 +18,7 @@ const check = (name, ok, extra = '') => {
   if (!ok) fails++;
 };
 const evalLabel = (s) =>
-  Function('return ' + s.replace(/×/g, '*').replace(/÷/g, '/').replace(/−/g, '-').replace(/,/g, '.').replace(/√(\d+)/g, 'Math.sqrt($1)').replace(/(\d+)²/g, '($1**2)').replace(/(\d+)³/g, '($1**3)').replace(/(\d+)\/(\d+)/g, '($1/$2)'))();
+  Function('return ' + s.replace(/×/g, '*').replace(/÷/g, '/').replace(/−/g, '-').replace(/,/g, '.').replace(/(\d+)\/(\d+)/g, '($1/$2)'))();
 const ready = () => page.waitForFunction(() => !document.querySelector('#btn-left').disabled, null, { timeout: 8000 });
 async function answer(wrong = false) {
   // aria-label kartu = "Sisi kiri: <label polos>" (textContent pecahan bertumpuk tidak memuat "/")

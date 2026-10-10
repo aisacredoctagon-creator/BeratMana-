@@ -1,6 +1,5 @@
 import type { QType } from '../../config/difficulty';
 import { addType } from './add';
-import { bonusType } from './bonus';
 import type { QuestionTypeDef } from './def';
 import { decimalType } from './decimal';
 import { divType } from './div';
@@ -17,5 +16,3 @@ export const TYPE_DEFS: Record<QType, QuestionTypeDef> = {
   fraction: fractionType,
   decimal: decimalType,
 };
-
-export { bonusType };

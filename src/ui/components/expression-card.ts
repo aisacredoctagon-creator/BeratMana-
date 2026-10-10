@@ -8,10 +8,7 @@ type Size = 's' | 'm' | 'l' | 'xl';
 
 function tokenNode(k: Token): Node {
   if (k.t === 'txt') return h('span', { class: 'op' }, k.v);
-  if (k.t === 'frac') {
-    return h('span', { class: 'frac' }, h('span', { class: 'frac__n' }, String(k.n)), h('span', { class: 'frac__d' }, String(k.d)));
-  }
-  return h('span', { class: 'sqrt' }, '√', h('span', { class: 'sqrt__rad' }, k.v));
+  return h('span', { class: 'frac' }, h('span', { class: 'frac__n' }, String(k.n)), h('span', { class: 'frac__d' }, String(k.d)));
 }
 
 /** Ukuran font ekspresi menurut panjang visual supaya selalu muat (termasuk di 360px). */

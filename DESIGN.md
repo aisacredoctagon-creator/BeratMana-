@@ -125,7 +125,7 @@ Kiri biru (`--side-left-*`), kanan koral (`--side-right-*`). Tinggi `--answer-h`
 
 ### 4.4 Kartu ekspresi — `.expr-card` (`--left` / `--right`)
 Putih, garis 1px (`--side-*-line`), radius 24, padding 24, isi: tag "SISI KIRI/KANAN" (pil kecil) + ekspresi 48px.
-`data-size="s|m|l|xl"` mengecilkan ekspresi panjang. Ekspresi mendukung pecahan bertumpuk (`.frac`) dan akar (`.sqrt`).
+`data-size="s|m|l|xl"` mengecilkan ekspresi panjang. Ekspresi mendukung pecahan bertumpuk (`.frac`). Soal akar (√), pangkat, dan kurung sudah dihapus dari game.
 | State | Perilaku |
 | --- | --- |
 | Default | seperti Figma |
@@ -154,7 +154,7 @@ Latar slate-100, garis 2px slate-300, radius 8, teks 14. Dipakai di footer petun
 Pil info kecil (mis. lencana kesulitan di game over/ringkasan) memakai keluarga pil level.
 
 ### 4.11 Modal / bottom sheet — `.overlay` + `.sheet`
-Scrim `--surface-scrim` + blur. Desktop: kartu tengah (radius 24, `--shadow-sheet`). Layar sempit: **bottom sheet** menempel di bawah (radius atas 24, area aman bawah). Fokus terkunci di dalam dialog, Esc menutup.
+Scrim `--surface-scrim` + blur. Desktop: kartu tengah (radius 24, `--shadow-sheet`). Layar sempit: **bottom sheet** menempel di bawah (radius atas 24, area aman bawah). Fokus terkunci di dalam dialog, Esc menutup. Teks tebal di daftar "Cara Main" (`.sheet__list b`) memakai `--fw-semibold` (600), bukan Bold 700; Fredoka Variable menyediakan bobot 600 secara asli.
 
 ### 4.12 Toast — `.toast`
 Pil gelap (slate-800), teks putih, `--shadow-toast`, muncul dari bawah. `role="status"`.

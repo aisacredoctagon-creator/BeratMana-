@@ -47,7 +47,7 @@ export class SettingsPanel {
     this.hint = diff.el.querySelector('#difficulty-hint') as HTMLElement;
 
     const chips = h('div', { class: 'chips', id: 'chips' });
-    const mix = createChip({ value: 'mix', label: 'Mix (semua tipe + soal bonus)', wide: true });
+    const mix = createChip({ value: 'mix', label: 'Mix (semua tipe)', wide: true });
     this.chipInputs.set('mix', mix.input);
     chips.append(mix.el);
     for (const t of QTYPES) {

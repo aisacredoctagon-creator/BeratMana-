@@ -1,5 +1,5 @@
-import type { DifficultyConfig } from '../../config/difficulty';
-import type { Expr, ExprKind } from '../expression';
+import type { DifficultyConfig, QType } from '../../config/difficulty';
+import type { Expr } from '../expression';
 import type { Rng } from '../random';
 
 export interface GenCtx {
@@ -12,7 +12,7 @@ export interface GenCtx {
  * QuestionTypeDef lalu mendaftarkannya di registry.ts (lihat README).
  */
 export interface QuestionTypeDef {
-  readonly id: ExprKind;
+  readonly id: QType;
   /** Rentang nilai alami tipe ini pada kesulitan tertentu (null bila tidak tersedia). */
   span(cfg: DifficultyConfig): { min: number; max: number } | null;
   /**

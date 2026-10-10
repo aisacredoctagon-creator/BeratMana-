@@ -1,26 +1,22 @@
 import type { QType } from '../config/difficulty';
 import type { Rat } from './rational';
 
-/** Potongan label. UI merender 'frac' bertumpuk dan 'sqrt' dengan garis atas. */
+/** Potongan label. UI merender 'frac' bertumpuk. */
 export type Token =
   | { t: 'txt'; v: string }
-  | { t: 'frac'; n: number; d: number }
-  | { t: 'sqrt'; v: string };
-
-export type ExprKind = QType | 'bonus';
+  | { t: 'frac'; n: number; d: number };
 
 export interface Expr {
-  kind: ExprKind;
+  kind: QType;
   /** Nilai eksak. Inilah "berat" benda. */
   value: Rat;
-  /** Label teks polos, mis. "3/4", "36÷3", "√144". Dipakai untuk aria-label dan pengujian. */
+  /** Label teks polos, mis. "3/4", "36÷3". Dipakai untuk aria-label dan pengujian. */
   label: string;
   tokens: Token[];
 }
 
 export const txt = (v: string): Token => ({ t: 'txt', v });
 export const frac = (n: number, d: number): Token => ({ t: 'frac', n, d });
-export const sqrtTok = (v: string): Token => ({ t: 'sqrt', v });
 
 export const MINUS = '−';
 export const TIMES = '×';
@@ -28,11 +24,11 @@ export const DIVIDE = '÷';
 
 export function tokensToLabel(tokens: readonly Token[]): string {
   return tokens
-    .map((k) => (k.t === 'txt' ? k.v : k.t === 'frac' ? `${k.n}/${k.d}` : `√${k.v}`))
+    .map((k) => (k.t === 'txt' ? k.v : `${k.n}/${k.d}`))
     .join('');
 }
 
-export function makeExpr(kind: ExprKind, value: Rat, tokens: Token[]): Expr {
+export function makeExpr(kind: QType, value: Rat, tokens: Token[]): Expr {
   return { kind, value, tokens, label: tokensToLabel(tokens) };
 }
 
@@ -41,8 +37,7 @@ export function visualLength(tokens: readonly Token[]): number {
   let len = 0;
   for (const k of tokens) {
     if (k.t === 'txt') len += k.v.length;
-    else if (k.t === 'frac') len += Math.max(String(k.n).length, String(k.d).length) + 0.6;
-    else len += k.v.length + 1;
+    else len += Math.max(String(k.n).length, String(k.d).length) + 0.6;
   }
   return len;
 }
