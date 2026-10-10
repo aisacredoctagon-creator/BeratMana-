@@ -100,7 +100,7 @@
   padding-inline: var(--space-14);
 }
 
-/* waktu (biru langit) + cincin */
+/* waktu (biru langit): statistik "Akurasi" di game over; waktu di HUD memakai .hud-time (hud.css) */
 .pill--time {
   --_bg: var(--pill-time-bg);
   --_line: var(--pill-time-line);
@@ -111,31 +111,4 @@
 
 .pill--time .pill__value {
   letter-spacing: var(--ls-time);
-}
-
-.timer-ring {
-  --timer-progress: 1;
-}
-
-.timer-ring__track {
-  stroke: var(--pill-time-ring-track);
-}
-
-.timer-ring__bar {
-  stroke: var(--pill-time-ring);
-  stroke-dasharray: 100;
-  stroke-dashoffset: calc(100 * (1 - var(--timer-progress)));
-}
-
-.pill--time.is-low {
-  --_icon: var(--bad-bg);
-  --_value: var(--bad-bg);
-}
-
-.pill--time.is-low .timer-ring__bar {
-  stroke: var(--bad-bg);
-}
-
-.pill--time.is-low .pill__value {
-  animation: low-time var(--dur-slow) var(--ease-in-out) infinite alternate;
 }

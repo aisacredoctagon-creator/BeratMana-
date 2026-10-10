@@ -60,7 +60,7 @@ check('pengaturan tersimpan setelah reload', (await page.isChecked('input[name="
 // ---- permainan Normal Hard ----
 await page.click('#btn-play');
 await ready();
-check('layar game tampil + HUD mode Normal (hati, tanpa pil waktu)', (await page.getAttribute('#screen-game', 'data-mode')) === 'normal' && (await page.isVisible('.hearts')) && !(await page.isVisible('.pill--time')));
+check('layar game tampil + HUD mode Normal (hati, tanpa pil waktu)', (await page.getAttribute('#screen-game', 'data-mode')) === 'normal' && (await page.isVisible('.hearts')) && !(await page.isVisible('.hud-time')));
 check('HUD hanya skor, hati, jeda: elemen lama hilang', (await page.$$eval('#screen-game .pill--level, #screen-game .pill--mode, #screen-game .pill--combo, #screen-game .pill__badge, #screen-game .pill--lives, #screen-game #btn-sound, #screen-game .tagline', (e) => e.length)) === 0);
 check('hati: 2 nyawa Hard, aria-label tersembunyi', (await page.getAttribute('.hearts', 'aria-label')) === 'Nyawa 2 dari 2' && (await page.$$eval('.heart[data-state="full"]', (e) => e.length)) === 2);
 const side = await answer(false);

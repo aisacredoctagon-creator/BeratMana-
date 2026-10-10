@@ -111,6 +111,7 @@
   --line-control: var(--color-slate-300);
 
   --text-strong: var(--color-slate-800);
+  --color-question-text: var(--color-sky-950); /* teks soal: hitam kebiruan, kontras 13,9:1 di putih dan 13,2:1 di kartu menang */
   --text-body: var(--color-slate-700);
   --text-muted: var(--color-slate-500); /* di atas putih (4,8:1) */
   --text-muted-on-app: var(--color-slate-600); /* di atas --surface-app */
@@ -137,7 +138,6 @@
   --side-left-tag-bg: var(--color-sky-100);
   --side-left-tag-line: var(--color-sky-300);
   --side-left-tag-text: var(--color-sky-800);
-  --side-left-expr: var(--color-sky-950);
 
   --side-right-bg: var(--color-rose-500);
   --side-right-line: var(--color-rose-400);
@@ -146,7 +146,6 @@
   --side-right-tag-bg: var(--color-rose-chip);
   --side-right-tag-line: var(--color-rose-400);
   --side-right-tag-text: var(--color-rose-700); /* turunan: Figma #f43f5e (kontras 3,2:1) */
-  --side-right-expr: var(--color-purple-950);
 
   /* tombol utama (memakai keluarga koral) dan sekunder */
   --btn-primary-bg: var(--color-rose-500);
@@ -207,6 +206,9 @@
   --combo-spark-3: var(--color-sky-400);
   --combo-spark-4: var(--color-emerald-500);
   --combo-spark-5: var(--color-indigo-400);
+  /* waktu di HUD (tanpa kotak): turunan dari keluarga biru langit */
+  --hud-time-text: var(--color-sky-900);
+  --hud-time-icon: var(--color-sky-700);
   --star-tile-bg: var(--color-amber-400);
   --star-tile-line: var(--color-amber-500);
   --star-tile-icon: var(--color-amber-700);
@@ -384,6 +386,9 @@
   --heart-size: max(20px, calc(28 * var(--u))); /* tidak lebih kecil dari 20px di layar kecil/landscape */
   --heart-gap: calc(6 * var(--u));
   --keycap-h: calc(36 * var(--u));
+  --score-min-w: 5.5ch; /* angka skor sampai "12.345" tidak menggeser bar atas */
+  --hud-time-min-w: 4ch; /* "m:ss" */
+  --hud-time-icon-size: 1em; /* sama dengan tinggi angka waktu */
   --fs-combo-notice: max(1rem, calc(22 * var(--u)));
   --combo-notice-top: var(--space-8);
   --combo-notice-icon: 1.2em;

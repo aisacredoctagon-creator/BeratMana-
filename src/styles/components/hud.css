@@ -43,8 +43,62 @@
 
 /* mode Time Attack = pil waktu; mode Normal = hati (tanpa wadah dan tanpa tulisan) */
 .screen[data-mode='time'] .hearts,
-.screen[data-mode='normal'] .pill--time {
+.screen[data-mode='normal'] .hud-time {
   display: none;
+}
+
+/* ---------- skor: hanya angka; lebar minimum + tabular-nums supaya bar tidak bergeser saat angka bertambah ---------- */
+.hud .pill--score .pill__value {
+  min-inline-size: var(--score-min-w);
+}
+
+/* ---------- waktu: ikon jam + angka, tanpa kotak dan tanpa tulisan ---------- */
+.hud-time {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  color: var(--hud-time-text);
+  font-size: var(--fs-value);
+  font-weight: var(--fw-semibold);
+  line-height: var(--lh-value);
+  letter-spacing: var(--ls-time);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.hud-time__icon {
+  display: grid;
+  flex: none;
+  color: var(--hud-time-icon);
+}
+
+.hud-time__icon .icon {
+  inline-size: var(--hud-time-icon-size);
+  block-size: var(--hud-time-icon-size);
+}
+
+.hud-time__value {
+  min-inline-size: var(--hud-time-min-w);
+}
+
+/* 10 detik terakhir: angka + ikon merah dan berdenyut (skala); denyut tidak dipakai bila reduced-motion,
+   penggantinya garis bawah statis pada angka (bukan hanya warna) */
+.hud-time.is-low {
+  --hud-time-text: var(--bad-bg);
+  --hud-time-icon: var(--bad-bg);
+}
+
+.hud-time.is-low .hud-time__value,
+.hud-time.is-low .hud-time__icon {
+  animation: low-time var(--dur-slow) var(--ease-in-out) infinite alternate;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hud-time.is-low .hud-time__value {
+    text-decoration: underline;
+    text-decoration-thickness: var(--border-2);
+    text-underline-offset: var(--space-4);
+  }
 }
 
 /* ---------- nyawa: hanya ikon hati ----------
@@ -108,10 +162,6 @@
 
   .hud .pill {
     padding: var(--space-6) var(--space-10);
-  }
-
-  .hud .pill--time .pill__icon {
-    display: none;
   }
 
   .hud .pill--score .star-tile {
