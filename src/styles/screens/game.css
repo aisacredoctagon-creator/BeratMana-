@@ -8,7 +8,7 @@
   min-block-size: 0;
   inline-size: min(100%, var(--main-max-w));
   margin-inline: auto;
-  /* + area aman bawah: saat keybar disembunyikan (mobile), tombol jawab tidak boleh tertutup home indicator */
+  /* + area aman bawah: tombol jawab tidak boleh tertutup home indicator */
   padding: var(--game-pad-top) var(--gutter) calc(var(--game-pad-bottom) + var(--safe-bottom));
 }
 
