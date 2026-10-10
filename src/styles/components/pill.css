@@ -1,4 +1,4 @@
-/* ===== Pil HUD: .pill (--score --level --mode --combo --time --lives), .star-tile, .badge ===== */
+/* ===== Pil: .pill (--score --level --combo --time), .star-tile, .badge. Dipakai HUD (skor, waktu) dan layar game over. ===== */
 .pill {
   --_bg: var(--pill-score-bg);
   --_line: var(--pill-score-line);
@@ -80,32 +80,8 @@
   line-height: var(--lh-body);
 }
 
-.pill__dot {
-  flex: none;
-  inline-size: var(--dot-size);
-  block-size: var(--dot-size);
-  border-radius: var(--radius-full);
-  background: var(--pill-level-dot);
-}
-
-/* mode (ungu) */
-.pill--mode {
-  --_bg: var(--pill-mode-bg);
-  --_line: var(--pill-mode-line);
-  --_value: var(--pill-mode-text);
-  --_icon: var(--pill-mode-icon);
-  gap: var(--space-12);
-  min-block-size: var(--hud-mode-h);
-}
-
-.pill--mode .pill__value {
-  font-size: var(--fs-body);
-  line-height: var(--lh-body);
-  letter-spacing: var(--ls-pill);
-}
-
-.badge,
-.pill__badge {
+/* lencana kecil (ringkasan kesulitan) */
+.badge {
   padding: var(--space-2) var(--space-8);
   border-radius: var(--radius-sm);
   background: var(--pill-mode-badge-bg);
@@ -114,7 +90,7 @@
   white-space: nowrap;
 }
 
-/* combo (merah muda; makin hangat bila combo naik) */
+/* combo (merah muda): statistik "Streak maks" di layar game over */
 .pill--combo {
   --_bg: var(--pill-combo-bg);
   --_line: var(--pill-combo-line);
@@ -122,28 +98,6 @@
   --_value: var(--pill-combo-value);
   --_icon: var(--pill-combo-icon);
   padding-inline: var(--space-14);
-  transition:
-    background-color var(--dur-base) var(--ease-out),
-    border-color var(--dur-base) var(--ease-out);
-}
-
-.pill--combo[data-level='2'],
-.pill--combo[data-level='3'] {
-  --_bg: var(--pill-combo-warm-bg);
-  --_line: var(--pill-combo-warm-line);
-  --_icon: var(--pill-combo-warm-icon);
-}
-
-.pill--combo[data-level='4'],
-.pill--combo[data-level='5'] {
-  --_bg: var(--pill-combo-hot-bg);
-  --_line: var(--pill-combo-hot-line);
-  --_icon: var(--pill-combo-hot-icon);
-  box-shadow: var(--shadow-combo-hot);
-}
-
-.pill--combo[data-level='5'] .pill__icon {
-  animation: flicker var(--dur-slow) var(--ease-in-out) infinite alternate;
 }
 
 /* waktu (biru langit) + cincin */
@@ -184,28 +138,4 @@
 
 .pill--time.is-low .pill__value {
   animation: low-time var(--dur-slow) var(--ease-in-out) infinite alternate;
-}
-
-/* nyawa (mode Normal) */
-.pill--lives {
-  --_bg: var(--pill-lives-bg);
-  --_line: var(--pill-lives-line);
-  --_label: var(--pill-lives-label);
-  --_value: var(--pill-lives-value);
-  --_icon: var(--pill-lives-value);
-}
-
-.hearts {
-  display: flex;
-  gap: var(--space-2);
-  align-items: center;
-}
-
-.hearts .icon {
-  inline-size: var(--icon-sm);
-  block-size: var(--icon-sm);
-}
-
-.hearts .icon--heart-lost {
-  opacity: 0.35;
 }

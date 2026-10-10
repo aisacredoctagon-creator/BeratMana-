@@ -51,6 +51,7 @@
 
 .expr-card__expr {
   display: block;
+  margin-block: auto; /* ekspresi di tengah ruang di bawah tag, bila kartu lebih tinggi dari isinya */
   max-inline-size: 100%;
   padding-block: var(--space-4);
   color: var(--_expr);

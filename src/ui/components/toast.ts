@@ -3,7 +3,7 @@ import { h } from '../dom';
 let el: HTMLElement | null = null;
 let timer = 0;
 
-/** Toast singkat di bawah layar (`role="status"`). Lihat DESIGN.md §4.12. */
+/** Toast singkat di bawah layar (`role="status"`). Lihat DESIGN.md §4.13. */
 export function toast(message: string, ms = 2200): void {
   if (!el) {
     el = h('div', { class: 'toast', role: 'status', 'aria-live': 'polite', hidden: true });

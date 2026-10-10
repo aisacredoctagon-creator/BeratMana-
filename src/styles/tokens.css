@@ -173,30 +173,40 @@
   --pill-mode-bg: linear-gradient(90deg, var(--color-violet-100) 0%, var(--color-indigo-50) 50%, var(--color-purple-100) 100%);
   --pill-mode-line: var(--color-indigo-200);
   --pill-mode-text: var(--color-indigo-900);
-  --pill-mode-icon: var(--color-indigo-500);
   --pill-mode-badge-bg: var(--color-indigo-600);
   --pill-combo-bg: var(--color-rose-50);
   --pill-combo-line: var(--color-rose-300);
   --pill-combo-label: var(--color-rose-700); /* turunan: Figma #f43f5e */
   --pill-combo-value: var(--color-rose-800);
   --pill-combo-icon: var(--color-rose-500);
-  --pill-combo-warm-bg: var(--color-amber-50); /* combo x2-x3 (turunan) */
-  --pill-combo-warm-line: var(--color-amber-300);
-  --pill-combo-warm-icon: var(--color-orange-500);
-  --pill-combo-hot-bg: var(--color-rose-100); /* combo x4-x5 (turunan) */
-  --pill-combo-hot-line: var(--color-rose-400);
-  --pill-combo-hot-icon: var(--color-rose-600);
-  --pill-combo-hot-glow: var(--alpha-glow-rose);
   --pill-time-bg: var(--color-sky-50);
   --pill-time-line: var(--color-sky-300);
   --pill-time-label: var(--color-sky-700); /* turunan: Figma #0284c7 */
   --pill-time-value: var(--color-sky-900);
   --pill-time-ring: var(--color-sky-500);
   --pill-time-ring-track: var(--color-sky-200);
-  --pill-lives-bg: var(--color-white);
-  --pill-lives-line: var(--color-slate-300);
-  --pill-lives-label: var(--color-slate-600);
-  --pill-lives-value: var(--color-rose-500);
+  /* nyawa = hanya ikon hati (turunan): penuh = isi merah, hilang = outline abu (beda bentuk, bukan hanya warna) */
+  --heart-full: var(--color-rose-500);
+  --heart-lost: var(--color-slate-500);
+  /* notifikasi combo (turunan; 1 = pemanasan, 2–3 hangat, 4–5 panas) */
+  --combo-notice-bg-1: var(--color-rose-50);
+  --combo-notice-line-1: var(--color-rose-300);
+  --combo-notice-text-1: var(--color-rose-800);
+  --combo-notice-icon-1: var(--color-rose-500);
+  --combo-notice-bg-2: var(--color-amber-50);
+  --combo-notice-line-2: var(--color-amber-300);
+  --combo-notice-text-2: var(--color-amber-900);
+  --combo-notice-icon-2: var(--color-orange-500);
+  --combo-notice-bg-4: var(--color-rose-100);
+  --combo-notice-line-4: var(--color-rose-400);
+  --combo-notice-text-4: var(--color-rose-800);
+  --combo-notice-icon-4: var(--color-rose-600);
+  --combo-notice-glow: var(--alpha-glow-rose);
+  --combo-spark-1: var(--color-amber-400);
+  --combo-spark-2: var(--color-rose-400);
+  --combo-spark-3: var(--color-sky-400);
+  --combo-spark-4: var(--color-emerald-500);
+  --combo-spark-5: var(--color-indigo-400);
   --star-tile-bg: var(--color-amber-400);
   --star-tile-line: var(--color-amber-500);
   --star-tile-icon: var(--color-amber-700);
@@ -258,7 +268,6 @@
   --ls-expr: 0.02em;
   --ls-tag: 0.05em;
   --ls-eyebrow: 0.05em;
-  --ls-pill: 0.025em;
   --ls-time: 0.05em;
   --ls-none: 0;
 
@@ -339,7 +348,8 @@
   --shadow-stand: drop-shadow(0 calc(2 * var(--ss-u)) calc(1 * var(--ss-u)) var(--alpha-ink-06))
     drop-shadow(0 calc(4 * var(--ss-u)) calc(1.5 * var(--ss-u)) var(--alpha-ink-07));
   --shadow-fx-text: 0 calc(2 * var(--u)) calc(6 * var(--u)) var(--alpha-ink-07);
-  --shadow-combo-hot: 0 0 calc(12 * var(--u)) var(--pill-combo-hot-glow);
+  --shadow-combo-notice: 0 calc(3 * var(--u)) 0 var(--alpha-ink-07);
+  --shadow-combo-notice-hot: 0 calc(3 * var(--u)) 0 var(--alpha-ink-07), 0 0 calc(14 * var(--u)) var(--combo-notice-glow);
   --shadow-title: drop-shadow(0 calc(1 * var(--u)) calc(0.5 * var(--u)) var(--alpha-ink-05));
   --blur-bar: 6px;
   --blur-scrim: 3px;
@@ -351,13 +361,12 @@
   --hud-pad-bottom: calc(16 * var(--u));
   --hud-max-w: calc(1152 * var(--u));
   --hud-pill-h: calc(59 * var(--u));
-  --hud-mode-h: calc(42 * var(--u));
   --footer-pad-top: calc(16 * var(--u));
   --footer-pad-bottom: calc(14 * var(--u));
   --main-max-w: calc(1024 * var(--u));
   --cards-max-w: calc(672 * var(--u));
   --card-pad: calc(24 * var(--u));
-  --card-min-h: calc(130 * var(--u));
+  --card-min-h: calc(150 * var(--u)); /* 130 (Figma) + ruang bekas tagline */
   --answers-max-w: calc(473 * var(--u));
   --answers-col-w: calc(224 * var(--u));
   --answer-h: calc(131 * var(--u));
@@ -372,8 +381,21 @@
   --hit-outset-icon: calc(-1 * max(0px, calc((var(--tap-min) - var(--icon-btn)) / 2)));
   --sr-size: 1px;
   --star-tile: calc(31 * var(--u));
-  --dot-size: calc(10 * var(--u));
+  --heart-size: max(20px, calc(28 * var(--u))); /* tidak lebih kecil dari 20px di layar kecil/landscape */
+  --heart-gap: calc(6 * var(--u));
   --keycap-h: calc(36 * var(--u));
+  --fs-combo-notice: max(1rem, calc(22 * var(--u)));
+  --combo-notice-top: var(--space-8);
+  --combo-notice-icon: 1.2em;
+  --combo-notice-scale-1: 0.82;
+  --combo-notice-scale-2: 1;
+  --combo-notice-scale-3: 1.06;
+  --combo-notice-scale-4: 1.12;
+  --combo-notice-scale-5: 1.18;
+  --combo-notice-in-x: 140%;
+  --combo-notice-out-x: 45%;
+  --combo-spark-size: max(4px, calc(8 * var(--u)));
+  --combo-spark-reach: max(40px, calc(84 * var(--u)));
   --control-min-h: var(--tap-min);
   --panel-max-w: calc(520 * var(--u));
   --keybar-max-w: calc(896 * var(--u));
@@ -384,8 +406,7 @@
   --badge-mark: calc(32 * var(--u));
 
   /* jarak vertikal tata letak layar game (mengikuti Figma) */
-  --gap-title-tagline: calc(24 * var(--u));
-  --gap-tagline-cards: calc(30 * var(--u));
+  --gap-title-cards: calc(40 * var(--u));
   --gap-cards-seesaw: calc(40 * var(--u));
   --gap-seesaw-answers: calc(50 * var(--u));
   --game-pad-top: calc(40 * var(--u));
@@ -429,6 +450,7 @@
   /* ---------- Z-INDEX ---------- */
   --z-bar: 10;
   --z-overlay: 30;
+  --z-combo-notice: 20; /* di atas isi game, di bawah modal */
   --z-toast: 40;
   --z-flash: 50;
 
@@ -443,6 +465,12 @@
   --dur-verdict: 900ms;
   --dur-shake: 420ms;
   --dur-pop: 320ms;
+  --dur-combo-notice: 1200ms; /* seluruh notifikasi combo: masuk, tahan, keluar */
+  --dur-combo-pulse: 420ms;
+  --dur-combo-shine: 700ms;
+  --dur-combo-spark: 650ms;
+  --dur-combo-spark-delay: 160ms;
+  --dur-combo-spark-stagger: 220ms;
   --dur-rock: 5.5s;
   --ease-out: cubic-bezier(0.2, 0.7, 0.4, 1);
   --ease-in-out: ease-in-out;
@@ -473,13 +501,18 @@
     --hud-pad-top: calc(8 * var(--u));
     --hud-pad-bottom: calc(10 * var(--u));
     --hud-pill-h: calc(52 * var(--u));
-    --gap-title-tagline: calc(8 * var(--u));
-    --gap-tagline-cards: calc(14 * var(--u));
+    --gap-title-cards: calc(20 * var(--u));
     --gap-cards-seesaw: calc(14 * var(--u));
     --gap-seesaw-answers: calc(14 * var(--u));
     --game-pad-top: calc(16 * var(--u));
     --game-pad-bottom: calc(16 * var(--u));
     --card-pad: calc(16 * var(--u));
+    --card-min-h: calc(190 * var(--u));
+    --combo-notice-scale-1: 0.8;
+    --combo-notice-scale-2: 0.9;
+    --combo-notice-scale-3: 0.94;
+    --combo-notice-scale-4: 0.98;
+    --combo-notice-scale-5: 1.02;
     --fs-expr: clamp(1.125rem, 24cqi, calc(48 * var(--u)));
     --gutter: max(var(--space-12), var(--safe-left));
   }
@@ -500,6 +533,7 @@
   :root {
     --u: clamp(0.4px, min(0.078125vw, 0.178571dvh), 1.25px);
     --answers-col-w: calc(224 * var(--u));
+    --card-min-h: calc(130 * var(--u)); /* kolom kiri berbagi tinggi dengan papan */
     --game-pad-top: calc(8 * var(--u));
     --game-pad-bottom: calc(8 * var(--u));
     --hud-pad-top: calc(6 * var(--u));

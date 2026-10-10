@@ -1,6 +1,7 @@
 import { TIME_ATTACK } from '../config/difficulty';
 import { pickItemPair } from '../config/items';
 import type { Item } from '../config/items';
+import { comboNoticeFor, comboNoticeText } from '../game/combo-notice';
 import { GameEngine } from '../game/engine';
 import type { AnswerResult, RunSummary } from '../game/engine';
 import type { GameSettings } from '../game/settings';
@@ -79,6 +80,7 @@ export class GameView {
     this.lastItems = null;
     this.lastTickSecond = Infinity;
     this.ui.hud.setup(settings);
+    this.ui.comboNotice.hide();
     this.ui.seesaw.reset();
     this.ui.cardLeft.clear();
     this.ui.cardRight.clear();
@@ -95,6 +97,7 @@ export class GameView {
     this.paused = true;
     this.engine.paused = true;
     this.audio.play('click');
+    this.ui.comboNotice.hide();
     this.pauseModal.modal.open(this.pauseModal.resumeBtn);
     this.audio.setActive(false);
   }
@@ -119,6 +122,7 @@ export class GameView {
     this.paused = false;
     this.stopLoop();
     this.pending = [];
+    this.ui.comboNotice.hide();
     this.engine?.end('quit');
     this.pauseModal.modal.el.hidden = true;
     // pause() menangguhkan audio; keluar/mengulang dari jeda harus mengaktifkannya lagi
@@ -174,9 +178,7 @@ export class GameView {
     const { hud, seesaw, cardLeft, cardRight } = this.ui;
     const where = seesaw.center();
     hud.setScore(engine.score);
-    hud.setCombo(engine.streak, engine.multiplier);
     hud.setLives(engine.lives, engine.maxLives);
-    hud.setLevel(engine.level + 1, engine.settings);
     if (engine.settings.mode === 'time') hud.setTime(engine.timeLeft);
 
     const q = res.question;
@@ -195,16 +197,18 @@ export class GameView {
       floatText(`+${res.points}`, where.x, where.y, 'good');
       this.audio.play('correct');
       haptics.correct();
-      const milestone = res.streak > 0 && res.streak % TIME_ATTACK.streakBonusEvery === 0;
-      if (milestone) {
-        this.audio.play('combo', res.multiplier);
-        haptics.combo();
+      // notifikasi combo (presentasi saja): tampilan + arpeggio + haptic berjenjang
+      const notice = comboNoticeFor(res.correct, res.streak);
+      if (notice) {
+        this.ui.comboNotice.show(notice);
+        this.audio.play('combo', notice.level);
+        haptics.combo(notice.level);
       }
       if (res.streakBonus) {
+        // bunyinya sudah menyatu dengan arpeggio combo (selalu jatuh di kelipatan yang sama)
         floatText(`+${TIME_ATTACK.streakBonusSeconds} detik`, where.x, where.y + 44, 'bonus');
-        this.audio.play('bonus');
       }
-      this.announce(`Benar. Sisi ${side} lebih berat: ${heavy.label} lebih besar dari ${light.label}.`);
+      this.announce(`Benar. Sisi ${side} lebih berat: ${heavy.label} lebih besar dari ${light.label}.${notice ? ` ${comboNoticeText(notice)}` : ''}`);
     } else {
       flash('bad');
       shake();
@@ -225,6 +229,7 @@ export class GameView {
     this.running = false;
     this.stopLoop();
     this.setButtons(false);
+    this.ui.comboNotice.hide();
     this.audio.play('gameover');
     haptics.gameOver();
     this.onEnd({ summary: engine.summary(), engine });

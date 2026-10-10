@@ -1,5 +1,6 @@
 /* ===== Layar game ===== */
 .game {
+  position: relative; /* penjangkar notifikasi combo (.combo-notice) */
   display: flex;
   flex: 1 1 0;
   flex-direction: column;
@@ -15,7 +16,6 @@
   display: grid;
   flex: none;
   justify-items: center;
-  gap: var(--gap-title-tagline);
 }
 
 .game__cards {
@@ -23,7 +23,7 @@
   flex: none;
   gap: var(--space-24);
   inline-size: min(100%, var(--cards-max-w));
-  margin-block-start: var(--gap-tagline-cards);
+  margin-block-start: var(--gap-title-cards);
 }
 
 .game__board {

@@ -53,14 +53,28 @@ check('pengaturan tersimpan setelah reload', (await page.textContent('#play-summ
 // ---- permainan Normal Hard ----
 await page.click('#btn-play');
 await ready();
-check('layar game tampil + HUD mode Normal', (await page.getAttribute('#screen-game', 'data-mode')) === 'normal' && (await page.isVisible('.pill--lives')) && !(await page.isVisible('.pill--time')));
-check('badge pengali EXP = X2', (await page.textContent('.pill--mode .pill__badge')) === 'X2 EXP');
+check('layar game tampil + HUD mode Normal (hati, tanpa pil waktu)', (await page.getAttribute('#screen-game', 'data-mode')) === 'normal' && (await page.isVisible('.hearts')) && !(await page.isVisible('.pill--time')));
+check('HUD hanya skor, hati, jeda: elemen lama hilang', (await page.$$eval('#screen-game .pill--level, #screen-game .pill--mode, #screen-game .pill--combo, #screen-game .pill__badge, #screen-game .pill--lives, #screen-game #btn-sound, #screen-game .tagline', (e) => e.length)) === 0);
+check('hati: 2 nyawa Hard, aria-label tersembunyi', (await page.getAttribute('.hearts', 'aria-label')) === 'Nyawa 2 dari 2' && (await page.$$eval('.heart[data-state="full"]', (e) => e.length)) === 2);
 const side = await answer(false);
 await page.waitForTimeout(300);
 const fb = await page.getAttribute(side === 'left' ? '#btn-left' : '#btn-right', 'data-feedback');
 check('jawaban benar → feedback good + skor naik', fb === 'good' && (await page.textContent('#hud-score')) !== '0');
 check('kartu pemenang ditandai', (await page.$$eval('.expr-card[data-result="win"]', (e) => e.length)) === 1 && (await page.$$eval('.expr-card[data-result="lose"]', (e) => e.length)) === 1);
 await page.waitForTimeout(1300);
+await ready();
+
+// ---- notifikasi combo: streak 3 = pemanasan, hilang sendiri, tidak menangkap sentuhan ----
+check('belum ada notifikasi combo di streak 1', !(await page.$eval('.combo-notice', (n) => n.classList.contains('is-on'))));
+await answer(false);
+await page.waitForTimeout(1300);
+await ready();
+await answer(false);
+await page.waitForTimeout(350);
+check('notifikasi combo muncul di streak 3 ("COMBO 3")', (await page.$eval('.combo-notice', (n) => n.classList.contains('is-on'))) && (await page.textContent('.combo-notice__text')) === 'COMBO 3');
+check('notifikasi combo tidak menangkap sentuhan', (await page.$eval('.combo-notice', (n) => getComputedStyle(n).pointerEvents)) === 'none');
+await page.waitForTimeout(1500);
+check('notifikasi combo hilang sendiri (~1,2 dtk)', !(await page.$eval('.combo-notice', (n) => n.classList.contains('is-on'))));
 await ready();
 
 // ---- jeda ----
@@ -73,12 +87,19 @@ check('P menjeda', await page.isVisible('#overlay-pause'));
 await page.click('#btn-resume');
 check('tombol Lanjut', !(await page.isVisible('#overlay-pause')));
 
-// ---- suara ----
-const soundLabel = () => page.getAttribute('#btn-sound', 'aria-label');
+// ---- suara: toggle Musik/SFX di pop-up Dijeda (searah dengan beranda, tersimpan) ----
+await page.keyboard.press('p');
+check('Dijeda punya toggle Musik dan SFX', (await page.isVisible('#tgl-music-pause')) && (await page.isVisible('#tgl-sfx-pause')));
+await page.click('#tgl-music-pause');
+check('Musik mati, SFX tetap nyala (terpisah)', (await page.getAttribute('#tgl-music-pause', 'aria-checked')) === 'false' && (await page.getAttribute('#tgl-sfx-pause', 'aria-checked')) === 'true' && (await page.getAttribute('#tgl-music', 'aria-checked')) === 'false');
+await page.click('#tgl-sfx-pause');
+check('SFX mati, tersimpan di localStorage', (await page.evaluate(() => localStorage.getItem('bm.audio'))) === '{"music":false,"sfx":false}');
+await page.click('#tgl-music-pause');
+await page.click('#tgl-sfx-pause');
+check('kedua toggle dinyalakan lagi', (await page.getAttribute('#tgl-music-pause', 'aria-checked')) === 'true' && (await page.getAttribute('#tgl-sfx-pause', 'aria-checked')) === 'true');
+await page.click('#btn-resume');
 await page.keyboard.press('m');
-check('M mematikan suara (ikon + aria)', (await soundLabel()).startsWith('Nyalakan'));
-await page.click('#btn-sound');
-check('tombol suara HUD menyalakan lagi', (await soundLabel()).startsWith('Matikan'));
+check('tombol M tidak lagi mengubah suara', (await page.getAttribute('#tgl-music', 'aria-checked')) === 'true');
 
 // ---- game over (2 nyawa Hard) ----
 await ready().catch(() => {});

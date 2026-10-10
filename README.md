@@ -42,10 +42,10 @@ Repo: https://github.com/aisacredoctagon-creator/BeratMana- (nama repo diakhiri 
 ## Aturan permainan
 
 - **Mode**: *Time Attack* (60 detik; salah = penalti waktu dan combo reset; streak 5, 10, 15, … = +2 detik) dan *Normal* (tanpa timer, nyawa terbatas). Timer Time Attack hanya berjalan saat menunggu jawaban, tidak saat animasi hasil.
-- **Skor** = 10 × combo × pengali kesulitan (Easy ×1, Medium ×1,5, Hard ×2), dibulatkan. Combo: ×2 di streak 5, ×3 di 10, ×4 di 15, ×5 di 20 (maksimum).
+- **Skor** = 10 × combo × pengali kesulitan (Easy ×1, Medium ×1,5, Hard ×2), dibulatkan. Combo: ×2 di streak 5, ×3 di 10, ×4 di 15, ×5 di 20 (maksimum). Notifikasi combo (teks, api/bintang, partikel, arpeggio) muncul di streak 3 dan tiap kelipatan 5; jawaban salah tidak menampilkannya.
 - **Rekor** terpisah per kombinasi mode × kesulitan (6 rekor); pilihan tipe soal tidak memecah rekor. Lihat bagian *Penyimpanan rekor*.
 - **Level intensitas** naik tiap 5 jawaban benar: angka makin besar dan selisih makin tipis, dibatasi `levelMax` kesulitan.
-- Kontrol: `←` `→` atau `A` `D` menjawab, `P`/`Esc` jeda, `M` bisukan semua suara. Game otomatis dijeda saat tab disembunyikan.
+- Kontrol: `←` `→` atau `A` `D` menjawab, `P`/`Esc` jeda. Musik dan SFX diatur lewat toggle di beranda dan di pop-up Dijeda. Game otomatis dijeda saat tab disembunyikan.
 
 ## Penyimpanan rekor
 
@@ -146,7 +146,7 @@ Benda ada di `public/assets/items/` dan didaftarkan di [`src/config/items.ts`](s
 
 ## Audio
 
-Dua toggle terpisah (Musik, SFX), masing-masing hanya mute/unmute dan tersimpan. Semua suara disintesis di `src/services/audio.ts` (benar, salah, combo, game over, klik, tick 10 detik terakhir). `AudioContext` baru dibuat setelah interaksi pertama pengguna dan ditangguhkan saat jeda atau tab disembunyikan.
+Dua toggle terpisah (Musik, SFX), masing-masing hanya mute/unmute dan tersimpan. Semua suara disintesis di `src/services/audio.ts` (benar, salah, combo, game over, klik, tick 10 detik terakhir; nada arpeggio combo di `src/services/combo-sfx.ts`, volume di `src/config/combo.ts`). `AudioContext` baru dibuat setelah interaksi pertama pengguna dan ditangguhkan saat jeda atau tab disembunyikan.
 
 ## Catatan teknis
 
@@ -162,8 +162,7 @@ Dua toggle terpisah (Musik, SFX), masing-masing hanya mute/unmute dan tersimpan.
 | --- | --- | --- |
 | Font **Fredoka** (variabel, subset latin) | paket npm `@fontsource-variable/fredoka` | SIL Open Font License 1.1 |
 | Font **Plus Jakarta Sans** (miring 500/700, subset latin) | paket npm `@fontsource/plus-jakarta-sans` | SIL Open Font License 1.1 |
-| Ikon petir (mode) | Bootstrap Icons (`bi:lightning-charge-fill`), via desain Figma | MIT |
-| Ikon api (combo) | Ant Design Icons (`ant-design:fire-filled`), via desain Figma | MIT |
+| Ikon api (notifikasi combo) | Ant Design Icons (`ant-design:fire-filled`), via desain Figma | MIT |
 | Ilustrasi bulu, gajah, penyangga segitiga; ikon chevron, suara, jeda | file desain Figma milik pemilik proyek, dirakit oleh `scripts/build-figma-art.mjs` | © pemilik proyek |
 | Benda lain (landasan, balon, bola bowling, kapas, batu, bantal, dumbel, mobil), ikon lain (centang, silang, hati, piala, bagikan, dll.), ikon aplikasi, gambar OG | digambar untuk proyek ini | © pemilik proyek |
 | **Musik dan efek suara** | **tidak ada berkas audio**; semuanya disintesis oleh kode (Web Audio API) di `src/services/audio.ts` | © pemilik proyek |

@@ -1,4 +1,6 @@
 import { createAnswerButton } from '../components/button';
+import { createComboNotice } from '../components/combo-notice';
+import type { ComboNoticeView } from '../components/combo-notice';
 import { createKeyHint } from '../components/controls';
 import { createExpressionCard } from '../components/expression-card';
 import type { ExpressionCard } from '../components/expression-card';
@@ -14,9 +16,10 @@ export interface GameScreen {
   cardRight: ExpressionCard;
   btnLeft: HTMLButtonElement;
   btnRight: HTMLButtonElement;
+  comboNotice: ComboNoticeView;
 }
 
-/** Layar game sesuai frame Figma: HUD, judul, tagline, dua kartu, jungkat-jungkit, tombol jawab, bar keyboard. */
+/** Layar game: HUD, judul, dua kartu, jungkat-jungkit, tombol jawab, bar keyboard. */
 export function createGameScreen(): GameScreen {
   const hud = new Hud();
   const seesaw = new Seesaw({ id: 'seesaw' });
@@ -24,6 +27,7 @@ export function createGameScreen(): GameScreen {
   const cardRight = createExpressionCard('right', 'card-right');
   const btnLeft = createAnswerButton('left', 'btn-left', 'Kiri lebih berat (←)');
   const btnRight = createAnswerButton('right', 'btn-right', 'Kanan lebih berat (→)');
+  const comboNotice = createComboNotice();
 
   const sep = () => h('span', { class: 'keyhint__sep', 'aria-hidden': 'true' }, '•');
   const keybar = h(
@@ -35,8 +39,6 @@ export function createGameScreen(): GameScreen {
       createKeyHint([{ key: '←' }, { key: '→' }, 'atau', { key: 'A' }, { key: 'D' }, 'untuk menjawab']),
       sep(),
       createKeyHint([{ key: 'Spasi' }, '/', { key: 'P' }, 'untuk jeda']),
-      sep(),
-      createKeyHint([{ key: 'M' }, 'bisukan suara']),
     ),
   );
 
@@ -47,11 +49,11 @@ export function createGameScreen(): GameScreen {
     h(
       'div',
       { class: 'game' },
+      comboNotice.el,
       h(
         'div',
         { class: 'game__head' },
         h('h1', { id: 'question', class: 'h1' }, 'Mana yang Lebih ', h('span', { class: 'h1__accent' }, 'Berat?')),
-        h('p', { class: 'tagline' }, 'Berat = ', h('strong', {}, 'hasil hitungan,'), ' bukan ukuran visual objek!'),
       ),
       h('div', { class: 'game__cards' }, cardLeft.el, cardRight.el),
       h('div', { class: 'game__board' }, seesaw.el, h('div', { id: 'fx-layer', class: 'fx-layer', 'aria-hidden': 'true' })),
@@ -60,5 +62,5 @@ export function createGameScreen(): GameScreen {
     keybar,
   );
 
-  return { el, hud, seesaw, cardLeft, cardRight, btnLeft, btnRight };
+  return { el, hud, seesaw, cardLeft, cardRight, btnLeft, btnRight, comboNotice };
 }
