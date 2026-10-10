@@ -38,16 +38,6 @@
   line-height: var(--lh-body);
 }
 
-.field__msg {
-  flex: 1;
-  min-inline-size: 0;
-  margin: 0;
-  color: var(--bad-bg);
-  font-size: var(--fs-body);
-  font-weight: var(--fw-semibold);
-  line-height: var(--lh-body);
-}
-
 /* ---------- .switch (toggle) ---------- */
 .switch {
   --_depth: var(--depth-3d);
@@ -217,10 +207,6 @@
   gap: var(--space-8);
 }
 
-.chip--wide {
-  grid-column: 1 / -1;
-}
-
 .chip__face {
   display: flex;
   align-items: center;
@@ -280,26 +266,6 @@
   border-color: var(--side-left-bg);
   background: var(--side-left-bg);
   color: var(--text-on-accent);
-}
-
-.field__actions {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: var(--space-4);
-  margin-block-start: var(--space-4);
-}
-
-.link {
-  min-block-size: var(--tap-min);
-  padding: 0 var(--space-10);
-  border: 0;
-  background: none;
-  color: var(--pill-mode-text);
-  font-size: var(--fs-body);
-  font-weight: var(--fw-semibold);
-  text-decoration: underline;
-  text-underline-offset: var(--space-4);
 }
 
 /* ---------- .keycap ---------- */

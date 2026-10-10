@@ -88,7 +88,7 @@ const TYPE_SETS: { name: string; types: QType[] }[] = [
   { name: 'default (add+mul)', types: ['add', 'mul'] },
   { name: 'fraction+decimal', types: ['fraction', 'decimal'] },
   { name: 'fraction+mul (rentang berjauhan)', types: ['fraction', 'mul'] },
-  { name: 'mix', types: [...QTYPES] },
+  { name: 'semua tipe', types: [...QTYPES] },
 ];
 
 describe('aritmetika rasional', () => {
@@ -214,7 +214,7 @@ describe('generator soal: per tipe', () => {
     }
   });
 
-  it('pembagian di dalam Mix pun selalu bulat', () => {
+  it('pembagian di antara tipe lain pun selalu bulat', () => {
     for (const difficulty of DIFFICULTIES) {
       for (const q of run([...QTYPES], difficulty, ITER, 7)) {
         for (const e of [q.left, q.right]) {
@@ -321,21 +321,47 @@ describe('generator soal: per tipe', () => {
   });
 });
 
-describe('generator soal: mode Mix', () => {
-  it('menghasilkan beragam tipe, termasuk pasangan beda tipe', () => {
+describe('generator soal: beberapa tipe tercentang = soal campuran', () => {
+  /** minMixed = batas bawah porsi pasangan beda tipe. Aturan lama: sisi kanan hanya dipasangkan dengan tipe yang rentang
+   * nilainya tumpang tindih, jadi pecahan (nilai kecil) jarang bersanding dengan perkalian/pembagian (nilai besar). */
+  const MULTI: { name: string; types: QType[]; minMixed: number }[] = [
+    { name: 'dua tipe', types: ['add', 'sub'], minMixed: 0.2 },
+    { name: 'tiga tipe (rentang berjauhan)', types: ['mul', 'div', 'fraction'], minMixed: 0.003 },
+    { name: 'lima tipe', types: ['add', 'sub', 'mul', 'div', 'decimal'], minMixed: 0.2 },
+    { name: 'semua tipe', types: [...QTYPES], minMixed: 0.2 },
+  ];
+
+  it('satu tipe saja hanya menghasilkan tipe itu', () => {
     for (const difficulty of DIFFICULTIES) {
-      const kinds = new Set<string>();
-      let mixedPairs = 0;
-      const qs = run([...QTYPES], difficulty, ITER, 31);
-      for (const q of qs) {
-        kinds.add(q.left.kind);
-        kinds.add(q.right.kind);
-        if (q.left.kind !== q.right.kind) mixedPairs++;
+      for (const t of QTYPES) {
+        for (const q of run([t], difficulty, 800, 11 + QTYPES.indexOf(t))) {
+          expect(q.left.kind).toBe(t);
+          expect(q.right.kind).toBe(t);
+        }
       }
-      for (const t of QTYPES) expect(kinds.has(t), `${difficulty} tanpa ${t}`).toBe(true);
-      expect(mixedPairs).toBeGreaterThan(ITER * 0.2);
     }
   });
+
+  it('banyak tipe: semua tipe terpilih muncul, merata, dan kiri/kanan boleh beda tipe', () => {
+    for (const difficulty of DIFFICULTIES) {
+      for (const set of MULTI) {
+        const count = new Map<string, number>();
+        let mixedPairs = 0;
+        const qs = run(set.types, difficulty, ITER, 31 + set.types.length);
+        for (const q of qs) {
+          for (const e of [q.left, q.right]) count.set(e.kind, (count.get(e.kind) ?? 0) + 1);
+          if (q.left.kind !== q.right.kind) mixedPairs++;
+        }
+        const total = qs.length * 2;
+        for (const t of set.types) {
+          const share = (count.get(t) ?? 0) / total;
+          expect(share, `${difficulty}/${set.name}: ${t} muncul ${(share * 100).toFixed(1)}%`).toBeGreaterThan(0.4 / set.types.length);
+        }
+        for (const k of count.keys()) expect(set.types).toContain(k as QType); // tidak ada tipe lain
+        expect(mixedPairs, `${difficulty}/${set.name}: pasangan beda tipe`).toBeGreaterThan(ITER * set.minMixed);
+      }
+    }
+  }, 60_000);
 
   it('soal akar, pangkat, dan kurung sudah dihapus: tidak ada label berisi √ ² ³ ( )', () => {
     const PER_COMBO = 1000; // 3 kesulitan × 10 set tipe × 1000 soal = 30.000 soal

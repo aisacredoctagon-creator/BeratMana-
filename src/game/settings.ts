@@ -4,7 +4,7 @@ import type { Difficulty, Mode, QType } from '../config/difficulty';
 export interface GameSettings {
   mode: Mode;
   difficulty: Difficulty;
-  /** Urut sesuai QTYPES, minimal 1 elemen. "Mix" = semua tipe tercentang. */
+  /** Urut sesuai QTYPES, minimal 1 elemen. Banyak tipe tercentang = soal campuran. */
   types: QType[];
 }
 
@@ -23,8 +23,6 @@ const order = (types: Iterable<QType>): QType[] => {
   return QTYPES.filter((t) => set.has(t));
 };
 
-export const isMix = (types: readonly QType[]): boolean => QTYPES.every((t) => types.includes(t));
-
 export interface TypeChange {
   types: QType[];
   /** true bila perubahan ditolak karena akan mengosongkan pilihan. */
@@ -39,25 +37,9 @@ export function toggleType(types: readonly QType[], t: QType): TypeChange {
   return { types: order([...types, t]), rejected: false };
 }
 
-/** Mix menyala = pilih semua; mati = kembali ke pilihan sebelum Mix (atau default). */
-export function toggleMix(types: readonly QType[], previous: readonly QType[] | null): QType[] {
-  if (isMix(types)) {
-    const back = previous && previous.length > 0 && !isMix(previous) ? previous : DEFAULT_TYPES;
-    return order(back);
-  }
-  return [...QTYPES];
-}
-
-export const selectAllTypes = (): QType[] => [...QTYPES];
-
-/** "Hapus semua": sisakan satu tipe (yang pertama aktif) karena minimal harus ada satu. */
-export function clearTypes(types: readonly QType[]): TypeChange {
-  const keep = types[0] ?? DEFAULT_TYPES[0] ?? 'add';
-  return { types: [keep], rejected: true };
-}
-
+/** "Semua tipe" bila keenamnya aktif, selain itu daftar singkat ("Tambah, Kali"). */
 export function typesSummary(types: readonly QType[]): string {
-  if (isMix(types)) return 'Mix';
+  if (QTYPES.every((t) => types.includes(t))) return 'Semua tipe';
   return types.map((t) => QTYPE_INFO[t].short).join(', ');
 }
 
@@ -71,7 +53,9 @@ export function sanitizeSettings(raw: unknown): GameSettings {
   const o = (typeof raw === 'object' && raw !== null ? raw : {}) as Record<string, unknown>;
   const mode = MODES.find((m) => m === o.mode) ?? DEFAULT_SETTINGS.mode;
   const difficulty = DIFFICULTIES.find((d) => d === o.difficulty) ?? DEFAULT_SETTINGS.difficulty;
-  const rawTypes = Array.isArray(o.types) ? o.types : [];
-  const types = order(QTYPES.filter((t) => rawTypes.includes(t)));
+  const rawTypes: unknown[] = Array.isArray(o.types) ? o.types : [];
+  // data versi lama yang memakai "mix" dipetakan sekali jalan menjadi keenam tipe tercentang
+  const legacyMix = o.types === 'mix' || rawTypes.includes('mix');
+  const types = legacyMix ? [...QTYPES] : order(QTYPES.filter((t) => rawTypes.includes(t)));
   return { mode, difficulty, types: types.length > 0 ? types : [...DEFAULT_TYPES] };
 }

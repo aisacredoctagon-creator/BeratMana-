@@ -36,19 +36,23 @@ await page.waitForSelector('#btn-play');
 // ---- pengaturan ----
 const types = () => page.$$eval('#chips input:checked', (els) => els.map((e) => e.value));
 check('default: Penjumlahan + Perkalian', JSON.stringify(await types()) === JSON.stringify(['add', 'mul']));
-await page.click('#chips label:has(input[value="mix"])');
-check('Mix menyalakan semua tipe', (await types()).length === 7);
+check('tidak ada chip Mix, Pilih semua, atau Hapus semua', (await page.$$eval('#chips label', (e) => e.length)) === 6 && (await page.$$('#chips input[value="mix"], #btn-all, #btn-none')).length === 0 && !(await page.textContent('#settings')).match(/mix|pilih semua|hapus semua/i));
+for (const t of ['sub', 'div', 'fraction', 'decimal']) await page.click(`#chips label:has(input[value="${t}"])`);
+check('mencentang keenam tipe manual', (await types()).length === 6);
+check('ringkasan "Semua tipe" bila keenamnya aktif', (await page.textContent('#play-summary')).includes('Semua tipe'));
 await page.click('#chips label:has(input[value="fraction"])');
-check('menghapus satu tipe mematikan Mix', !(await types()).includes('mix') && (await types()).length === 5);
-await page.click('#btn-none');
-check('Hapus semua menyisakan 1 tipe + pesan', (await types()).length === 1 && (await page.textContent('#types-msg')) === 'Pilih minimal 1 tipe soal');
+check('menghapus satu tipe: lima tipe tersisa', (await types()).length === 5 && !(await page.textContent('#play-summary')).includes('Semua tipe'));
+for (const t of ['sub', 'div', 'decimal', 'mul']) await page.click(`#chips label:has(input[value="${t}"])`);
+check('menyisakan satu tipe (add)', JSON.stringify(await types()) === JSON.stringify(['add']));
+await page.click('#chips label:has(input[value="add"])');
+check('tipe terakhir tidak bisa dimatikan + toast pesan', JSON.stringify(await types()) === JSON.stringify(['add']) && (await page.textContent('.toast')) === 'Pilih minimal 1 tipe soal');
 check('ringkasan pengaturan', (await page.textContent('#play-summary')).includes('Medium • Time Attack'));
 await page.click('label:has(input[name="difficulty"][value="hard"])');
 await page.click('label:has(input[name="mode"][value="normal"])');
-await page.click('#btn-all');
+for (const t of ['sub', 'mul', 'div', 'fraction', 'decimal']) await page.click(`#chips label:has(input[value="${t}"])`);
 await page.reload();
 await page.waitForSelector('#btn-play');
-check('pengaturan tersimpan setelah reload', (await page.textContent('#play-summary')) === 'Hard • Normal • Mix');
+check('pengaturan tersimpan setelah reload', (await page.textContent('#play-summary')) === 'Hard • Normal • Semua tipe');
 
 // ---- permainan Normal Hard ----
 await page.click('#btn-play');
@@ -109,7 +113,7 @@ await ready();
 await answer(true);
 await page.waitForSelector('#screen-over:not([hidden])', { timeout: 8000 });
 check('game over: nyawa habis', (await page.textContent('#over-title')) === 'Nyawa Habis!');
-check('ringkasan pengaturan di game over', (await page.textContent('#over-summary')).includes('Hard • Normal • Mix'));
+check('ringkasan pengaturan di game over', (await page.textContent('#over-summary')).includes('Hard • Normal • Semua tipe'));
 const scoreText = await page.textContent('#over-score');
 check('rekor baru tampil bila skor > 0', (scoreText !== '0') === (await page.isVisible('#over-record')), `skor=${scoreText}`);
 await page.click('#btn-again');
@@ -172,7 +176,7 @@ const gaps = await page.evaluate(() => {
 });
 check('jarak visual tombol game over sama (merah = sekunder)', gaps.length === 2 && Math.abs(gaps[0] - gaps[1]) < 1, gaps.map((g) => g.toFixed(1)).join(' vs '));
 await page.click('#btn-home');
-check('Ke Beranda → layar judul + pengaturan tersimpan', (await page.isVisible('#btn-play')) && (await page.textContent('#play-summary')).includes('Hard • Normal • Mix'));
+check('Ke Beranda → layar judul + pengaturan tersimpan', (await page.isVisible('#btn-play')) && (await page.textContent('#play-summary')).includes('Hard • Normal • Semua tipe'));
 check('layar game tersembunyi setelah Ke Beranda', !(await page.isVisible('#screen-game')) && !(await page.isVisible('#overlay-pause')));
 
 // 3) + 5) tampilan mobile (lebar 360, tanpa sentuh: bukti keybar tidak bergantung pada hover)

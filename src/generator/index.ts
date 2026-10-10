@@ -1,4 +1,4 @@
-import { DIFFICULTY_CONFIG, QTYPES } from '../config/difficulty';
+import { DIFFICULTY_CONFIG } from '../config/difficulty';
 import type { Difficulty, DifficultyConfig, QType } from '../config/difficulty';
 import { cmp, isInt, sub, abs, toNumber } from './rational';
 import type { Expr } from './expression';
@@ -32,7 +32,7 @@ export function nextPace(pace: Pace, heavier: Side): Pace {
 }
 
 export interface GenerateInput {
-  /** Tipe yang dicentang. Semua tipe tercentang = mode Mix. */
+  /** Tipe yang dicentang. Tiap sisi memilih tipe secara merata dari daftar ini (boleh beda tipe). */
   types: readonly QType[];
   difficulty: Difficulty;
   /** Level intensitas (0 = awal). Dijepit ke levelMax kesulitan. */
@@ -47,8 +47,6 @@ const MAX_ATTEMPTS = 120;
 const GAP_SLACK = 1.35;
 /** Rentang dua tipe dianggap tumpang tindih bila rasio batas atas/bawah irisan ≥ ini. */
 const MIN_OVERLAP_RATIO = 1.6;
-
-export const isMixTypes = (types: readonly QType[]): boolean => QTYPES.every((t) => types.includes(t));
 
 /**
  * Syarat selisih dua nilai: tidak pernah sama; selisih relatif ≥ minDiffRatio;

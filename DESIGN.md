@@ -149,7 +149,7 @@ Pil dengan ikon + label + teks status "Nyala/Mati". Nyala = keluarga hijau; mati
 Opsi sejajar; terpilih = gradasi mode (ungu) + ✓ + bayangan 3D hilang (tampak "rata"), posisi tidak bergeser supaya baris tetap sejajar; tidak terpilih = putih 3D. Navigasi panah keyboard bawaan radio.
 
 ### 4.8 Chip/checkbox — `.chip` (checkbox asli)
-Kartu kecil min 48px dengan kotak centang 24px berisi ✓. Tercentang = latar `--pill-time-bg`, garis `--pill-time-line`, bayangan 3D hilang, kotak terisi biru + ✓ (posisi tidak bergeser). Chip "Mix" lebar penuh.
+Kartu kecil min 48px dengan kotak centang 24px berisi ✓. Tercentang = latar `--pill-time-bg`, garis `--pill-time-line`, bayangan 3D hilang, kotak terisi biru + ✓ (posisi tidak bergeser). Enam chip tipe soal tersusun dalam grid dua kolom (tiga baris) di semua lebar; tidak ada chip "Mix", tombol "Pilih semua", maupun "Hapus semua" (A46). Tipe terakhir tidak bisa dimatikan: toast "Pilih minimal 1 tipe soal".
 
 ### 4.9 Keycap — `.keycap`
 Latar slate-100, garis 2px slate-300, radius 8, teks 14. Dipakai di footer petunjuk keyboard.
@@ -269,7 +269,7 @@ Koordinat desain 576 × 260 (`--ss-*`, unit `--ss-u`). Papan kayu (gradasi kunin
 | A28 | Kartu menang: cincin hijau + ✓ di pojok + latar hijau muda; kalah: ekspresi memudar; nilai "= N" sebagai pil gelap menempel di tepi bawah | umpan balik tidak hanya warna |
 | A30 | Pil statistik game over memakai keluarga warna pil HUD (rekor=kuning, akurasi=biru langit, streak=merah muda, benar/salah=hijau) | konsisten dengan HUD |
 | A31 | Tombol jawab: yang tidak dipilih menjadi abu-abu saat hasil ditampilkan; yang dipilih memakai lencana ✓/✗ | feedback tidak hanya warna |
-| A34 | Layar judul: tombol Main + ringkasan + rekor berada di kolom kiri di bawah jungkat-jungkit; kolom kanan hanya pengaturan, toggle suara, Cara Main (dua kolom seimbang). Pesan "Pilih minimal 1 tipe soal" sebaris dengan link Pilih/Hapus semua | rapi, tanpa baris kosong |
+| A34 | Layar judul: tombol Main + ringkasan + rekor berada di kolom kiri di bawah jungkat-jungkit; kolom kanan hanya pengaturan, toggle suara, Cara Main (dua kolom seimbang). Pesan "Pilih minimal 1 tipe soal" memakai toast (A46) | rapi, tanpa baris kosong |
 | A35 | Orientasi portrait: papan, kartu, dan tombol jawab memakai lebar penuh isi (bukan 576/672/473 satuan) | terlihat kecil di tablet portrait |
 | A36 | Tombol game over "Ubah Pengaturan" diganti "Ke Beranda" (id `btn-home`); menu Jeda tetap "Keluar ke Menu" | tujuannya layar judul; "beranda" = istilah layar itu |
 | A37 | Semua tombol 3D mengompensasi kedalaman bayangan lewat margin (lihat §4); tombol jawab di desktop turun 8 → `--game-pad-bottom` 56 → 48 agar posisinya tetap sama dengan Figma | tombol merah terlihat dempet dengan elemen di sekitarnya |
@@ -281,6 +281,7 @@ Koordinat desain 576 × 260 (`--ss-*`, unit `--ss-u`). Papan kayu (gradasi kunin
 | A43 | SFX `bonus` (+2 detik) dihapus: ia selalu jatuh di streak yang sama dengan notifikasi combo, sehingga menyatu ke arpeggio combo (teks "+2 detik" tetap melayang) | mencegah tiga bunyi bertumpuk (benar + combo + bonus) |
 | A44 | Tingkat notifikasi: 1 = pemanasan (streak 3), 2–5 = pengali; setelah ×5 tetap tingkat 5 sebagai pengingat tiap +5 streak | konsisten dengan SFX combo lama yang berbunyi tiap kelipatan 5 |
 | A45 | Gajah dihapus dari daftar benda (sulit dikenali) dan dekorasi beranda memakai bulu + batu. Bulu, kapas, bantal, dumbel digambar ulang agar jelas di ±42px: bulu bergerigi dengan tangkai, kapas = buah kapas dengan kelopak cokelat + batang + daun, bantal lavender berumbai + lipatan tengah, dumbel hijau tebal. `og-image.png` dibuat ulang tanpa gajah (`scripts/make-og.mjs`) | benda lama mirip daun / awan / mentega; bantal kuning menyatu dengan papan kuning |
+| A46 | Pemilihan tipe soal disederhanakan: chip "Mix", tombol "Pilih semua", dan "Hapus semua" dihapus (Figma menampilkannya; prompt pemilik proyek menang). Banyak tipe tercentang = soal campuran, tiap sisi memilih tipe merata dari daftar (boleh beda tipe). Ringkasan: daftar tipe, atau "Semua tipe" bila keenamnya aktif. Pengaturan lama ber-"mix" dimigrasi menjadi keenam tipe. Tidak ada ekspresi bonus (sudah dihapus sebelumnya), jadi tidak ada perilaku khusus saat keenam tipe aktif | permintaan pemilik proyek; satu cara memilih lebih sederhana |
 | A33 | Skala font teks kecil dinaikkan dari Figma: eyebrow 10→12, tag 12→14, badan/tagline/pil 14→16, nilai HUD 20→24, tombol utama 24→28 (keycap 32→36). Proporsi komponen ikut menyesuaikan lewat padding/tinggi isi | permintaan: font terlalu kecil di Figma, terutama di HP |
 | A32 | Gambar OG dan ikon aplikasi digambar ulang dalam palet Figma | produk harus konsisten |
 

@@ -35,14 +35,14 @@ export function createSegmented(o: { name: string; legend: string; options: Segm
 }
 
 /** Chip/checkbox besar dengan kotak ✓ (bukan hanya warna). Lihat DESIGN.md §4.8. */
-export function createChip(o: { value: string; label: string; wide?: boolean }): {
+export function createChip(o: { value: string; label: string }): {
   el: HTMLLabelElement;
   input: HTMLInputElement;
 } {
   const input = h('input', { type: 'checkbox', value: o.value });
   const el = h(
     'label',
-    { class: o.wide ? 'chip chip--wide' : 'chip' },
+    { class: 'chip' },
     input,
     h('span', { class: 'chip__face' }, h('span', { class: 'chip__box', 'aria-hidden': 'true' }, icon('check')), h('span', {}, o.label)),
   );
