@@ -1,4 +1,4 @@
-/* ===== Kontrol: .switch, .seg, .chip, .keycap, .field, .panel ===== */
+/* ===== Kontrol: .switch, .seg, .chip, .field, .panel ===== */
 
 /* ---------- panel & field ---------- */
 .panel {
@@ -274,40 +274,6 @@
   border-color: var(--side-left-bg);
   background: var(--side-left-bg);
   color: var(--text-on-accent);
-}
-
-/* ---------- .keycap ---------- */
-.keycap {
-  display: inline-flex;
-  font-family: inherit;
-  align-items: center;
-  justify-content: center;
-  min-inline-size: var(--keycap-h);
-  min-block-size: var(--keycap-h);
-  padding: var(--space-6) var(--space-10);
-  border: var(--border-2) solid var(--line-control);
-  border-radius: var(--radius-sm);
-  background: var(--surface-sunken);
-  color: var(--text-body);
-  box-shadow: var(--shadow-pill);
-  font-size: var(--fs-body);
-  font-weight: var(--fw-semibold);
-  line-height: var(--lh-body);
-}
-
-.keyhint {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-6);
-  color: var(--text-muted);
-  font-size: var(--fs-body);
-  font-weight: var(--fw-medium);
-  line-height: var(--lh-body);
-}
-
-.keyhint__sep {
-  color: var(--text-subtle);
-  font-weight: var(--fw-semibold);
 }
 
 /* ---------- mode ringkas (HP: ≤ 720px, dan landscape pendek) ----------

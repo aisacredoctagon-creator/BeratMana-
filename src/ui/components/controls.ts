@@ -82,15 +82,3 @@ export function setSwitch(el: HTMLElement, on: boolean): void {
   const state = el.querySelector('.switch__state');
   if (state) state.textContent = on ? 'Nyala' : 'Mati';
 }
-
-/** Keycap untuk petunjuk keyboard. Lihat DESIGN.md §4.9. */
-export const createKeycap = (text: string): HTMLElement => h('kbd', { class: 'keycap' }, text);
-
-/** Satu kelompok petunjuk: [keycap…] teks. */
-export function createKeyHint(parts: (string | { key: string })[]): HTMLElement {
-  return h(
-    'span',
-    { class: 'keyhint' },
-    ...parts.map((p) => (typeof p === 'string' ? p : createKeycap(p.key))),
-  );
-}

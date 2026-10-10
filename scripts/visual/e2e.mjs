@@ -144,7 +144,7 @@ const small = await page.evaluate(() => {
 });
 console.log('  (info) elemen < 48px di desktop:', small.join(', ') || 'tidak ada');
 
-// ---- feedback build-terbaru (jarak tombol 3D, radius, keybar mobile, tombol Beranda, jarak bawah) ----
+// ---- feedback build-terbaru (jarak tombol 3D, radius, tanpa keybar, tombol Beranda, jarak bawah) ----
 // 2) satu nilai radius untuk semua tombol (di viewport desktop ini)
 const radii = await page.evaluate(() => {
   const set = new Set();
@@ -217,15 +217,17 @@ await mob.evaluate(() => {
 }
 await mob.click('#btn-play');
 await mob.waitForFunction(() => !document.querySelector('#btn-left').disabled, null, { timeout: 8000 });
-check('keybar (petunjuk keyboard) tidak tampil di mobile', !(await mob.isVisible('.keybar')));
+check('tidak ada petunjuk keyboard (keybar) di game, mobile', (await mob.$$('.keybar, .keyhint, .keycap')).length === 0);
 const ansBottom = await mob.evaluate(() => innerHeight - document.getElementById('btn-left').getBoundingClientRect().bottom);
 check('tombol jawab tidak mepet tepi bawah di mobile (≥ 12px)', ansBottom >= 12, `${ansBottom.toFixed(1)}px`);
-check('keybar tetap tampil di desktop', await (async () => {
+check('tidak ada petunjuk keyboard (keybar) di game, desktop', await (async () => {
   await page.click('#btn-play');
-  const v = await page.isVisible('.keybar');
+  await page.waitForFunction(() => !document.querySelector('#btn-left').disabled, null, { timeout: 8000 });
+  const none = (await page.$$('.keybar, .keyhint, .keycap')).length === 0;
   await page.keyboard.press('p');
+  const paused = await page.isVisible('#overlay-pause'); // pintasan tetap berfungsi
   await page.click('#btn-quit');
-  return v;
+  return none && paused;
 })());
 
 // ---- rekor: keluar lebih awal, checkpoint, migrasi, isolasi kombinasi ----

@@ -1,4 +1,4 @@
-/* ===== HUD atas (.hud: skor, waktu/hati, jeda), hati (.hearts), dan bar petunjuk keyboard (.keybar) ===== */
+/* ===== HUD atas (.hud: skor, waktu/hati, jeda), hati (.hearts), ===== */
 .hud {
   position: relative;
   z-index: var(--z-bar);
@@ -169,42 +169,9 @@
   }
 }
 
-/* ---------- landscape pendek: footer disembunyikan ---------- */
+/* ---------- landscape pendek: HUD tetap satu baris ---------- */
 @media (max-height: 520px) and (orientation: landscape) {
   .hud__inner {
     min-block-size: var(--hud-pill-h);
-  }
-
-  .keybar {
-    display: none;
-  }
-}
-
-/* ---------- bar petunjuk keyboard (footer) ---------- */
-.keybar {
-  flex: none;
-  padding: var(--footer-pad-top) max(var(--space-64), var(--safe-right)) calc(var(--footer-pad-bottom) + var(--safe-bottom))
-    max(var(--space-64), var(--safe-left));
-  border-block-start: var(--border-2) solid var(--line-bar);
-  background: var(--surface-bar);
-  -webkit-backdrop-filter: blur(var(--blur-bar));
-  backdrop-filter: blur(var(--blur-bar));
-}
-
-.keybar__inner {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-8) var(--space-20);
-  max-inline-size: var(--keybar-max-w);
-  margin-inline: auto;
-}
-
-/* petunjuk keyboard disembunyikan di perangkat sentuh dan di semua layar "mobile" (≤ 960px = breakpoint HUD dua
-   baris; landscape pendek disembunyikan di blok landscape di atas). Desktop tetap menampilkannya. */
-@media (hover: none), (max-width: 960px) {
-  .keybar {
-    display: none;
   }
 }

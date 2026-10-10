@@ -1,7 +1,6 @@
 import { createAnswerButton } from '../components/button';
 import { createComboNotice } from '../components/combo-notice';
 import type { ComboNoticeView } from '../components/combo-notice';
-import { createKeyHint } from '../components/controls';
 import { createExpressionCard } from '../components/expression-card';
 import type { ExpressionCard } from '../components/expression-card';
 import { h } from '../dom';
@@ -19,7 +18,7 @@ export interface GameScreen {
   comboNotice: ComboNoticeView;
 }
 
-/** Layar game: HUD, judul, dua kartu, jungkat-jungkit, tombol jawab, bar keyboard. */
+/** Layar game: HUD, judul, dua kartu, jungkat-jungkit, tombol jawab. Pintasan keyboard dijelaskan di Cara Main. */
 export function createGameScreen(): GameScreen {
   const hud = new Hud();
   const seesaw = new Seesaw({ id: 'seesaw' });
@@ -28,19 +27,6 @@ export function createGameScreen(): GameScreen {
   const btnLeft = createAnswerButton('left', 'btn-left', 'Kiri lebih berat (←)');
   const btnRight = createAnswerButton('right', 'btn-right', 'Kanan lebih berat (→)');
   const comboNotice = createComboNotice();
-
-  const sep = () => h('span', { class: 'keyhint__sep', 'aria-hidden': 'true' }, '•');
-  const keybar = h(
-    'footer',
-    { class: 'keybar' },
-    h(
-      'div',
-      { class: 'keybar__inner' },
-      createKeyHint([{ key: '←' }, { key: '→' }, 'atau', { key: 'A' }, { key: 'D' }, 'untuk menjawab']),
-      sep(),
-      createKeyHint([{ key: 'Spasi' }, '/', { key: 'P' }, 'untuk jeda']),
-    ),
-  );
 
   const el = h(
     'section',
@@ -59,7 +45,6 @@ export function createGameScreen(): GameScreen {
       h('div', { class: 'game__board' }, seesaw.el, h('div', { id: 'fx-layer', class: 'fx-layer', 'aria-hidden': 'true' })),
       h('div', { class: 'game__answers' }, btnLeft, btnRight),
     ),
-    keybar,
   );
 
   return { el, hud, seesaw, cardLeft, cardRight, btnLeft, btnRight, comboNotice };
