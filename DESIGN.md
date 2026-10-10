@@ -65,7 +65,7 @@ Warna berlabel **"turunan"** di `tokens.css` tidak ada di Figma (lihat §10).
 | Nilai HUD | Fredoka | 600 | **24** (Figma 20) / 1,2 | `--fs-value` `--lh-value` |
 | Tombol utama | Fredoka | 600 | **28** *(turunan)* | `--fs-button` |
 | Teks pil / badan | Fredoka | 500–600 | **16** (Figma 14) / 1,4 | `--fs-body` `--lh-body` |
-| Teks besar (daftar Cara Main, hint) | Fredoka | 500–600 | **18** *(turunan)* | `--fs-body-lg` |
+| Teks besar (daftar Cara Main) | Fredoka | 500–600 | **18** *(turunan)* | `--fs-body-lg` |
 | Tag kartu, hint | Fredoka | 600 | **14** (Figma 12) / 1,3, UPPERCASE, tracking 0,05em | `--fs-tag` `--lh-tag` `--ls-tag` |
 | Eyebrow HUD | Fredoka | 600 | **12** (Figma 10) / 1,2, UPPERCASE | `--fs-eyebrow` `--lh-eyebrow` `--ls-eyebrow` |
 | Tagline | Plus Jakarta Sans | 500 / 700 miring | **16** (Figma 14) / 1,4 | `--font-body` |
@@ -144,12 +144,13 @@ Hanya ikon hati, tanpa wadah dan tanpa tulisan. Penuh = hati terisi (`--heart-fu
 
 ### 4.6 Toggle — `.switch` (`role="switch"`)
 Pil dengan ikon + label + teks status "Nyala/Mati". Nyala = keluarga hijau; mati = putih + coret + ikon redup. Min tinggi 48. Fokus: cincin.
+Varian ikon `.switch--icon` (persegi, tanpa label, bukan `role="switch"`): dipakai tombol "?" Cara Main (`#btn-howto`, `aria-label` + `title` "Cara Main") di baris yang sama dengan Musik dan SFX (`.toggles`: 3 kolom). Ukuran, radius, bayangan, dan kompensasi kedalaman 3D memakai aturan `.switch`. Di HP (≤ 720px dan landscape pendek) pil "Nyala/Mati" disembunyikan supaya satu baris muat di 360px; status tetap terbaca dari ikon redup + label dicoret + latar putih saat mati dan dari `aria-checked` (A47).
 
 ### 4.7 Segmented control — `.seg` (radio asli)
 Opsi sejajar; terpilih = gradasi mode (ungu) + ✓ + bayangan 3D hilang (tampak "rata"), posisi tidak bergeser supaya baris tetap sejajar; tidak terpilih = putih 3D. Navigasi panah keyboard bawaan radio.
 
 ### 4.8 Chip/checkbox — `.chip` (checkbox asli)
-Kartu kecil min 48px dengan kotak centang 24px berisi ✓. Tercentang = latar `--pill-time-bg`, garis `--pill-time-line`, bayangan 3D hilang, kotak terisi biru + ✓ (posisi tidak bergeser). Enam chip tipe soal tersusun dalam grid dua kolom (tiga baris) di semua lebar; tidak ada chip "Mix", tombol "Pilih semua", maupun "Hapus semua" (A46). Tipe terakhir tidak bisa dimatikan: toast "Pilih minimal 1 tipe soal".
+Kartu kecil min 48px dengan kotak centang 24px berisi ✓. Tercentang = latar `--pill-time-bg`, garis `--pill-time-line`, bayangan 3D hilang, kotak terisi biru + ✓ (posisi tidak bergeser). **Mode ringkas** (HP: ≤ 720px, dan landscape pendek) memakai chip berupa ikon: grid 3 kolom × 2 baris; ikon SVG satu keluarga (+, −, ×, ÷, ½, 0,5; garis 2,1–2,4, `--chip-icon`); teks tetap ada tetapi tersembunyi secara visual (`.chip__label`) dan input punya `aria-label` nama lengkap; kotak ✓ menjadi lencana pojok (`--chip-badge`: kosong = mati, biru + ✓ = aktif), ditambah perubahan isi dan garis chip. Desktop/tablet (> 720px) tetap bertuliskan teks dalam grid dua kolom (tiga baris); tidak ada chip "Mix", tombol "Pilih semua", maupun "Hapus semua" (A46). Tipe terakhir tidak bisa dimatikan: toast "Pilih minimal 1 tipe soal".
 
 ### 4.9 Keycap — `.keycap`
 Latar slate-100, garis 2px slate-300, radius 8, teks 14. Dipakai di footer petunjuk keyboard.
@@ -269,7 +270,7 @@ Koordinat desain 576 × 260 (`--ss-*`, unit `--ss-u`). Papan kayu (gradasi kunin
 | A28 | Kartu menang: cincin hijau + ✓ di pojok + latar hijau muda; kalah: ekspresi memudar; nilai "= N" sebagai pil gelap menempel di tepi bawah | umpan balik tidak hanya warna |
 | A30 | Pil statistik game over memakai keluarga warna pil HUD (rekor=kuning, akurasi=biru langit, streak=merah muda, benar/salah=hijau) | konsisten dengan HUD |
 | A31 | Tombol jawab: yang tidak dipilih menjadi abu-abu saat hasil ditampilkan; yang dipilih memakai lencana ✓/✗ | feedback tidak hanya warna |
-| A34 | Layar judul: tombol Main + ringkasan + rekor berada di kolom kiri di bawah jungkat-jungkit; kolom kanan hanya pengaturan, toggle suara, Cara Main (dua kolom seimbang). Pesan "Pilih minimal 1 tipe soal" memakai toast (A46) | rapi, tanpa baris kosong |
+| A34 | Layar judul: tombol Main + rekor berada di kolom kiri di bawah jungkat-jungkit; kolom kanan hanya pengaturan dan satu baris Musik · SFX · "?" (dua kolom seimbang; landscape pendek juga dua kolom). Pesan "Pilih minimal 1 tipe soal" memakai toast (A46) | rapi, tanpa baris kosong |
 | A35 | Orientasi portrait: papan, kartu, dan tombol jawab memakai lebar penuh isi (bukan 576/672/473 satuan) | terlihat kecil di tablet portrait |
 | A36 | Tombol game over "Ubah Pengaturan" diganti "Ke Beranda" (id `btn-home`); menu Jeda tetap "Keluar ke Menu" | tujuannya layar judul; "beranda" = istilah layar itu |
 | A37 | Semua tombol 3D mengompensasi kedalaman bayangan lewat margin (lihat §4); tombol jawab di desktop turun 8 → `--game-pad-bottom` 56 → 48 agar posisinya tetap sama dengan Figma | tombol merah terlihat dempet dengan elemen di sekitarnya |
@@ -282,6 +283,7 @@ Koordinat desain 576 × 260 (`--ss-*`, unit `--ss-u`). Papan kayu (gradasi kunin
 | A44 | Tingkat notifikasi: 1 = pemanasan (streak 3), 2–5 = pengali; setelah ×5 tetap tingkat 5 sebagai pengingat tiap +5 streak | konsisten dengan SFX combo lama yang berbunyi tiap kelipatan 5 |
 | A45 | Gajah dihapus dari daftar benda (sulit dikenali) dan dekorasi beranda memakai bulu + batu. Bulu, kapas, bantal, dumbel digambar ulang agar jelas di ±42px: bulu bergerigi dengan tangkai, kapas = buah kapas dengan kelopak cokelat + batang + daun, bantal lavender berumbai + lipatan tengah, dumbel hijau tebal. `og-image.png` dibuat ulang tanpa gajah (`scripts/make-og.mjs`) | benda lama mirip daun / awan / mentega; bantal kuning menyatu dengan papan kuning |
 | A46 | Pemilihan tipe soal disederhanakan: chip "Mix", tombol "Pilih semua", dan "Hapus semua" dihapus (Figma menampilkannya; prompt pemilik proyek menang). Banyak tipe tercentang = soal campuran, tiap sisi memilih tipe merata dari daftar (boleh beda tipe). Ringkasan: daftar tipe, atau "Semua tipe" bila keenamnya aktif. Pengaturan lama ber-"mix" dimigrasi menjadi keenam tipe. Tidak ada ekspresi bonus (sudah dihapus sebelumnya), jadi tidak ada perilaku khusus saat keenam tipe aktif | permintaan pemilik proyek; satu cara memilih lebih sederhana |
+| A47 | Beranda dirapikan (Figma menampilkannya; prompt pemilik proyek menang): teks "Selisih minimal … • Salah = … • skor …" di bawah kesulitan dan ringkasan "Medium • Time Attack • Tambah, Kali" di bawah Main dihapus; tombol "Pengaturan" dan mekanisme lipat dihapus di semua ukuran (pengaturan selalu tampil; desktop memang tidak pernah punya tombol itu); "Cara Main" menjadi tombol ikon "?" di baris Musik/SFX; chip tipe soal berupa ikon 3 × 2 di HP (≤ 720px dan landscape pendek); pil Nyala/Mati disembunyikan di HP; landscape pendek memakai dua kolom (hero kiri, pengaturan kanan); hiasan jungkat-jungkit beranda diperkecil di HP agar 390 × 844 tanpa scroll | beranda ringkas; info yang sama ada di Cara Main |
 | A33 | Skala font teks kecil dinaikkan dari Figma: eyebrow 10→12, tag 12→14, badan/tagline/pil 14→16, nilai HUD 20→24, tombol utama 24→28 (keycap 32→36). Proporsi komponen ikut menyesuaikan lewat padding/tinggi isi | permintaan: font terlalu kecil di Figma, terutama di HP |
 | A32 | Gambar OG dan ikon aplikasi digambar ulang dalam palet Figma | produk harus konsisten |
 

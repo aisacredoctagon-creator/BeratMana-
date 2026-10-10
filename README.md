@@ -132,7 +132,7 @@ Contoh: tipe "persen". Ada empat langkah.
    };
    ```
    `build` harus **selalu** mengembalikan ekspresi (jepit target ke jangkauan tipe), dan nilai harus berupa `Rat` (`rat(n, d)`) agar perbandingan eksak.
-4. **Daftarkan** di `src/generator/types/registry.ts` (`TYPE_DEFS`). Chip di panel pengaturan dan ringkasan otomatis mengikuti `QTYPES`; mencentang beberapa tipe otomatis menghasilkan soal campuran.
+4. **Daftarkan** di `src/generator/types/registry.ts` (`TYPE_DEFS`). Chip di panel pengaturan dan ringkasan otomatis mengikuti `QTYPES` (tambahkan juga ikon chip HP di `QTYPE_ICON`, `src/ui/settings-panel.ts`, dan SVG-nya di `icons.ts`); mencentang beberapa tipe otomatis menghasilkan soal campuran.
 
 Lalu tambahkan `percent` ke daftar di `TYPE_SETS` pada `generator.test.ts`; semua tes aturan wajib (tidak pernah sama, hasil benar, selisih sesuai kesulitan, dst.) langsung berlaku untuk tipe baru. Bila ada label baru, perluas parser kecil `evaluate()` di file tes tersebut.
 

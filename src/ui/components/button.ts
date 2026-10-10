@@ -11,8 +11,6 @@ export interface ButtonOptions {
   icon?: IconName;
   block?: boolean;
   disabled?: boolean;
-  ariaExpanded?: boolean;
-  ariaControls?: string;
   className?: string;
 }
 
@@ -28,8 +26,6 @@ export function createButton(o: ButtonOptions): HTMLButtonElement {
       id: o.id,
       class: cls,
       disabled: o.disabled,
-      'aria-expanded': o.ariaExpanded === undefined ? undefined : String(o.ariaExpanded),
-      'aria-controls': o.ariaControls,
     },
     o.icon ? icon(o.icon) : null,
     h('span', {}, o.label),

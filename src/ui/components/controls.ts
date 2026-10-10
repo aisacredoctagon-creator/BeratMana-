@@ -9,7 +9,7 @@ export interface SegmentedOption {
 }
 
 /** Segmented control berbasis radio asli (keyboard: panah). Lihat DESIGN.md §4.7. */
-export function createSegmented(o: { name: string; legend: string; options: SegmentedOption[]; hintId?: string }): {
+export function createSegmented(o: { name: string; legend: string; options: SegmentedOption[] }): {
   el: HTMLFieldSetElement;
   inputs: HTMLInputElement[];
 } {
@@ -29,24 +29,41 @@ export function createSegmented(o: { name: string; legend: string; options: Segm
     { class: 'field' },
     h('legend', { class: 'field__legend' }, o.legend),
     h('div', { class: `seg seg--${o.options.length}` }, ...opts),
-    o.hintId ? h('p', { id: o.hintId, class: 'field__hint', 'aria-live': 'polite' }) : null,
   );
   return { el, inputs };
 }
 
-/** Chip/checkbox besar dengan kotak ✓ (bukan hanya warna). Lihat DESIGN.md §4.8. */
-export function createChip(o: { value: string; label: string }): {
+/**
+ * Chip/checkbox besar dengan kotak ✓ (bukan hanya warna). Lihat DESIGN.md §4.8.
+ * Di layar HP (CSS) chip hanya menampilkan `icon`; teks tetap ada di DOM dan di aria-label.
+ */
+export function createChip(o: { value: string; label: string; icon?: IconName }): {
   el: HTMLLabelElement;
   input: HTMLInputElement;
 } {
-  const input = h('input', { type: 'checkbox', value: o.value });
+  const input = h('input', { type: 'checkbox', value: o.value, 'aria-label': o.label });
   const el = h(
     'label',
     { class: 'chip' },
     input,
-    h('span', { class: 'chip__face' }, h('span', { class: 'chip__box', 'aria-hidden': 'true' }, icon('check')), h('span', {}, o.label)),
+    h(
+      'span',
+      { class: 'chip__face' },
+      h('span', { class: 'chip__box', 'aria-hidden': 'true' }, icon('check')),
+      o.icon ? h('span', { class: 'chip__icon', 'aria-hidden': 'true' }, icon(o.icon)) : null,
+      h('span', { class: 'chip__label' }, o.label),
+    ),
   );
   return { el, input };
+}
+
+/** Tombol ikon bergaya toggle (mis. "?" Cara Main di samping Musik dan SFX). Lihat DESIGN.md §4.6. */
+export function createSwitchIconButton(o: { id: string; label: string; icon: IconName }): HTMLButtonElement {
+  return h(
+    'button',
+    { type: 'button', id: o.id, class: 'switch switch--icon', 'aria-label': o.label, title: o.label },
+    icon(o.icon),
+  );
 }
 
 /** Toggle (role="switch") dengan ikon, label, dan teks status Nyala/Mati. Lihat DESIGN.md §4.6. */

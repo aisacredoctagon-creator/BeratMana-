@@ -30,14 +30,6 @@
   text-transform: uppercase;
 }
 
-.field__hint {
-  min-block-size: var(--lh-body);
-  margin: var(--space-8) 0 0;
-  color: var(--text-muted);
-  font-size: var(--fs-tag);
-  line-height: var(--lh-body);
-}
-
 /* ---------- .switch (toggle) ---------- */
 .switch {
   --_depth: var(--depth-3d);
@@ -101,6 +93,18 @@
 
 .switch[aria-checked='false'] .icon {
   opacity: 0.55;
+}
+
+/* tombol ikon bergaya toggle (mis. "?" Cara Main): persegi, tanpa label */
+.switch--icon {
+  justify-content: center;
+  aspect-ratio: 1;
+  padding: var(--space-8);
+}
+
+.switch--icon .icon {
+  inline-size: var(--icon-md);
+  block-size: var(--icon-md);
 }
 
 /* ---------- .seg (segmented control, radio asli) ---------- */
@@ -227,6 +231,10 @@
     background-color var(--dur-base) var(--ease-out);
 }
 
+.chip__icon {
+  display: none;
+}
+
 .chip__box {
   display: grid;
   place-items: center;
@@ -300,4 +308,57 @@
 .keyhint__sep {
   color: var(--text-subtle);
   font-weight: var(--fw-semibold);
+}
+
+/* ---------- mode ringkas (HP: ≤ 720px, dan landscape pendek) ----------
+   Chip tipe soal hanya berupa ikon, 3 per baris; pil Nyala/Mati pada toggle disembunyikan supaya Musik + SFX + "?"
+   muat satu baris di 360px (status tetap jelas: ikon redup + label dicoret + latar putih saat mati). */
+@media (max-width: 720px), (max-height: 520px) and (orientation: landscape) {
+  .chips {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .chip__face {
+    position: relative;
+    justify-content: center;
+    padding: var(--space-8);
+  }
+
+  .chip__icon {
+    display: grid;
+  }
+
+  .chip__icon .icon {
+    inline-size: var(--chip-icon);
+    block-size: var(--chip-icon);
+  }
+
+  /* teks tetap ada untuk pembaca layar, tidak terlihat */
+  .chip__label {
+    position: absolute;
+    inline-size: var(--sr-size);
+    block-size: var(--sr-size);
+    margin: calc(-1 * var(--sr-size));
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  /* kotak ✓ menjadi lencana di pojok: hollow = mati, terisi + ✓ = aktif */
+  .chip__box {
+    position: absolute;
+    inset-block-start: var(--space-4);
+    inset-inline-end: var(--space-4);
+    inline-size: var(--chip-badge);
+    block-size: var(--chip-badge);
+  }
+
+  .chip__box .icon {
+    inline-size: var(--chip-badge-icon);
+    block-size: var(--chip-badge-icon);
+  }
+
+  .switch__state {
+    display: none;
+  }
 }

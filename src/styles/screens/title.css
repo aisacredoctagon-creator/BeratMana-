@@ -59,23 +59,15 @@
   font-variant-numeric: tabular-nums;
 }
 
-.settings-toggle[aria-expanded='false'] .icon--chevron {
-  transform: rotate(-90deg);
-}
-
-.settings-toggle .icon--chevron {
-  transition: transform var(--dur-base) var(--ease-out);
-}
-
 .toggles {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
   gap: var(--space-8);
   inline-size: 100%;
 }
 
-/* ---------- layar lebar: dua kolom, pengaturan selalu terbuka ---------- */
-@media (min-width: 900px) and (min-height: 620px) {
+/* ---------- layar lebar dan landscape pendek: dua kolom (hero kiri, pengaturan kanan) ---------- */
+@media (min-width: 900px) and (min-height: 620px), (max-height: 520px) and (orientation: landscape) {
   .title {
     grid-template-columns: minmax(0, 1fr) minmax(0, var(--panel-max-w));
     align-items: center;
@@ -85,8 +77,16 @@
   .title__panel {
     margin-inline: 0;
   }
+}
 
-  .settings-toggle {
-    display: none;
+/* landscape pendek: panel dirapatkan supaya seluruh pengaturan hampir muat tanpa scroll */
+@media (max-height: 520px) and (orientation: landscape) {
+  .title__panel {
+    gap: var(--space-10);
+  }
+
+  .title__panel .panel {
+    gap: var(--space-10);
+    padding: var(--space-16);
   }
 }

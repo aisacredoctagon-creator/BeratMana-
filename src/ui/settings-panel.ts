@@ -3,8 +3,18 @@ import type { Difficulty, Mode, QType } from '../config/difficulty';
 import { TYPES_MIN_MESSAGE, toggleType } from '../game/settings';
 import type { GameSettings } from '../game/settings';
 import { createChip, createSegmented } from './components/controls';
+import type { IconName } from './components/icons';
 import { toast } from './components/toast';
 import { h } from './dom';
+
+const QTYPE_ICON: Record<QType, IconName> = {
+  add: 'plus',
+  sub: 'minus',
+  mul: 'times',
+  div: 'divide',
+  fraction: 'fraction',
+  decimal: 'decimal',
+};
 
 /**
  * Panel pengaturan: mode, kesulitan, tipe soal. Dibangun dari komponen (segmented, chip, link).
@@ -15,7 +25,6 @@ export class SettingsPanel {
   private readonly chipInputs = new Map<QType, HTMLInputElement>();
   private readonly modeInputs: HTMLInputElement[];
   private readonly diffInputs: HTMLInputElement[];
-  private readonly hint: HTMLElement;
 
   constructor(
     private settings: GameSettings,
@@ -29,16 +38,14 @@ export class SettingsPanel {
     const diff = createSegmented({
       name: 'difficulty',
       legend: 'Kesulitan',
-      hintId: 'difficulty-hint',
       options: DIFFICULTIES.map((d) => ({ value: d, label: DIFFICULTY_CONFIG[d].label })),
     });
     this.modeInputs = mode.inputs;
     this.diffInputs = diff.inputs;
-    this.hint = diff.el.querySelector('#difficulty-hint') as HTMLElement;
 
     const chips = h('div', { class: 'chips', id: 'chips' });
     for (const t of QTYPES) {
-      const c = createChip({ value: t, label: QTYPE_INFO[t].name });
+      const c = createChip({ value: t, label: QTYPE_INFO[t].name, icon: QTYPE_ICON[t] });
       this.chipInputs.set(t, c.input);
       chips.append(c.el);
     }
@@ -82,8 +89,5 @@ export class SettingsPanel {
     for (const [key, input] of this.chipInputs) {
       input.checked = s.types.includes(key);
     }
-    const cfg = DIFFICULTY_CONFIG[s.difficulty];
-    const detail = s.mode === 'time' ? `Salah = −${cfg.timePenalty} detik` : `${cfg.lives} nyawa`;
-    this.hint.textContent = `Selisih minimal ${Math.round(cfg.minDiffRatio * 100)}% • ${detail} • skor ×${String(cfg.scoreMultiplier).replace('.', ',')}`;
   }
 }

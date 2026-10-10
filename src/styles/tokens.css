@@ -403,6 +403,9 @@
   --sheet-max-w: calc(420 * var(--u));
   --sheet-wide-max-w: calc(560 * var(--u));
   --check-box: calc(24 * var(--u));
+  --chip-icon: max(24px, calc(30 * var(--u))); /* ikon tipe soal di mode ringkas (HP) */
+  --chip-badge: max(16px, calc(20 * var(--u))); /* lencana ✓ di pojok chip (HP) */
+  --chip-badge-icon: max(12px, calc(14 * var(--u)));
   --badge-mark: calc(32 * var(--u));
 
   /* jarak vertikal tata letak layar game (mengikuti Figma) */
@@ -502,6 +505,7 @@
     --hud-pad-bottom: calc(10 * var(--u));
     --hud-pill-h: calc(52 * var(--u));
     --gap-title-cards: calc(20 * var(--u));
+    --title-hero-max-w: calc(380 * var(--u)); /* hiasan jungkat-jungkit beranda lebih ringkas di HP */
     --gap-cards-seesaw: calc(14 * var(--u));
     --gap-seesaw-answers: calc(14 * var(--u));
     --game-pad-top: calc(16 * var(--u));

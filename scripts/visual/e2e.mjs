@@ -35,24 +35,27 @@ await page.waitForSelector('#btn-play');
 
 // ---- pengaturan ----
 const types = () => page.$$eval('#chips input:checked', (els) => els.map((e) => e.value));
+const saved = () => page.evaluate(() => JSON.parse(localStorage.getItem('bm.settings') ?? 'null'));
+check('tidak ada teks info di bawah kesulitan maupun di bawah Main, dan tidak ada tombol Pengaturan', !(await page.$('#difficulty-hint')) && !(await page.$('#play-summary')) && !(await page.$('#btn-settings')));
+check('"Cara Main" = tombol ikon "?" (aria-label, title, tanpa teks) di baris Musik/SFX', (await page.getAttribute('#btn-howto', 'aria-label')) === 'Cara Main' && (await page.getAttribute('#btn-howto', 'title')) === 'Cara Main' && (await page.textContent('#btn-howto')).trim() === '' && (await page.evaluate(() => { const t = [...document.querySelectorAll('#screen-title .toggles > *')].map((e) => Math.round(e.getBoundingClientRect().top)); return t.length === 3 && new Set(t).size === 1; })));
 check('default: Penjumlahan + Perkalian', JSON.stringify(await types()) === JSON.stringify(['add', 'mul']));
 check('tidak ada chip Mix, Pilih semua, atau Hapus semua', (await page.$$eval('#chips label', (e) => e.length)) === 6 && (await page.$$('#chips input[value="mix"], #btn-all, #btn-none')).length === 0 && !(await page.textContent('#settings')).match(/mix|pilih semua|hapus semua/i));
 for (const t of ['sub', 'div', 'fraction', 'decimal']) await page.click(`#chips label:has(input[value="${t}"])`);
 check('mencentang keenam tipe manual', (await types()).length === 6);
-check('ringkasan "Semua tipe" bila keenamnya aktif', (await page.textContent('#play-summary')).includes('Semua tipe'));
+check('keenam tipe tersimpan', (await saved()).types.length === 6);
 await page.click('#chips label:has(input[value="fraction"])');
-check('menghapus satu tipe: lima tipe tersisa', (await types()).length === 5 && !(await page.textContent('#play-summary')).includes('Semua tipe'));
+check('menghapus satu tipe: lima tipe tersisa', (await types()).length === 5);
 for (const t of ['sub', 'div', 'decimal', 'mul']) await page.click(`#chips label:has(input[value="${t}"])`);
 check('menyisakan satu tipe (add)', JSON.stringify(await types()) === JSON.stringify(['add']));
 await page.click('#chips label:has(input[value="add"])');
 check('tipe terakhir tidak bisa dimatikan + toast pesan', JSON.stringify(await types()) === JSON.stringify(['add']) && (await page.textContent('.toast')) === 'Pilih minimal 1 tipe soal');
-check('ringkasan pengaturan', (await page.textContent('#play-summary')).includes('Medium • Time Attack'));
+check('pengaturan default tersimpan (Medium, Time Attack)', (await saved()).difficulty === 'medium' && (await saved()).mode === 'time');
 await page.click('label:has(input[name="difficulty"][value="hard"])');
 await page.click('label:has(input[name="mode"][value="normal"])');
 for (const t of ['sub', 'mul', 'div', 'fraction', 'decimal']) await page.click(`#chips label:has(input[value="${t}"])`);
 await page.reload();
 await page.waitForSelector('#btn-play');
-check('pengaturan tersimpan setelah reload', (await page.textContent('#play-summary')) === 'Hard • Normal • Semua tipe');
+check('pengaturan tersimpan setelah reload', (await page.isChecked('input[name="difficulty"][value="hard"]')) && (await page.isChecked('input[name="mode"][value="normal"]')) && (await types()).length === 6);
 
 // ---- permainan Normal Hard ----
 await page.click('#btn-play');
@@ -176,7 +179,7 @@ const gaps = await page.evaluate(() => {
 });
 check('jarak visual tombol game over sama (merah = sekunder)', gaps.length === 2 && Math.abs(gaps[0] - gaps[1]) < 1, gaps.map((g) => g.toFixed(1)).join(' vs '));
 await page.click('#btn-home');
-check('Ke Beranda → layar judul + pengaturan tersimpan', (await page.isVisible('#btn-play')) && (await page.textContent('#play-summary')).includes('Hard • Normal • Semua tipe'));
+check('Ke Beranda → layar judul + pengaturan tersimpan', (await page.isVisible('#btn-play')) && (await page.isChecked('input[name="difficulty"][value="hard"]')));
 check('layar game tersembunyi setelah Ke Beranda', !(await page.isVisible('#screen-game')) && !(await page.isVisible('#overlay-pause')));
 
 // 3) + 5) tampilan mobile (lebar 360, tanpa sentuh: bukti keybar tidak bergantung pada hover)
@@ -185,18 +188,33 @@ await mob.goto(APP_URL);
 await mob.evaluate(() => localStorage.clear());
 await mob.reload();
 await mob.waitForSelector('#btn-play');
-await mob.click('#btn-settings');
+check('mobile: tidak ada tombol Pengaturan dan semua pengaturan tampil', !(await mob.$('#btn-settings')) && (await mob.isVisible('#settings')) && (await mob.isVisible('#chips')) && (await mob.isVisible('#tgl-music')) && (await mob.isVisible('#btn-howto')));
+check('mobile: chip tipe soal berupa ikon, 3 per baris, 2 baris, tinggi ≥ 48px', await mob.evaluate(() => {
+  const c = [...document.querySelectorAll('#chips label')].map((e) => e.getBoundingClientRect());
+  const labelShown = [...document.querySelectorAll('.chip__label')].some((e) => e.getBoundingClientRect().width > 4);
+  return c.length === 6 && !labelShown && new Set(c.map((r) => Math.round(r.top))).size === 2 && new Set(c.map((r) => Math.round(r.left))).size === 3 && c.every((r) => r.height >= 47.5);
+}));
+check('mobile: tiap chip punya aria-label nama lengkap', JSON.stringify(await mob.$$eval('#chips input', (e) => e.map((x) => x.getAttribute('aria-label')))) === JSON.stringify(['Penjumlahan', 'Pengurangan', 'Perkalian', 'Pembagian', 'Pecahan', 'Desimal']));
 await mob.evaluate(() => {
   const s = document.getElementById('screen-title');
   s.scrollTop = s.scrollHeight;
 });
 await mob.waitForTimeout(250);
 const bottomGap = await mob.evaluate(() => innerHeight - document.getElementById('btn-howto').getBoundingClientRect().bottom);
-check('"Cara Main" punya jarak aman dari tepi bawah (≥ 16px)', bottomGap >= 16, `${bottomGap.toFixed(1)}px`);
+check('baris Musik/SFX/? (elemen paling bawah) punya jarak aman dari tepi bawah (≥ 16px)', bottomGap >= 16, `${bottomGap.toFixed(1)}px`);
 await mob.evaluate(() => {
   const s = document.getElementById('screen-title');
   s.scrollTop = 0;
 });
+{
+  const m390 = await (await browser.newContext({ viewport: { width: 390, height: 844 } })).newPage();
+  await m390.goto(APP_URL);
+  await m390.evaluate(() => localStorage.clear());
+  await m390.reload();
+  await m390.waitForSelector('#btn-play');
+  check('390×844: semua pengaturan + tombol Main terlihat tanpa scroll', await m390.evaluate(() => { const s = document.getElementById('screen-title'); return s.scrollHeight <= s.clientHeight + 1; }));
+  await m390.close();
+}
 await mob.click('#btn-play');
 await mob.waitForFunction(() => !document.querySelector('#btn-left').disabled, null, { timeout: 8000 });
 check('keybar (petunjuk keyboard) tidak tampil di mobile', !(await mob.isVisible('.keybar')));

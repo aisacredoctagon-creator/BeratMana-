@@ -52,7 +52,6 @@ async function answer(wrong = false) {
 }
 
 if (scenario === 'settings') {
-  await page.click('#btn-settings').catch(() => {});
   // gulir sampai dasar supaya jarak tombol terakhir ke tepi layar terlihat
   await page.evaluate(() => { const t = document.getElementById('screen-title'); t.scrollTop = t.scrollHeight; });
 } else if (scenario !== 'title' && scenario !== 'howto' && scenario !== 'normal' && scenario !== 'streak') {

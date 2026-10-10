@@ -5,7 +5,6 @@
 export type IconName =
   | 'chevronLeft'
   | 'chevronRight'
-  | 'chevronDown'
   | 'fire'
   | 'star'
   | 'sound'
@@ -16,7 +15,13 @@ export type IconName =
   | 'heartLost'
   | 'trophy'
   | 'share'
-  | 'sliders'
+  | 'plus'
+  | 'minus'
+  | 'times'
+  | 'divide'
+  | 'fraction'
+  | 'decimal'
+  | 'help'
   | 'music'
   | 'target'
   | 'streak'
@@ -38,11 +43,6 @@ const ICONS: Record<IconName, IconDef> = {
   chevronRight: {
     viewBox: '0 0 40 40',
     body: `<path d="M15 8.33333L26.6667 20L15 31.6667" ${STROKE} stroke-width="5.83333"/>`,
-  },
-  chevronDown: {
-    viewBox: '0 0 24 24',
-    body: `<path d="M6 9l6 6 6-6" ${STROKE} stroke-width="3" />`,
-    className: 'icon--chevron',
   },
   fire: {
     viewBox: '0 0 20 20',
@@ -88,9 +88,33 @@ const ICONS: Record<IconName, IconDef> = {
     viewBox: '0 0 24 24',
     body: `<path d="M12 3.5v11.5M8 7l4-4 4 4M5 12v6.5A1.5 1.5 0 006.5 20h11a1.5 1.5 0 001.5-1.5V12" ${STROKE} stroke-width="2.2"/>`,
   },
-  sliders: {
+  plus: {
     viewBox: '0 0 24 24',
-    body: `<path d="M4 7h8M18 7h2M4 17h2M12 17h8" ${STROKE} stroke-width="2.2"/><circle cx="15" cy="7" r="2.4" ${STROKE} stroke-width="2.2"/><circle cx="9" cy="17" r="2.4" ${STROKE} stroke-width="2.2"/>`,
+    body: `<path d="M12 5v14M5 12h14" ${STROKE} stroke-width="2.4"/>`,
+  },
+  minus: {
+    viewBox: '0 0 24 24',
+    body: `<path d="M5 12h14" ${STROKE} stroke-width="2.4"/>`,
+  },
+  times: {
+    viewBox: '0 0 24 24',
+    body: `<path d="M6.5 6.5l11 11M17.5 6.5l-11 11" ${STROKE} stroke-width="2.4"/>`,
+  },
+  divide: {
+    viewBox: '0 0 24 24',
+    body: `<path d="M5 12h14" ${STROKE} stroke-width="2.4"/><circle cx="12" cy="5.8" r="1.9" fill="currentColor"/><circle cx="12" cy="18.2" r="1.9" fill="currentColor"/>`,
+  },
+  fraction: {
+    viewBox: '0 0 24 24',
+    body: `<path d="M9.4 6.4l2.6-2v7.4M5.5 13h13M8.9 16.6c.3-1.5 1.4-2.2 2.9-2.2 1.6 0 2.7.9 2.7 2.3 0 1.2-.8 2-2 3L8.8 21h5.8" ${STROKE} stroke-width="2.2"/>`,
+  },
+  decimal: {
+    viewBox: '0 0 24 24',
+    body: `<ellipse cx="6.6" cy="12" rx="3" ry="4.6" ${STROKE} stroke-width="2.1"/><path d="M11.3 18.4l-.9 2.3" ${STROKE} stroke-width="2.4"/><path d="M20.6 7.6h-4.5l-.6 4c.5-.3 1.1-.5 1.8-.5 1.7 0 2.9 1.1 2.9 2.9 0 1.8-1.3 3-3.2 3-1 0-1.9-.4-2.6-1.1" ${STROKE} stroke-width="2.1"/>`,
+  },
+  help: {
+    viewBox: '0 0 24 24',
+    body: `<circle cx="12" cy="12" r="9" ${STROKE} stroke-width="2.2"/><path d="M9.3 9.6a2.8 2.8 0 1 1 4.1 2.5c-.9.5-1.4 1.1-1.4 2" ${STROKE} stroke-width="2.2"/><circle cx="12" cy="17.1" r="1.2" fill="currentColor"/>`,
   },
   music: {
     viewBox: '0 0 24 24',

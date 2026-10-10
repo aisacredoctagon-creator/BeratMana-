@@ -64,12 +64,6 @@ $('app').append(
 );
 showScreen('title');
 
-/* ================= pengaturan terbuka/terlipat ================= */
-const wide = matchMedia('(min-width: 900px) and (min-height: 620px)');
-title.setSettingsOpen(wide.matches);
-wide.addEventListener('change', () => title.setSettingsOpen(wide.matches));
-title.settingsToggle.addEventListener('click', () => title.setSettingsOpen(!title.settingsOpen));
-
 /* ================= audio ================= */
 // toggle Musik/SFX ada di dua tempat (beranda dan pop-up Dijeda) dan selalu searah
 const switchPairs = [
