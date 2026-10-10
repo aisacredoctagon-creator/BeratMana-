@@ -104,9 +104,10 @@ const ICONS: Record<IconName, IconDef> = {
     viewBox: '0 0 24 24',
     body: `<path d="M5 12h14" ${STROKE} stroke-width="2.4"/><circle cx="12" cy="5.8" r="1.9" fill="currentColor"/><circle cx="12" cy="18.2" r="1.9" fill="currentColor"/>`,
   },
+  /** Pie dengan satu bagian kosong (pecahan = sebagian dari utuh). */
   fraction: {
     viewBox: '0 0 24 24',
-    body: `<path d="M9.4 6.4l2.6-2v7.4M5.5 13h13M8.9 16.6c.3-1.5 1.4-2.2 2.9-2.2 1.6 0 2.7.9 2.7 2.3 0 1.2-.8 2-2 3L8.8 21h5.8" ${STROKE} stroke-width="2.2"/>`,
+    body: `<circle cx="12" cy="12" r="8.8" ${STROKE} stroke-width="2.1"/><path d="M12 12V3.2M12 12h8.8" ${STROKE} stroke-width="2.1"/><path d="M12 12h6.2A6.2 6.2 0 1 1 12 5.8z" fill="currentColor"/>`,
   },
   decimal: {
     viewBox: '0 0 24 24',
