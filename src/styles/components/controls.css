@@ -344,15 +344,9 @@
     white-space: nowrap;
   }
 
-  /* tanpa kotak centang: status tercentang dibaca dari chip yang "rata" (bayangan 3D hilang) + garis ganda + latar */
+  /* tanpa kotak centang; garis chip tercentang sama tebal dengan versi web (aturan .chip input:checked di atas) */
   .chip__box {
     display: none;
-  }
-
-  .chip input:checked + .chip__face {
-    box-shadow:
-      var(--shadow-key-pressed),
-      inset 0 0 0 var(--border-2) var(--pill-time-line);
   }
 
   .switch__state {
