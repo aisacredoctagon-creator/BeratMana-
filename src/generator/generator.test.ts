@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { DIFFICULTIES, DIFFICULTY_CONFIG, QTYPES } from '../config/difficulty';
 import type { Difficulty, QType } from '../config/difficulty';
-import { formatScaled, formatValue } from './expression';
+import { formatScaled, formatValue, frac, spokenLabel, txt } from './expression';
 import {
   INITIAL_PACE,
   MAX_SAME_SIDE_RUN,
@@ -380,6 +380,25 @@ describe('generator soal: beberapa tipe tercentang = soal campuran', () => {
       }
     }
     expect(checked).toBeGreaterThanOrEqual(PER_COMBO * 2 * DIFFICULTIES.length * TYPE_SETS.length);
+  }, 60_000);
+
+  it('label ucap (aria-label): simbol operator diganti kata, pecahan dibaca "per"', () => {
+    expect(spokenLabel({ tokens: [txt('2 × 21')] })).toBe('2 kali 21');
+    expect(spokenLabel({ tokens: [txt('1980 ÷ 20')] })).toBe('1980 dibagi 20');
+    expect(spokenLabel({ tokens: [txt('87 − 9')] })).toBe('87 kurang 9');
+    expect(spokenLabel({ tokens: [txt('18 + 12')] })).toBe('18 tambah 12');
+    expect(spokenLabel({ tokens: [frac(3, 7), txt(' − '), frac(2, 5)] })).toBe('3 per 7 kurang 2 per 5');
+    expect(spokenLabel({ tokens: [txt('0,375 + 0,25')] })).toBe('0,375 tambah 0,25');
+    // untuk ribuan soal acak semua tipe: tidak ada simbol operator tersisa dan tidak ada spasi ganda
+    for (const difficulty of DIFFICULTIES) {
+      for (const q of run([...QTYPES], difficulty, 800, 5)) {
+        for (const e of [q.left, q.right]) {
+          const t = spokenLabel(e);
+          expect(t, `${difficulty}: "${e.label}" → "${t}"`).not.toMatch(/[×÷−+/]|s{2}/);
+          expect(t.length).toBeGreaterThan(0);
+        }
+      }
+    }
   }, 60_000);
 
   it('konfigurasi kesulitan tidak lagi punya rentang bonus', () => {

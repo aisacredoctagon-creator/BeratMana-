@@ -22,7 +22,7 @@ const evalLabel = (s) =>
 const ready = () => page.waitForFunction(() => !document.querySelector('#btn-left').disabled, null, { timeout: 8000 });
 async function answer(wrong = false) {
   // aria-label kartu = "Sisi kiri: <label polos>" (textContent pecahan bertumpuk tidak memuat "/")
-  const [l, r] = await page.evaluate(() => ['#card-left', '#card-right'].map((s) => document.querySelector(s).getAttribute('aria-label').split(': ')[1]));
+  const [l, r] = await page.evaluate(() => ['#card-left', '#card-right'].map((s) => document.querySelector(s).dataset.expr));
   const left = (evalLabel(l) > evalLabel(r)) !== wrong;
   await page.click(left ? '#btn-left' : '#btn-right');
   return left ? 'left' : 'right';

@@ -7,20 +7,22 @@ export interface Item {
   id: string;
   name: string;
   src: string;
+  /** Bagian atas gambar yang kosong (0–1 dari tinggi): box soal menempel di puncak objek yang sebenarnya. Default 0. */
+  top?: number;
 }
 
 const base = (file: string): string => `${import.meta.env.BASE_URL}assets/items/${file}`;
 
 export const ITEMS: readonly Item[] = [
-  { id: 'bulu', name: 'Bulu', src: base('bulu.svg') },
-  { id: 'landasan', name: 'Landasan besi', src: base('landasan.svg') },
-  { id: 'balon', name: 'Balon', src: base('balon.svg') },
-  { id: 'bola-bowling', name: 'Bola bowling', src: base('bola-bowling.svg') },
-  { id: 'kapas', name: 'Kapas', src: base('kapas.svg') },
-  { id: 'batu', name: 'Batu', src: base('batu.svg') },
-  { id: 'bantal', name: 'Bantal', src: base('bantal.svg') },
-  { id: 'dumbel', name: 'Dumbel', src: base('dumbel.svg') },
-  { id: 'mobil', name: 'Mobil', src: base('mobil.svg') },
+  { id: 'bulu', name: 'Bulu', src: base('bulu.svg'), top: 0.07 },
+  { id: 'landasan', name: 'Landasan besi', src: base('landasan.svg'), top: 0.35 },
+  { id: 'balon', name: 'Balon', src: base('balon.svg'), top: 0.07 },
+  { id: 'bola-bowling', name: 'Bola bowling', src: base('bola-bowling.svg'), top: 0.12 },
+  { id: 'kapas', name: 'Kapas', src: base('kapas.svg'), top: 0.11 },
+  { id: 'batu', name: 'Batu', src: base('batu.svg'), top: 0.29 },
+  { id: 'bantal', name: 'Bantal', src: base('bantal.svg'), top: 0.28 },
+  { id: 'dumbel', name: 'Dumbel', src: base('dumbel.svg'), top: 0.35 },
+  { id: 'mobil', name: 'Mobil', src: base('mobil.svg'), top: 0.38 },
 ];
 
 /** Memuat dan men-decode semua gambar di depan agar pergantian ronde mulus. */

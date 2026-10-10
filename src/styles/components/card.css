@@ -1,33 +1,56 @@
-/* ===== Kartu ekspresi: .expr-card (--left / --right) ===== */
+/* ===== Box soal bergaya speech bubble: .expr-card (--left / --right) =====
+   Dipasang di .seesaw__anchor (seesaw.css) sehingga menempel di atas objek. Ekor (.expr-card__tail) = persegi
+   dirotasi 45° dengan latar dan garis yang sama; bayangan memakai filter: drop-shadow pada wadah supaya garis dan
+   bayangan menyambung mulus sampai ke ekor. Posisi ekor (--tail-x) dipisah dari geseran box (--bubble-shift). */
 .expr-card {
-  --_line: var(--side-left-line);
+  --_bg: var(--surface-card);
+  --_line: var(--bubble-line-left);
+  --_glow: var(--side-left-glow);
   --_tag-bg: var(--side-left-tag-bg);
   --_tag-line: var(--side-left-tag-line);
   --_tag-text: var(--side-left-tag-text);
   position: relative;
   container-type: inline-size;
   display: flex;
-  flex: 1 1 0;
   flex-direction: column;
   align-items: center;
   min-inline-size: 0;
-  min-block-size: var(--card-min-h);
-  padding: var(--card-pad);
+  min-block-size: var(--bubble-min-h);
+  padding: var(--bubble-pad);
   border: var(--border-1) solid var(--_line);
   border-radius: var(--radius-xl);
-  background: var(--surface-card);
-  box-shadow: var(--shadow-card);
+  background: var(--_bg);
+  filter: drop-shadow(0 var(--bubble-shadow-y) var(--bubble-shadow-blur) var(--_glow));
   transition:
     opacity var(--dur-base) var(--ease-out),
     background-color var(--dur-base) var(--ease-out),
-    box-shadow var(--dur-base) var(--ease-out);
+    border-color var(--dur-base) var(--ease-out);
 }
 
 .expr-card--right {
-  --_line: var(--side-right-line);
+  --_line: var(--bubble-line-right);
+  --_glow: var(--side-right-glow);
   --_tag-bg: var(--side-right-tag-bg);
   --_tag-line: var(--side-right-tag-line);
   --_tag-text: var(--side-right-tag-text);
+}
+
+/* ekor: menunjuk ke bawah ke objek; --tail-x terpisah dari geseran box agar tetap di tengah objek */
+.expr-card__tail {
+  position: absolute;
+  inset-block-end: calc(var(--bubble-tail) / -2 - var(--border-1));
+  inset-inline-start: clamp(var(--bubble-tail-min), calc(50% - var(--bubble-shift)), calc(100% - var(--bubble-tail-min)));
+  inline-size: var(--bubble-tail);
+  block-size: var(--bubble-tail);
+  border-inline-end: var(--border-1) solid var(--_line);
+  border-block-end: var(--border-1) solid var(--_line);
+  border-end-end-radius: var(--radius-sm);
+  background: var(--_bg);
+  transform: translateX(-50%) rotate(45deg);
+  transition:
+    background-color var(--dur-base) var(--ease-out),
+    border-color var(--dur-base) var(--ease-out);
+  pointer-events: none;
 }
 
 /* "SISI KIRI" / "SISI KANAN" */
@@ -79,22 +102,17 @@
   text-wrap: balance;
 }
 
-/* nilai hasil hitungan, menempel di tepi bawah kartu (tidak menggeser tata letak) */
+/* baris nilai hasil hitungan di dalam box; ruangnya selalu dicadangkan (tampil lewat opacity) sehingga tinggi box stabil */
 .expr-card__value {
-  position: absolute;
-  inset-inline: 0;
-  inset-block-end: 0;
-  display: flex;
-  justify-content: center;
-  transform: translateY(50%);
+  display: block;
+  min-block-size: var(--bubble-value-h);
+  text-align: center;
   pointer-events: none;
 }
 
 .expr-card__value-text {
-  padding: var(--space-2) var(--space-12);
-  border-radius: var(--radius-full);
-  background: var(--text-strong);
-  color: var(--text-on-accent);
+  display: inline-block;
+  color: var(--color-question-text);
   font-size: var(--fs-body);
   font-weight: var(--fw-semibold);
   line-height: var(--lh-body);
@@ -134,9 +152,9 @@
 }
 
 .expr-card[data-result='win'] {
-  background: var(--good-soft);
-  border-color: var(--good-line);
-  box-shadow: 0 0 0 var(--border-2) var(--good-line);
+  --_bg: var(--good-soft);
+  --_line: var(--good-line);
+  --_glow: var(--alpha-ink-07);
 }
 
 .expr-card[data-result='win'] .expr-card__mark {

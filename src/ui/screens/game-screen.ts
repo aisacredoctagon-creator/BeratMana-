@@ -18,12 +18,13 @@ export interface GameScreen {
   comboNotice: ComboNoticeView;
 }
 
-/** Layar game: HUD, judul, dua kartu, jungkat-jungkit, tombol jawab. Pintasan keyboard dijelaskan di Cara Main. */
+/** Layar game: HUD, judul, jungkat-jungkit (dengan box soal di atas objek), tombol jawab. Pintasan keyboard dijelaskan di Cara Main. */
 export function createGameScreen(): GameScreen {
   const hud = new Hud();
-  const seesaw = new Seesaw({ id: 'seesaw' });
   const cardLeft = createExpressionCard('left', 'card-left');
   const cardRight = createExpressionCard('right', 'card-right');
+  // box soal menempel di atas objek masing-masing (di dalam jungkat-jungkit)
+  const seesaw = new Seesaw({ id: 'seesaw', bubbles: { left: cardLeft.el, right: cardRight.el } });
   const btnLeft = createAnswerButton('left', 'btn-left', 'Kiri lebih berat (←)');
   const btnRight = createAnswerButton('right', 'btn-right', 'Kanan lebih berat (→)');
   const comboNotice = createComboNotice();
@@ -41,7 +42,6 @@ export function createGameScreen(): GameScreen {
         { class: 'game__head' },
         h('h1', { id: 'question', class: 'h1' }, 'Mana yang Lebih ', h('span', { class: 'h1__accent' }, 'Berat?')),
       ),
-      h('div', { class: 'game__cards' }, cardLeft.el, cardRight.el),
       h('div', { class: 'game__board' }, seesaw.el, h('div', { id: 'fx-layer', class: 'fx-layer', 'aria-hidden': 'true' })),
       h('div', { class: 'game__answers' }, btnLeft, btnRight),
     ),

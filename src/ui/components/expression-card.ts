@@ -1,4 +1,4 @@
-import { formatValue, visualLength } from '../../generator/expression';
+import { formatValue, spokenLabel, visualLength } from '../../generator/expression';
 import type { Expr, Token } from '../../generator/expression';
 import { h } from '../dom';
 import { icon } from './icons';
@@ -26,7 +26,10 @@ export interface ExpressionCard {
   clear(): void;
 }
 
-/** Kartu ekspresi "SISI KIRI/KANAN + hitungan". Lihat DESIGN.md §4.4. */
+/**
+ * Box soal bergaya speech bubble: tag "SISI KIRI/KANAN" + ekspresi + baris nilai, dengan ekor kecil di bawah.
+ * Dipasang di dalam jungkat-jungkit (menempel di atas objek). Lihat DESIGN.md §4.4.
+ */
 export function createExpressionCard(side: Side, id: string): ExpressionCard {
   const expr = h('span', { class: 'expr-card__expr', id: `${id}-expr` });
   const valueText = h('span', { class: 'expr-card__value-text' });
@@ -37,13 +40,15 @@ export function createExpressionCard(side: Side, id: string): ExpressionCard {
     expr,
     h('span', { class: 'expr-card__value', 'aria-hidden': 'true' }, valueText),
     h('span', { class: 'expr-card__mark', 'aria-hidden': 'true' }, icon('check')),
+    h('span', { class: 'expr-card__tail', 'aria-hidden': 'true' }),
   );
   return {
     el,
     set(e) {
       expr.replaceChildren(...e.tokens.map(tokenNode));
       el.dataset.size = sizeClass(e.tokens);
-      el.setAttribute('aria-label', `Sisi ${side === 'left' ? 'kiri' : 'kanan'}: ${e.label}`);
+      el.dataset.expr = e.label; // ekspresi mentah untuk pengujian; aria-label memakai kata ("2 kali 21")
+      el.setAttribute('aria-label', `Sisi ${side === 'left' ? 'kiri' : 'kanan'}: ${spokenLabel(e)}`);
       el.removeAttribute('data-result');
       valueText.textContent = '';
     },

@@ -125,15 +125,20 @@ Kiri biru (`--side-left-*`), kanan koral (`--side-right-*`). Tinggi `--answer-h`
 | `data-feedback="good"` | animasi pop + lencana ✓ hijau di pojok |
 | `data-feedback="bad"` | goyang horizontal + lencana ✗ merah di pojok |
 
-### 4.4 Kartu ekspresi — `.expr-card` (`--left` / `--right`)
-Putih, garis 1px (`--side-*-line`), radius 24, padding 24, isi: tag "SISI KIRI/KANAN" (pil kecil) + ekspresi 48px. **Warna teks soal satu token** `--color-question-text` untuk kedua sisi dan semua tipe (tambah, kurang, kali, bagi, pecahan, desimal); tanpa warna per sisi/operator/tipe dan tanpa opacity pada kondisi normal. Pengecualian yang disengaja: state kalah memudar (opacity .6, A28).
-`data-size="s|m|l|xl"` mengecilkan ekspresi panjang. Ekspresi mendukung pecahan bertumpuk (`.frac`). Soal akar (√), pangkat, dan kurung sudah dihapus dari game.
+### 4.4 Box soal (speech bubble) — `.expr-card` (`--left` / `--right`)
+Box putih bersudut `--radius-xl` dengan **ekor kecil membulat di tengah bawah** yang menunjuk objek, **menempel di atas objeknya** dan ikut naik-turun bersama objek saat jungkat-jungkit miring, tanpa ikut berputar (teks selalu tegak). Isi: tag "SISI KIRI/KANAN" (pil kecil) + ekspresi + satu baris nilai "= N" (ruangnya selalu dicadangkan, tampil lewat opacity: tinggi box stabil).
+- **Warna:** garis 1px biru muda (kiri, `--bubble-line-left`) dan merah muda (kanan, `--bubble-line-right`), turunan 55% dari `--side-*-line` ke putih; bayangan halus senada (`--side-*-glow`) lewat `filter: drop-shadow` pada wadah, sehingga garis dan bayangan menyambung mulus sampai ke ekor. **Warna teks soal satu token** `--color-question-text` untuk kedua sisi dan semua tipe (tambah, kurang, kali, bagi, pecahan, desimal); tanpa warna per sisi/operator/tipe dan tanpa opacity pada kondisi normal.
+- **Ekor:** `.expr-card__tail` = persegi `--bubble-tail` dirotasi 45° dengan latar dan garis yang sama (sudut ujung membulat). Posisi ekor terpisah dari posisi box: box digeser `--bubble-shift` (terdaftar `@property <length>`) agar tidak keluar tepi jungkat-jungkit (`--bubble-edge`), sedangkan ekor tetap di tengah objek (`left = 50% − shift`, dibatasi `--bubble-tail-min` dari sudut).
+- **Penempelan di objek:** kartu dipasang di dalam `.seesaw__item` lewat jangkar nol-ukuran `.seesaw__anchor` di puncak objek yang sebenarnya (`--item-top` = bagian kosong di atas gambar, `Item.top` di `items.ts`, default 0) dikurangi `--bubble-gap` dan `--bubble-tail-depth` (ujung ekor berjarak satu token spasi kecil dari objek). Jangkar diputar BALIK `rotate(-tilt)` dengan transisi/durasi yang sama seperti papan, jadi rotasi bersih 0. Lebar box `--bubble-w` ≈ 40–48% lebar jungkat-jungkit (`cqi`).
+- **Ekspresi:** `data-size="s|m|l|xl"` mengecilkan ekspresi panjang (font mengikuti lebar box lewat `cqi`; 'xl' boleh dua baris); pecahan bertumpuk (`.frac`). Box tumbuh ke atas (ekor tetap) untuk pecahan bertumpuk. Soal akar, pangkat, dan kurung sudah dihapus dari game.
+- **Aksesibilitas:** `aria-label` membacakan kata ("Sisi kiri: 2 kali 21", pecahan "3 per 7 kurang 2 per 5", lewat `spokenLabel`); ekspresi mentah di `data-expr` (untuk pengujian). Ekor dan lencana ✓ `aria-hidden`. Jungkat-jungkit game memakai `role="group"` (bukan `img`, supaya box terbaca pembaca layar).
+- **Ketahanan:** diuji dengan ekspresi terpanjang tiap tipe (pecahan Hard, desimal 3 angka, 2 digit × 2 digit, 1980 ÷ 20, dll.) di 360–1920px dan landscape, datar dan miring: tanpa overflow, tanpa keluar layar, tanpa menimpa HUD/judul/tombol/titik tumpu/box lawan; font terkecil ≥ 12px.
 | State | Perilaku |
 | --- | --- |
-| Default | seperti Figma |
-| `data-result="win"` | cincin `--good-line`, latar `--good-soft`, lencana ✓ di pojok, nilai "= N" tampil |
-| `data-result="lose"` | nilai "= N" tampil, kartu agak pudar |
-| Tersembunyi (antar ronde) | `opacity` 0 |
+| Default | box putih, garis dan bayangan senada sisi |
+| `data-result="win"` | latar `--good-soft`, garis `--good-line`, lencana ✓ di pojok, baris "= N" tampil |
+| `data-result="lose"` | baris "= N" tampil, teks soal dan tag agak pudar (opacity .6) |
+| Antar ronde | ikut animasi masuk/keluar objek (opacity + scale); posisi absolut → tanpa layout shift |
 
 ### 4.5 Pil — `.pill` (+ `--score`, `--time` di HUD; `--level`, `--combo` di statistik game over)
 Latar & garis 2px per keluarga warna, radius 16, `--shadow-pill`, padding 8 × 16. Bagian: `.pill__icon`, `.pill__text` > `.pill__label` (eyebrow) + `.pill__value`. Lencana bintang skor = `.star-tile`.
@@ -184,21 +189,22 @@ Koordinat desain 576 × 260 (`--ss-*`, unit `--ss-u`). Papan kayu (gradasi kunin
 │ [Skor]                  [Waktu] atau [♥♥♥♥♥]                      [⏸]    │
 ├──────────────────────────────────────────────────────────────────────────────┤
 │                    Mana yang Lebih Berat?   (H1, "Berat?" bergradasi)         │
-│              [ SISI KIRI  32 + 15 ]     [ SISI KANAN  23 × 3 ]                │
-│                     ── jungkat-jungkit 576 × 260 ──                           │
+│        [ SISI KIRI 32 + 15 ]             [ SISI KANAN 23 × 3 ]                │
+│                ▽ (ekor)                          ▽ (ekor)                    │
+│              (benda kiri)  ── jungkat-jungkit 576 × 260 ──  (benda kanan)     │
 │                    [   <  (biru)  ]   [  >  (koral)  ]                        │
 └──────────────────────────────────────────────────────────────────────────────┘
 ```
-- Isi utama dibatasi `--main-max-w` (1024) dan rata tengah. Kartu `--cards-max-w` (672), tombol jawab `--answers-max-w` (473).
-- HUD satu baris di semua lebar (skor kiri, waktu/hati tepat di tengah, jeda kanan); tinggi mengikuti tombol jeda (≥ 48px). Tagline tidak ada di layar game (infonya ada di Cara Main dan beranda); ruangnya dipakai kartu soal yang lebih tinggi (`--card-min-h`, ekspresi di tengah kartu). Tidak ada footer/petunjuk keyboard di layar game (A49): pintasan (←/→/A/D menjawab, Spasi/P jeda) tetap berfungsi dan dijelaskan di Cara Main. `.game` menambah `env(safe-area-inset-bottom)` pada padding bawah agar tombol jawab tidak tertutup home indicator.
+- Isi utama dibatasi `--main-max-w` (1024) dan rata tengah. Box soal ada di dalam jungkat-jungkit (menempel di atas objek), tombol jawab `--answers-max-w` (473).
+- HUD satu baris di semua lebar (skor kiri, waktu/hati tepat di tengah, jeda kanan); tinggi mengikuti tombol jeda (≥ 48px). Tagline tidak ada di layar game (infonya ada di Cara Main dan beranda); ruangnya dipakai box soal di atas objek (jungkat-jungkit terpusat di area yang lebih tinggi; A51). Tidak ada footer/petunjuk keyboard di layar game (A49): pintasan (←/→/A/D menjawab, Spasi/P jeda) tetap berfungsi dan dijelaskan di Cara Main. `.game` menambah `env(safe-area-inset-bottom)` pada padding bawah agar tombol jawab tidak tertutup home indicator.
 - Layar yang bisa di-scroll (judul, game over) memakai `--screen-pad-start` / `--screen-pad-end` (padding bawah = 40 + area aman) dan kontainer isinya `flex: none` supaya padding bawah ikut terhitung saat di-scroll.
-- Layar sempit (≤ 720px): kartu mengecil dengan teks mengikuti lebar kartu (`cqi`), judul pertanyaan mengikuti lebar viewport (tetap satu baris di 360px), tombol jawab tetap besar.
-- **Landscape pendek** (tinggi ≤ 520px, mis. HP miring): tata letak dua kolom. Kiri = kartu di atas jungkat-jungkit; kanan = tombol jawab bertumpuk. Judul disembunyikan. `--u` mengikuti tinggi 560 (bukan 992).
+- Layar sempit (≤ 720px): box soal mengecil dengan teks mengikuti lebar box (`cqi`), judul pertanyaan mengikuti lebar viewport (tetap satu baris di 360px), tombol jawab tetap besar.
+- **Landscape pendek** (tinggi ≤ 520px, mis. HP miring): tata letak dua kolom. Kiri = jungkat-jungkit (di dasar kolom, ruang di atasnya untuk box soal, termasuk saat miring); kanan = tombol jawab bertumpuk. Judul disembunyikan. `--u` mengikuti tinggi 560 (bukan 992).
 
 ```
 ┌ HUD: [Skor]              [Waktu / ♥♥♥]            [⏸] ┐
-│  [ SISI KIRI ] [ SISI KANAN ]              [ < ]       │
-│      ── jungkat-jungkit ──                 [ > ]       │
+│   [ SISI KIRI ]    [ SISI KANAN ]         [ < ]       │
+│  ── benda ── jungkat-jungkit ── benda ──   [ > ]       │
 └────────────────────────────────────────────────────────┘
 ```
 
@@ -228,7 +234,7 @@ Koordinat desain 576 × 260 (`--ss-*`, unit `--ss-u`). Papan kayu (gradasi kunin
 | ≥ 1280 × 992 | persis Figma kecuali bagian HUD/tagline yang disederhanakan (A40) |
 | 961–1279 | `--u` mengecil mengikuti viewport |
 | 721–960 (tablet portrait) | padding HUD mengecil; papan, kartu, tombol jawab selebar isi (orientasi portrait) |
-| ≤ 720 | token padding/jarak mengecil; kartu soal lebih tinggi (`--card-min-h` 190); modal menjadi bottom sheet |
+| ≤ 720 | token padding/jarak mengecil; box soal lebih ringkas (`--bubble-min-h`); modal menjadi bottom sheet |
 | Landscape pendek (tinggi ≤ 520) | tata letak dua kolom (lihat §5), `--u` mengikuti tinggi 560 |
 
 ## 9. Aset
@@ -284,6 +290,7 @@ Koordinat desain 576 × 260 (`--ss-*`, unit `--ss-u`). Papan kayu (gradasi kunin
 | A47 | Beranda dirapikan (Figma menampilkannya; prompt pemilik proyek menang): teks "Selisih minimal … • Salah = … • skor …" di bawah kesulitan dan ringkasan "Medium • Time Attack • Tambah, Kali" di bawah Main dihapus; tombol "Pengaturan" dan mekanisme lipat dihapus di semua ukuran (pengaturan selalu tampil; desktop memang tidak pernah punya tombol itu); "Cara Main" menjadi tombol ikon "?" di baris Musik/SFX; chip tipe soal berupa ikon 3 × 2 tanpa kotak centang di HP (≤ 720px dan landscape pendek); pil Nyala/Mati disembunyikan di HP; landscape pendek memakai dua kolom (hero kiri, pengaturan kanan); hiasan jungkat-jungkit beranda diperkecil di HP agar 390 × 844 tanpa scroll | beranda ringkas; info yang sama ada di Cara Main |
 | A48 | Indikator HUD dirapikan (prompt pemilik proyek menang atas Figma): kata "SKOR" dan "WAKTU" dihapus; waktu tanpa kotak, ikon jam di kiri angka (ikon cincin progres dan `.timer-ring*` dihapus, A19 tidak berlaku); skor tetap berkotak. Satu warna teks soal (`--color-question-text`): akar masalah lama = `--side-left-expr` (sky-950) berbeda dari `--side-right-expr` (purple-950); kedua token dihapus. State kalah (opacity .6, kontras 4,0:1) sengaja tidak diubah, dilaporkan ke pemilik proyek | bar atas lebih ringkas; teks soal seragam |
 | A49 | Footer petunjuk keyboard (komponen `.keybar`, `.keyhint`, `.keycap`) dihapus dari layar game di semua ukuran, termasuk versi web (Figma menampilkannya; permintaan pemilik proyek menang). Pintasan keyboard tetap berfungsi dan dijelaskan di Cara Main. Ruang 62 di bawah dipakai area main | game lebih bersih; info yang sama ada di Cara Main |
+| A51 | Box soal berbentuk speech bubble dengan ekor, menempel di atas objek (target pemilik proyek; Figma menampilkan dua kartu di atas papan). Baris kartu dikeluarkan dari alur layout sehingga jungkat-jungkit dan objek bergeser ke atas ±35–104px (disetujui); di landscape pendek papan di dasar kolom. Nilai "= N" menjadi baris kecil di dalam box (bukan pil di tepi bawah yang bertabrakan dengan ekor). aria-label memakai kata ("2 kali 21"). Tag "SISI KIRI/KANAN" sudah ada dan dipertahankan | benda dan box kini berdekatan; pembaca layar membaca soal dengan jelas |
 | A33 | Skala font teks kecil dinaikkan dari Figma: eyebrow 10→12, tag 12→14, badan/tagline/pil 14→16, nilai HUD 20→24, tombol utama 24→28 (keycap 32→36). Proporsi komponen ikut menyesuaikan lewat padding/tinggi isi | permintaan: font terlalu kecil di Figma, terutama di HP |
 | A32 | Gambar OG dan ikon aplikasi digambar ulang dalam palet Figma | produk harus konsisten |
 

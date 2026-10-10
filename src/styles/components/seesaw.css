@@ -1,4 +1,12 @@
 /* ===== Jungkat-jungkit (.seesaw). Koordinat desain 576 x 260; 1 satuan = var(--ss-u) ===== */
+
+/* geseran box soal agar tidak keluar tepi; terdaftar sebagai <length> supaya satuan cqi dihitung di elemen box
+   (bukan di keturunannya) dan ekor memakai nilai yang sama */
+@property --bubble-shift {
+  syntax: '<length>';
+  inherits: true;
+  initial-value: 0;
+}
 .seesaw {
   position: relative;
   container-type: inline-size;
@@ -63,6 +71,40 @@
   object-fit: contain;
   object-position: center bottom;
   pointer-events: none;
+}
+
+/* ---- box soal (speech bubble) di atas objek ----
+   Jangkar nol-ukuran di puncak objek berputar BALIK (-tilt) dengan transisi yang sama seperti papan, sehingga
+   rotasi bersihnya 0: box ikut naik-turun mengikuti objek tetapi teksnya selalu tegak. */
+.seesaw__anchor {
+  position: absolute;
+  inset-inline-start: 50%;
+  /* puncak objek yang sebenarnya = bagian kosong di atas gambar (--item-top); dikurangi jarak kecil dan tinggi ekor, sehingga UJUNG ekor berjarak --bubble-gap dari objek */
+  inset-block-start: calc(var(--item-top, 0) * var(--ss-item-size) * var(--ss-u) - var(--bubble-gap) - var(--bubble-tail-depth));
+  inline-size: 0;
+  block-size: 0;
+  transform: rotate(calc(-1 * var(--tilt, 0deg)));
+  transform-origin: 0 0;
+  transition: transform var(--dur-tilt) var(--spring);
+  pointer-events: none;
+}
+
+.seesaw[data-state='leaving'] .seesaw__anchor {
+  transition-duration: var(--dur-tilt-reset);
+  transition-timing-function: var(--ease-reset);
+}
+
+.seesaw__anchor .expr-card {
+  --bubble-shift: var(--bubble-shift-left);
+  position: absolute;
+  inset-block-end: 0;
+  inset-inline-start: 0;
+  inline-size: var(--bubble-w);
+  transform: translateX(calc(-50% + var(--bubble-shift)));
+}
+
+.seesaw__anchor .expr-card--right {
+  --bubble-shift: var(--bubble-shift-right);
 }
 
 .seesaw__stand {

@@ -28,6 +28,22 @@ export function tokensToLabel(tokens: readonly Token[]): string {
     .join('');
 }
 
+/**
+ * Teks ekspresi untuk pembaca layar, mis. "2 × 21" → "2 kali 21", pecahan 3/7 → "3 per 7".
+ * Label mentah (`label`) tetap dipakai pengujian; ini hanya untuk aria-label.
+ */
+export function spokenLabel(e: Pick<Expr, 'tokens'>): string {
+  return e.tokens
+    .map((k) =>
+      k.t === 'frac'
+        ? `${k.n} per ${k.d}`
+        : k.v.replace(/×/g, 'kali').replace(/÷/g, 'dibagi').replace(/−/g, 'kurang').replace(/\+/g, 'tambah'),
+    )
+    .join('')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 export function makeExpr(kind: QType, value: Rat, tokens: Token[]): Expr {
   return { kind, value, tokens, label: tokensToLabel(tokens) };
 }

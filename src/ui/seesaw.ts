@@ -5,6 +5,9 @@ import { icon } from './components/icons';
 
 export type SeesawState = 'idle' | 'entering' | 'ready' | 'revealing' | 'leaving';
 
+/** Jangkar nol-ukuran di atas objek; diputar balik terhadap papan supaya box soal di dalamnya selalu tegak. */
+const anchor = (box?: HTMLElement) => (box ? h('div', { class: 'seesaw__anchor' }, box) : null);
+
 /**
  * Komponen jungkat-jungkit (DESIGN.md §4.13). Hanya mengubah atribut data-state, variabel CSS --tilt,
  * dan gambar benda; semua gerak dilakukan CSS lewat transform/opacity (pegas di seesaw.css).
@@ -15,7 +18,7 @@ export class Seesaw {
   private readonly imgs: { left: HTMLImageElement; right: HTMLImageElement };
   private readonly verdict: HTMLElement;
 
-  constructor(opts: { rock?: boolean; id?: string } = {}) {
+  constructor(opts: { rock?: boolean; id?: string; bubbles?: { left: HTMLElement; right: HTMLElement } } = {}) {
     // width/height = rasio intrinsik 1:1 (mencegah layout shift); ukuran tampil tetap diatur CSS
     const imgL = h('img', { alt: '', decoding: 'async', draggable: false, width: 200, height: 200 });
     const imgR = h('img', { alt: '', decoding: 'async', draggable: false, width: 200, height: 200 });
@@ -24,13 +27,13 @@ export class Seesaw {
       'div',
       { class: 'seesaw__beam' },
       h('div', { class: 'seesaw__plank' }, h('span', { class: 'seesaw__shine' })),
-      h('div', { class: 'seesaw__item seesaw__item--left' }, imgL),
-      h('div', { class: 'seesaw__item seesaw__item--right' }, imgR),
+      h('div', { class: 'seesaw__item seesaw__item--left' }, imgL, anchor(opts.bubbles?.left)),
+      h('div', { class: 'seesaw__item seesaw__item--right' }, imgR, anchor(opts.bubbles?.right)),
     );
     this.verdict = h('div', { class: 'seesaw__verdict', 'aria-hidden': 'true' });
     this.el = h(
       'div',
-      { id: opts.id, class: opts.rock ? 'seesaw seesaw--rock' : 'seesaw', 'data-state': 'idle', role: 'img' },
+      { id: opts.id, class: opts.rock ? 'seesaw seesaw--rock' : 'seesaw', 'data-state': 'idle', role: opts.bubbles ? 'group' : 'img' },
       this.beam,
       h('img', { class: 'seesaw__stand', src: `${import.meta.env.BASE_URL}assets/seesaw/stand.svg`, alt: '', width: 80, height: 112, draggable: false }),
       h('div', { class: 'seesaw__base' }),
@@ -60,6 +63,9 @@ export class Seesaw {
   setItems(items: readonly [Item, Item]): void {
     this.imgs.left.src = items[0].src;
     this.imgs.right.src = items[1].src;
+    // puncak objek yang sebenarnya (untuk menempelkan ujung ekor box soal)
+    this.beam.querySelector<HTMLElement>('.seesaw__item--left')?.style.setProperty('--item-top', String(items[0].top ?? 0));
+    this.beam.querySelector<HTMLElement>('.seesaw__item--right')?.style.setProperty('--item-top', String(items[1].top ?? 0));
   }
 
   /** Menampilkan dekorasi diam: benda terlihat, papan bebas bergoyang lewat CSS. */

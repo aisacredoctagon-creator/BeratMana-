@@ -25,24 +25,20 @@ await page.evaluate(async (base) => {
   const right = createExpressionCard('right', 'og-right');
   left.set(makeExpr('mul', rat(16), [txt('4 × 4')]));
   right.set(makeExpr('mul', rat(12), [txt('3 × 4')]));
-  const seesaw = new Seesaw({ id: 'og-seesaw' });
+  const seesaw = new Seesaw({ id: 'og-seesaw', bubbles: { left: left.el, right: right.el } }); // box soal menempel di objek
   const find = (id) => ITEMS.find((i) => i.id === id);
   seesaw.showStatic([find('bulu'), find('batu')]);
   seesaw.reveal('left'); // sisi kiri lebih berat (16 > 12), bukan yang gambarnya besar
 
   document.documentElement.style.setProperty('--u', '1.12px'); // kanvas desain 1280 × 992 → 1200 × 630
-  const cards = el('div', 'game__cards');
-  cards.style.cssText = 'inline-size:760px;margin:26px auto 0';
-  cards.append(left.el, right.el);
   const board = el('div', 'game__board');
-  board.style.cssText = 'width:680px;height:320px;flex:none;margin:6px auto 0';
+  board.style.cssText = 'width:680px;height:400px;flex:none;margin:6px auto 0';
   board.append(seesaw.el);
   const wrap = el('div', 'og-wrap');
   wrap.style.cssText = 'position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;padding-top:30px;background:var(--surface-app)';
   wrap.append(
     el('h1', 'h1 h1--hero', 'Berat <span class="h1__accent">Mana?</span>'),
     el('p', 'tagline', 'Berat = <strong>hasil hitungan,</strong> bukan ukuran visual objek!'),
-    cards,
     board,
   );
   document.body.append(wrap);

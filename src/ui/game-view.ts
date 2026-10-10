@@ -6,6 +6,7 @@ import { GameEngine } from '../game/engine';
 import type { AnswerResult, RunSummary } from '../game/engine';
 import type { GameSettings } from '../game/settings';
 import type { Side } from '../generator';
+import { spokenLabel } from '../generator/expression';
 import type { AudioManager } from '../services/audio';
 import { haptics } from '../services/haptics';
 import { setAnswerFeedback } from './components/button';
@@ -142,7 +143,7 @@ export class GameView {
     this.lastItems = [items[0].id, items[1].id];
     this.ui.cardLeft.set(q.left);
     this.ui.cardRight.set(q.right);
-    this.ui.seesaw.setLabel(`Bandingkan ${q.left.label} dengan ${q.right.label}`);
+    this.ui.seesaw.setLabel(`Bandingkan ${spokenLabel(q.left)} dengan ${spokenLabel(q.right)}`);
     this.ui.seesaw.present(items as readonly [Item, Item]);
     setAnswerFeedback(this.ui.btnLeft, null);
     setAnswerFeedback(this.ui.btnRight, null);

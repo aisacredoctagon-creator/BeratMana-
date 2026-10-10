@@ -42,8 +42,8 @@ const evalLabel = (s) =>
 
 async function answer(wrong = false) {
   const labels = await page.evaluate(() => [
-    document.querySelector('#card-left').getAttribute('aria-label').split(': ')[1],
-    document.querySelector('#card-right').getAttribute('aria-label').split(': ')[1],
+    document.querySelector('#card-left').dataset.expr,
+    document.querySelector('#card-right').dataset.expr,
   ]);
   const l = evalLabel(labels[0]);
   const r = evalLabel(labels[1]);

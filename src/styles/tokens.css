@@ -364,9 +364,25 @@
   --hud-max-w: calc(1152 * var(--u));
   --hud-pill-h: calc(59 * var(--u));
   --main-max-w: calc(1024 * var(--u));
-  --cards-max-w: calc(672 * var(--u));
-  --card-pad: calc(24 * var(--u));
-  --card-min-h: calc(150 * var(--u)); /* 130 (Figma) + ruang bekas tagline */
+  /* box soal speech bubble (turunan; target pemilik proyek) */
+  --bubble-line-left: color-mix(in srgb, var(--side-left-line) 55%, var(--color-white)); /* border biru muda */
+  --bubble-line-right: color-mix(in srgb, var(--side-right-line) 55%, var(--color-white)); /* border merah muda */
+  --bubble-w: min(48cqi, max(40cqi, calc(200 * var(--u)))); /* cqi = lebar jungkat-jungkit */
+  --bubble-pad: calc(14 * var(--u));
+  --bubble-min-h: calc(128 * var(--u)); /* pecahan bertumpuk membuat box lebih tinggi (tumbuh ke atas, ekor tetap) */
+  --bubble-value-h: calc(26 * var(--u));
+  --bubble-tail: calc(26 * var(--u)); /* sisi persegi ekor (dirotasi 45°) */
+  --bubble-tail-depth: calc(var(--bubble-tail) * 0.71); /* ekor menonjol ±0,71 × sisi persegi di bawah tepi box */
+  --bubble-tail-min: calc(30 * var(--u)); /* ekor tidak boleh lebih dekat ke sudut box dari ini */
+  --bubble-edge: var(--space-4); /* sisa jarak ke tepi jungkat-jungkit saat box digeser */
+  --bubble-gap: var(--space-6); /* jarak ujung ekor ke puncak objek */
+  /* posisi ekor (persen lebar box) dan geseran box agar tidak keluar tepi jungkat-jungkit (cqi = lebar jungkat-jungkit) */
+  --bubble-anchor-x-left: calc((var(--ss-item-left-x) + var(--ss-item-size) / 2) * var(--ss-u));
+  --bubble-anchor-x-right: calc((var(--ss-item-right-x) + var(--ss-item-size) / 2) * var(--ss-u));
+  --bubble-shift-left: max(0px, calc(var(--bubble-w) / 2 - var(--bubble-anchor-x-left) + var(--bubble-edge)));
+  --bubble-shift-right: min(0px, calc(100cqi - var(--bubble-anchor-x-right) - var(--bubble-w) / 2 - var(--bubble-edge)));
+  --bubble-shadow-y: calc(4 * var(--u));
+  --bubble-shadow-blur: calc(12 * var(--u));
   --answers-max-w: calc(473 * var(--u));
   --answers-col-w: calc(224 * var(--u));
   --answer-h: calc(131 * var(--u));
@@ -410,7 +426,6 @@
 
   /* jarak vertikal tata letak layar game (mengikuti Figma) */
   --gap-title-cards: calc(40 * var(--u));
-  --gap-cards-seesaw: calc(40 * var(--u));
   --gap-seesaw-answers: calc(50 * var(--u));
   --game-pad-top: calc(40 * var(--u));
   --game-pad-bottom: calc(48 * var(--u)); /* 56 (Figma) − 8 kedalaman tombol jawab yang kini masuk layout */
@@ -506,12 +521,11 @@
     --hud-pill-h: calc(52 * var(--u));
     --gap-title-cards: calc(20 * var(--u));
     --title-hero-max-w: calc(380 * var(--u)); /* hiasan jungkat-jungkit beranda lebih ringkas di HP */
-    --gap-cards-seesaw: calc(14 * var(--u));
     --gap-seesaw-answers: calc(14 * var(--u));
     --game-pad-top: calc(16 * var(--u));
     --game-pad-bottom: calc(16 * var(--u));
-    --card-pad: calc(16 * var(--u));
-    --card-min-h: calc(190 * var(--u));
+    --bubble-pad: calc(12 * var(--u));
+    --bubble-min-h: calc(130 * var(--u));
     --combo-notice-scale-1: 0.8;
     --combo-notice-scale-2: 0.9;
     --combo-notice-scale-3: 0.94;
@@ -526,7 +540,6 @@
 @media (orientation: portrait) {
   :root {
     --ss-w: 100%;
-    --cards-max-w: 100%;
     --answers-max-w: 100%;
   }
 }
@@ -537,7 +550,8 @@
   :root {
     --u: clamp(0.4px, min(0.078125vw, 0.178571dvh), 1.25px);
     --answers-col-w: calc(224 * var(--u));
-    --card-min-h: calc(130 * var(--u)); /* kolom kiri berbagi tinggi dengan papan */
+    --bubble-min-h: calc(132 * var(--u)); /* ruang di atas objek hanya ±110px */
+    --bubble-value-h: calc(22 * var(--u));
     --game-pad-top: calc(8 * var(--u));
     --game-pad-bottom: calc(8 * var(--u));
     --hud-pad-top: calc(6 * var(--u));
