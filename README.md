@@ -43,9 +43,21 @@ Repo: https://github.com/aisacredoctagon-creator/BeratMana- (nama repo diakhiri 
 
 - **Mode**: *Time Attack* (60 detik; salah = penalti waktu dan combo reset; streak 5, 10, 15, … = +2 detik) dan *Normal* (tanpa timer, nyawa terbatas). Timer Time Attack hanya berjalan saat menunggu jawaban, tidak saat animasi hasil.
 - **Skor** = 10 × combo × pengali kesulitan (Easy ×1, Medium ×1,5, Hard ×2), dibulatkan. Combo: ×2 di streak 5, ×3 di 10, ×4 di 15, ×5 di 20 (maksimum).
-- **Rekor** tersimpan di localStorage, terpisah per kombinasi mode × kesulitan (6 rekor). Pilihan tipe soal tidak memecah rekor. Bila localStorage tidak tersedia, data bertahan di memori selama sesi.
+- **Rekor** terpisah per kombinasi mode × kesulitan (6 rekor); pilihan tipe soal tidak memecah rekor. Lihat bagian *Penyimpanan rekor*.
 - **Level intensitas** naik tiap 5 jawaban benar: angka makin besar dan selisih makin tipis, dibatasi `levelMax` kesulitan.
 - Kontrol: `←` `→` atau `A` `D` menjawab, `P`/`Esc` jeda, `M` bisukan semua suara. Game otomatis dijeda saat tab disembunyikan.
+
+## Penyimpanan rekor
+
+Satu-satunya pintu: `src/services/records.ts` (`getBest`, `submitScore`) dan `src/game/session.ts` (`GameSession`).
+
+- **Key per kombinasi:** `bm:best:v2:{mode}:{difficulty}` berisi satu bilangan bulat (mis. `bm:best:v2:time:hard` = `400`). Data rusak di satu key tidak memengaruhi kombinasi lain.
+- **Membaca tidak pernah menulis.** Kombinasi tanpa data = `null` ("belum ada rekor"; di UI tampil 0), tidak pernah disimpan sebagai 0.
+- **Rekor hanya naik.** Skor harus bilangan bulat ≥ 1; skor 0 tidak direkam. Nilai berlaku = maksimum dari memori sesi dan localStorage, jadi gagal-tulis (kuota, mode privat) atau tab lain tidak membuat rekor hilang atau turun. Tanpa localStorage, rekor bertahan di memori selama sesi.
+- **Kombinasi = pengaturan saat sesi dimulai.** `GameSession` mengambil snapshot beku `{mode, difficulty}` di awal; mengubah pilihan di beranda sesudahnya tidak memengaruhi sesi yang berjalan.
+- **Merekam saat keluar.** `endSession(reason)` idempoten (`gameover`, `quit`, `restart`): game over, "Keluar ke Menu" dan "Ulangi" di jeda merekam skor terakhir. Saat tab disembunyikan atau ditutup (`visibilitychange: hidden`, `pagehide`) dilakukan *checkpoint*: skor saat itu direkam tanpa menutup sesi (pemain bisa kembali). "REKOR BARU!" hanya tampil di layar game over.
+- **Migrasi:** data lama `bm.best` (satu JSON untuk semua kombinasi) dimigrasikan sekali jalan, hanya entri berbentuk `mode:kesulitan` dengan bilangan bulat valid. Entri yang tidak pasti diabaikan (peringatan di konsol), JSON lama yang rusak dilewati, dan key lama dibiarkan sebagai arsip.
+- **Origin bersama:** semua situs `aisacredoctagon-creator.github.io/*` berbagi localStorage. Semua key game ini berawalan `bm:`; jangan pakai awalan itu di proyek lain.
 
 ## Struktur
 
@@ -60,7 +72,7 @@ src/
     index.ts               generateQuestion(...)
     generator.test.ts      Vitest, ribuan iterasi acak
   game/                  engine.ts (skor, combo, timer, nyawa), scoring.ts, settings.ts
-  services/              storage.ts, audio.ts, haptics.ts, share.ts
+  services/              records.ts (rekor), storage.ts (pengaturan, audio), audio.ts, haptics.ts, share.ts
   ui/
     components/            komponen reusable: button, pill, controls, expression-card, modal, toast, icons
     screens/               title-screen, game-screen, over-screen, overlays, router

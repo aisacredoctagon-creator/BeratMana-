@@ -185,6 +185,91 @@ check('keybar tetap tampil di desktop', await (async () => {
   return v;
 })());
 
+// ---- rekor: keluar lebih awal, checkpoint, migrasi, isolasi kombinasi ----
+const keyOf = (m, d) => `bm:best:v2:${m}:${d}`;
+const stored = (m, d) => page.evaluate((k) => localStorage.getItem(k), keyOf(m, d));
+const pickCombo = async (m, d) => {
+  await page.click(`label:has(input[name="mode"][value="${m}"])`);
+  await page.click(`label:has(input[name="difficulty"][value="${d}"])`);
+};
+const hudScore = async () => Number((await page.textContent('#hud-score')).replace(/\./g, ''));
+
+await page.evaluate(() => localStorage.clear());
+await page.reload();
+await page.waitForSelector('#btn-play');
+await pickCombo('normal', 'medium');
+await page.click('#btn-play');
+await ready();
+await answer(false);
+await page.waitForTimeout(1500);
+await ready();
+await answer(false);
+await page.waitForTimeout(800);
+const scoreBefore = await hudScore();
+await page.evaluate(() => window.dispatchEvent(new Event('pagehide'))); // checkpoint (tab ditutup/disembunyikan)
+check('pagehide merekam skor saat ini tanpa menutup sesi', (await stored('normal', 'medium')) === String(scoreBefore) && (await page.isVisible('#screen-game')), `skor=${scoreBefore}`);
+await page.keyboard.press('p');
+await page.click('#btn-quit');
+check('keluar ke menu sebelum tuntas: rekor tersimpan', scoreBefore > 0 && (await stored('normal', 'medium')) === String(scoreBefore));
+check('beranda langsung menampilkan rekor baru', Number((await page.textContent('#title-best')).replace(/\./g, '')) === scoreBefore);
+check('tanpa notifikasi REKOR BARU saat keluar lebih awal', !(await page.isVisible('#over-record')) && !(await page.isVisible('#screen-over')));
+const others = await page.evaluate(() => Object.keys(localStorage).filter((k) => k.startsWith('bm:best:v2:')));
+check('hanya kombinasi yang dimainkan yang punya rekor', JSON.stringify(others) === JSON.stringify([keyOf('normal', 'medium')]), others.join(','));
+
+// Ulangi dari jeda merekam sesi lama; sesi baru memakai kombinasi yang sama
+await page.click('#btn-play');
+await ready();
+await answer(false);
+await page.waitForTimeout(900);
+const scoreB = await hudScore();
+await page.keyboard.press('p');
+await page.click('#btn-restart');
+await ready();
+check('Ulangi dari jeda: sesi lama direkam bila lebih tinggi', scoreB <= scoreBefore ? (await stored('normal', 'medium')) === String(Math.max(scoreBefore, scoreB)) : (await stored('normal', 'medium')) === String(scoreB));
+await page.keyboard.press('p');
+await page.click('#btn-quit');
+
+// migrasi dari bm.best lama (entri pasti saja)
+await page.evaluate(() => {
+  localStorage.clear();
+  localStorage.setItem('bm.best', JSON.stringify({ 'time:easy': 120, 'normal:hard': 30, 'tidak:dikenal': 5 }));
+});
+await page.reload();
+await page.waitForSelector('#btn-play');
+await pickCombo('time', 'easy');
+check('migrasi: rekor lama tampil di kombinasi yang benar', Number((await page.textContent('#title-best')).replace(/\./g, '')) === 120);
+await pickCombo('normal', 'hard');
+check('migrasi: kombinasi lain benar', Number((await page.textContent('#title-best')).replace(/\./g, '')) === 30);
+await pickCombo('time', 'medium');
+check('migrasi: kombinasi tak dimainkan tetap 0', Number((await page.textContent('#title-best')).replace(/\./g, '')) === 0);
+check('migrasi: key lama dibiarkan sebagai arsip', (await page.evaluate(() => localStorage.getItem('bm.best'))) !== null);
+
+// game over: tetap tampil REKOR BARU hanya bila mengalahkan rekor awal sesi
+await page.evaluate(() => localStorage.clear());
+await page.reload();
+await page.waitForSelector('#btn-play');
+await pickCombo('normal', 'hard');
+await page.click('#btn-play');
+await ready();
+await answer(false);
+await page.waitForTimeout(1500);
+await ready();
+await answer(true);
+await page.waitForTimeout(1500);
+await ready();
+await answer(true);
+await page.waitForSelector('#screen-over:not([hidden])', { timeout: 8000 });
+check('game over pertama: REKOR BARU tampil, rekor tersimpan', (await page.isVisible('#over-record')) && (await stored('normal', 'hard')) !== null);
+const firstBest = await stored('normal', 'hard');
+await page.click('#btn-again');
+await ready();
+await answer(true);
+await page.waitForTimeout(1500);
+await ready();
+await answer(true);
+await page.waitForSelector('#screen-over:not([hidden])', { timeout: 8000 });
+check('game over berikutnya (skor 0): tanpa REKOR BARU, rekor tidak turun', !(await page.isVisible('#over-record')) && (await stored('normal', 'hard')) === firstBest);
+
 check('tidak ada error konsol/halaman', errors.filter((e) => !/vibrate/.test(e)).length === 0, errors.join(' | '));
 console.log(fails === 0 ? '\nSEMUA LULUS' : `\n${fails} GAGAL`);
 await browser.close();

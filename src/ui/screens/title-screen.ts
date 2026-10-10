@@ -2,7 +2,7 @@ import { ITEMS } from '../../config/items';
 import type { Item } from '../../config/items';
 import { settingsSummary } from '../../game/settings';
 import type { GameSettings } from '../../game/settings';
-import { loadBest } from '../../services/storage';
+import { getBest } from '../../services/records';
 import { createButton } from '../components/button';
 import { createSwitch } from '../components/controls';
 import { icon } from '../components/icons';
@@ -74,7 +74,7 @@ export function createTitleScreen(settings: GameSettings, onChange: (s: GameSett
   function refresh(): void {
     const s = panel.value;
     summary.textContent = settingsSummary(s);
-    bestValue.textContent = loadBest(s.mode, s.difficulty).toLocaleString('id-ID');
+    bestValue.textContent = (getBest(s.mode, s.difficulty) ?? 0).toLocaleString('id-ID'); // null = belum ada rekor
   }
   refresh();
 

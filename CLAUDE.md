@@ -34,5 +34,6 @@ Minigame browser (Vite + TypeScript strict + CSS, tanpa framework). UI berbahasa
 - `src/styles/` — `tokens.css` (satu-satunya sumber nilai), `components/`, `screens/`, `motion.css`.
 
 ## Konvensi
+- Rekor (best score) hanya lewat `src/services/records.ts` (`getBest`/`submitScore`) dan `GameSession` (`src/game/session.ts`). Jangan baca/tulis key `bm:best:*` langsung; kombinasi diambil dari snapshot saat sesi dimulai, bukan dari panel beranda.
 - Logika game tidak boleh menyentuh DOM; UI tidak boleh berisi aturan game.
 - Komentar dan teks UI berbahasa Indonesia; identifier berbahasa Inggris.

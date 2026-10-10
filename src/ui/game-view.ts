@@ -68,11 +68,12 @@ export class GameView {
     return this.paused;
   }
 
-  /** Memulai permainan baru dengan pengaturan tertentu. */
-  start(settings: GameSettings): void {
+  /** Memulai permainan baru dengan pengaturan tertentu. Mengembalikan engine sesi ini (skor dibaca darinya). */
+  start(settings: GameSettings): GameEngine {
     this.stopLoop();
     this.pending = [];
-    this.engine = new GameEngine(settings);
+    const engine = new GameEngine(settings);
+    this.engine = engine;
     this.running = true;
     this.paused = false;
     this.lastItems = null;
@@ -85,6 +86,7 @@ export class GameView {
     this.pauseModal.modal.el.hidden = true;
     this.startLoop();
     this.beginRound();
+    return engine;
   }
 
   // ---------- jeda ----------
