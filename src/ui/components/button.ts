@@ -52,12 +52,12 @@ export function createIconButton(o: IconButtonOptions): HTMLButtonElement {
 export type AnswerSide = 'left' | 'right';
 export type AnswerFeedback = 'good' | 'bad' | null;
 
-/** Tombol jawab "<" (biru) dan ">" (koral). Lihat DESIGN.md §4.3. */
+/** Tombol jawab: panah tebal ke kiri (biru) dan ke kanan (koral). Lihat DESIGN.md §4.3. */
 export function createAnswerButton(side: AnswerSide, id: string, label: string): HTMLButtonElement {
   return h(
     'button',
     { type: 'button', id, class: `answer answer--${side}`, 'aria-label': label, disabled: true },
-    h('span', { class: 'answer__tile' }, icon(side === 'left' ? 'chevronLeft' : 'chevronRight')),
+    h('span', { class: 'answer__arrow' }, icon(side === 'left' ? 'arrowLeft' : 'arrowRight')),
     h('span', { class: 'answer__badge', 'aria-hidden': 'true' }, icon('check'), icon('cross')),
   );
 }

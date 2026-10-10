@@ -1,6 +1,6 @@
 # Berat Mana?
 
-Minigame browser: dua benda di jungkat-jungkit, masing-masing diberi **hitungan**. **Berat = hasil hitungan, bukan ukuran gambar.** Tekan `<` bila sisi kiri lebih berat, `>` bila sisi kanan.
+Minigame browser: dua benda di jungkat-jungkit, masing-masing diberi **hitungan**. **Berat = hasil hitungan, bukan ukuran gambar.** Tekan tombol biru (panah kiri) bila sisi kiri lebih berat, tombol merah (panah kanan) bila sisi kanan.
 
 Vite + TypeScript (strict) tanpa framework. UI dibangun dari komponen DOM + CSS bertoken (design system dari Figma, lihat [DESIGN.md](DESIGN.md)), animasi hanya `transform`/`opacity`, audio disintesis dengan Web Audio API (tanpa file audio). JS ±21 kB gzip, CSS ±10 kB, font ±56 kB (self-host).
 

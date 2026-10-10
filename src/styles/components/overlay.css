@@ -65,6 +65,27 @@
   font-weight: var(--fw-semibold);
 }
 
+.howto-arrow {
+  display: inline-grid;
+  place-items: center;
+  inline-size: var(--howto-arrow-w);
+  block-size: var(--howto-arrow-h);
+  border-radius: var(--radius-sm);
+  background: var(--side-left-bg);
+  color: var(--text-on-accent);
+  vertical-align: middle;
+}
+
+.howto-arrow--right {
+  background: var(--side-right-bg);
+}
+
+.howto-arrow .icon {
+  inline-size: var(--howto-arrow-icon);
+  block-size: auto;
+  aspect-ratio: 3 / 2;
+}
+
 .sheet__list kbd {
   display: inline-block;
   min-inline-size: var(--keycap-h);

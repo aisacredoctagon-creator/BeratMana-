@@ -3,8 +3,8 @@
  * Chevron, api, suara, jeda diambil dari frame Figma; sisanya digambar dalam gaya yang sama.
  */
 export type IconName =
-  | 'chevronLeft'
-  | 'chevronRight'
+  | 'arrowLeft'
+  | 'arrowRight'
   | 'fire'
   | 'star'
   | 'sound'
@@ -36,13 +36,20 @@ interface IconDef {
 const STROKE = 'fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"';
 
 const ICONS: Record<IconName, IconDef> = {
-  chevronLeft: {
-    viewBox: '0 0 40 40',
-    body: `<path d="M25 31.6667L13.3333 20L25 8.33333" ${STROKE} stroke-width="5.83333"/>`,
+  /**
+   * Panah tebal berekor ala tombol arcade (varian A: putih solid, bayangan dari CSS). Garis + isi sewarna dengan
+   * stroke-linejoin bulat = sudut membulat. Kiri adalah CERMIN kanan di dalam SVG (bukan scaleX CSS), jadi
+   * drop-shadow CSS pada pembungkusnya tetap jatuh ke bawah di kedua tombol.
+   */
+  arrowRight: {
+    viewBox: '0 0 48 32',
+    body: '<path d="M6 12.5h19V5.5L42.5 16 25 26.5v-7H6z" fill="currentColor" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/>',
+    className: 'icon--arrow',
   },
-  chevronRight: {
-    viewBox: '0 0 40 40',
-    body: `<path d="M15 8.33333L26.6667 20L15 31.6667" ${STROKE} stroke-width="5.83333"/>`,
+  arrowLeft: {
+    viewBox: '0 0 48 32',
+    body: '<path transform="matrix(-1 0 0 1 48 0)" d="M6 12.5h19V5.5L42.5 16 25 26.5v-7H6z" fill="currentColor" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/>',
+    className: 'icon--arrow',
   },
   fire: {
     viewBox: '0 0 20 20',

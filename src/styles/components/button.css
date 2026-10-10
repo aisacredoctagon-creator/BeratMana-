@@ -68,6 +68,10 @@
   box-shadow: var(--shadow-btn-off);
 }
 
+.answer:disabled:not([data-feedback]) .answer__arrow {
+  filter: drop-shadow(0 var(--answer-arrow-depth-pressed) 0 var(--_solid));
+}
+
 /* ---------- .icon-btn ---------- */
 .icon-btn {
   position: relative;
@@ -116,7 +120,9 @@
 
 /* ---------- .answer ---------- */
 .answer {
+  container-type: inline-size; /* panah proporsional terhadap lebar tombol (cqi) */
   --_depth: var(--depth-3d-lg);
+  --_solid: var(--side-left-solid); /* warna bayangan panah = satu tingkat lebih gelap dari tombol */
   --_bg: var(--side-left-bg);
   --_line: var(--side-left-line);
   --_shadow: var(--shadow-answer-left);
@@ -140,27 +146,24 @@
 }
 
 .answer--right {
+  --_solid: var(--side-right-solid);
   --_bg: var(--side-right-bg);
   --_line: var(--side-right-line);
   --_shadow: var(--shadow-answer-right);
   --_shadow-pressed: var(--shadow-answer-right-pressed);
 }
 
-.answer__tile {
+/* panah tebal berdiri langsung di muka tombol; bayangan jatuh ke BAWAH (drop-shadow vertikal, tidak ikut cermin) */
+.answer__arrow {
   display: grid;
-  place-items: center;
-  inline-size: var(--answer-tile);
-  block-size: var(--answer-tile);
-  padding: var(--space-2);
-  border: var(--border-2) solid var(--alpha-white-40);
-  border-radius: var(--radius-lg);
-  background: var(--alpha-white-20);
-  box-shadow: var(--shadow-inset-tile);
+  filter: drop-shadow(0 var(--answer-arrow-depth) 0 var(--_solid));
 }
 
-.answer__tile .icon {
-  inline-size: var(--answer-icon);
-  block-size: var(--answer-icon);
+.answer__arrow .icon {
+  inline-size: var(--answer-arrow);
+  block-size: auto;
+  aspect-ratio: 3 / 2;
+  overflow: visible;
 }
 
 @media (hover: hover) {
@@ -174,10 +177,16 @@
   box-shadow: var(--_shadow-pressed);
 }
 
+/* ditekan: tombol rata, jadi bayangan panah ikut mengecil (panah turun bersama tombol) */
+.answer:active:not(:disabled) .answer__arrow {
+  filter: drop-shadow(0 var(--answer-arrow-depth-pressed) 0 var(--_solid));
+}
+
 /* belum bisa dijawab / animasi hasil: tombol "tenggelam" dan abu-abu */
 .answer:disabled:not([data-feedback]) {
   --_bg: var(--btn-off-bg);
   --_line: var(--btn-off-line);
+  --_solid: var(--btn-off-solid);
   transform: translateY(var(--press-travel-sm));
   box-shadow: var(--shadow-btn-off);
 }
