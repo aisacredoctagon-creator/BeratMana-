@@ -1,6 +1,6 @@
 /* Service worker minimal: halaman dicoba dari jaringan dulu (selalu versi terbaru), aset statis
    memakai cache lalu diperbarui di latar belakang. Naikkan VERSION untuk mengosongkan cache lama. */
-const VERSION = 'bm-v2';
+const VERSION = 'bm-v3';
 
 self.addEventListener('install', () => self.skipWaiting());
 

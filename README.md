@@ -140,8 +140,8 @@ Lalu tambahkan `percent` ke daftar di `TYPE_SETS` pada `generator.test.ts`; semu
 
 Benda ada di `public/assets/items/` dan didaftarkan di [`src/config/items.ts`](src/config/items.ts).
 
-- `bulu.svg` dan `gajah.svg` dirakit dari vektor Figma (`node scripts/build-figma-art.mjs`, sumber di `scripts/figma-src/`).
-- Sisanya (landasan, balon, bola bowling, kapas, batu, bantal, dumbel, mobil) adalah **SVG placeholder** dalam gaya yang sama. Untuk mengganti: timpa file dengan nama yang sama, atau tambah/ubah entri di `ITEMS` (SVG/PNG/WebP).
+- Semua benda adalah SVG yang digambar untuk proyek ini (satu gaya). `node scripts/build-figma-art.mjs` hanya merakit penyangga jungkat-jungkit dari vektor Figma (`scripts/figma-src/`) dan tidak menyentuh benda. Untuk mengganti: timpa file dengan nama yang sama, atau tambah/ubah entri di `ITEMS` (SVG/PNG/WebP).
+- Warna di dalam SVG memakai nilai heks yang sama dengan palet `tokens.css`, karena gambar yang dimuat lewat `<img>` tidak bisa membaca variabel CSS.
 - Gaya: isi datar lembut + garis lebih gelap sewarna (±3% lebar gambar) + sorotan putih tipis, tanpa gradasi. Gambar persegi (viewBox 200 × 200), latar transparan, benda menempel di **dasar** gambar supaya duduk rapi di atas papan. Detail di DESIGN.md §9.
 
 ## Audio
@@ -163,8 +163,8 @@ Dua toggle terpisah (Musik, SFX), masing-masing hanya mute/unmute dan tersimpan.
 | Font **Fredoka** (variabel, subset latin) | paket npm `@fontsource-variable/fredoka` | SIL Open Font License 1.1 |
 | Font **Plus Jakarta Sans** (miring 500/700, subset latin) | paket npm `@fontsource/plus-jakarta-sans` | SIL Open Font License 1.1 |
 | Ikon api (notifikasi combo) | Ant Design Icons (`ant-design:fire-filled`), via desain Figma | MIT |
-| Ilustrasi bulu, gajah, penyangga segitiga; ikon chevron, suara, jeda | file desain Figma milik pemilik proyek, dirakit oleh `scripts/build-figma-art.mjs` | © pemilik proyek |
-| Benda lain (landasan, balon, bola bowling, kapas, batu, bantal, dumbel, mobil), ikon lain (centang, silang, hati, piala, bagikan, dll.), ikon aplikasi, gambar OG | digambar untuk proyek ini | © pemilik proyek |
+| Ilustrasi penyangga segitiga; ikon chevron, suara, jeda | file desain Figma milik pemilik proyek, dirakit oleh `scripts/build-figma-art.mjs` | © pemilik proyek |
+| Benda (bulu, landasan, balon, bola bowling, kapas, batu, bantal, dumbel, mobil), ikon lain (centang, silang, hati, piala, bagikan, dll.), ikon aplikasi, gambar OG | digambar untuk proyek ini | © pemilik proyek |
 | **Musik dan efek suara** | **tidak ada berkas audio**; semuanya disintesis oleh kode (Web Audio API) di `src/services/audio.ts` | © pemilik proyek |
 | Alat pengembangan (tidak ikut ke situs): Vite, Vitest (MIT), TypeScript, sharp, playwright-core (Apache-2.0) | npm | lihat masing-masing paket |
 

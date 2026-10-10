@@ -1,5 +1,6 @@
 // Merakit potongan vektor hasil ekspor Figma (scripts/figma-src/*.svg) menjadi SVG utuh:
-//   public/assets/items/gajah.svg, public/assets/items/bulu.svg, public/assets/seesaw/stand.svg
+//   public/assets/seesaw/stand.svg
+// (benda di public/assets/items/ digambar langsung sebagai SVG proyek; skrip ini tidak menyentuhnya)
 // Posisi tiap potongan diturunkan dari persentase inset pada kode referensi Figma
 // (frame 17:248). Jalankan sekali: node scripts/build-figma-art.mjs
 import { readFileSync, writeFileSync } from 'node:fs';
@@ -63,37 +64,6 @@ function compose({ container, parts, origin }) {
 
 const beam = { w: 576, h: 124 };
 
-// ---------- gajah (grup 17:672) ----------
-const elephant = compose({
-  container: beam,
-  parts: [
-    { file: 'vector', outer: ['2.32%', '8.14%', '60.52%', '81.86%'], inner: ['-2.17%', '-1.74%', '-2.17%', '-1.74%'] },
-    { file: 'vector1', outer: ['0%', '12.81%', '72.13%', '81.19%'], inner: ['-2.89%', '13.77%', '13.77%', '-2.89%'] },
-    { file: 'vector2', outer: ['4.65%', '13.56%', '74.59%', '84.14%'], inner: ['-3.88%', '9.12%', '12.78%', '-7.53%'] },
-    { file: 'vector3', outer: ['9.68%', '16.23%', '84.9%', '82.61%'], inner: ['0%', '16.67%', '16.67%', '0%'] },
-    { file: 'vector4', outer: ['10.3%', '16.78%', '87.85%', '82.82%'], inner: ['0%', '16.67%', '16.67%', '0%'] },
-    { file: 'vector5', outer: ['15.48%', '15.64%', '79.87%', '83.36%'], inner: ['0%', '16.67%', '16.67%', '0%'] },
-    { file: 'vector6', outer: ['17.03%', '17.81%', '67.51%', '80.56%'], inner: ['-14.61%', '-13.06%', '2.06%', '-29.73%'] },
-    { file: 'vector7', outer: ['30.97%', '14.14%', '55.1%', '84.52%'], inner: ['-4.63%', '6.25%', '12.04%', '-10.42%'] },
-    { file: 'vector8', outer: ['32.52%', '12.14%', '55.1%', '86.52%'], inner: ['0%', '16.67%', '16.67%', '0%'] },
-    { file: 'vector7', outer: ['30.97%', '10.48%', '55.1%', '88.19%'], inner: ['-4.63%', '6.25%', '12.04%', '-10.42%'] },
-    { file: 'vector9', outer: ['32.52%', '8.81%', '55.1%', '89.86%'], inner: ['0%', '16.67%', '16.67%', '0%'] },
-    { file: 'vector10', outer: ['20.13%', '7.27%', '70.58%', '91.52%'], inner: ['-10.42%', '-0.59%', '6.25%', '-17.26%'] },
-  ],
-});
-writeFileSync('public/assets/items/gajah.svg', elephant);
-
-// ---------- bulu (grup 17:673) ----------
-const feather = compose({
-  container: beam,
-  parts: [
-    { file: 'vector11', outer: ['-4.03%', '79.8%', '48.37%', '8.21%'], inner: ['0%', '16.67%', '16.67%', '0%'] },
-    { file: 'vector12', outer: ['13.76%', '82.93%', '60.83%', '11.31%'], inner: ['0%', '16.67%', '16.67%', '0%'] },
-    { file: 'vector13', outer: ['-2.08%', '80.38%', '47.65%', '8.16%'], inner: ['-2.78%', '13.83%', '13.89%', '-2.84%'] },
-  ],
-});
-writeFileSync('public/assets/items/bulu.svg', feather);
-
 // ---------- penyangga segitiga (17:293, 80 x 112) ----------
 const stand = compose({
   container: { w: 80, h: 112 },
@@ -106,4 +76,4 @@ const stand = compose({
 });
 writeFileSync('public/assets/seesaw/stand.svg', stand);
 
-console.log('gajah.svg, bulu.svg, stand.svg dibuat');
+console.log('stand.svg dibuat');
