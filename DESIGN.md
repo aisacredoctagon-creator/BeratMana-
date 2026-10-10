@@ -46,8 +46,9 @@ Warna berlabel **"turunan"** di `tokens.css` tidak ada di Figma (lihat §10).
 | Teks | `--text-strong` `--text-body` `--text-muted` `--text-muted-on-app` `--text-subtle` `--text-on-accent` `--text-emphasis` |
 | Fokus | `--focus-ring` |
 | Hasil | `--good-bg` `--good-soft` `--good-line` `--bad-bg` `--bad-soft` `--flash-good` `--flash-bad` |
-| Sisi kiri | `--side-left-{bg,line,solid,glow,tag-bg,tag-line,tag-text,expr}` |
-| Sisi kanan | `--side-right-{bg,line,solid,glow,tag-bg,tag-line,tag-text,expr}` |
+| Sisi kiri | `--side-left-{bg,line,solid,glow,tag-bg,tag-line,tag-text}` |
+| Sisi kanan | `--side-right-{bg,line,solid,glow,tag-bg,tag-line,tag-text}` |
+| Teks soal | `--color-question-text` (satu warna untuk semua teks soal; = sky-950 `#082f49`, kontras 13,9:1 di putih, 13,2:1 di kartu menang) |
 | Tombol | `--btn-primary-*` `--btn-secondary-*` `--btn-off-*` |
 | Pil | `--pill-{score,level,mode,combo,time}-*` `--star-tile-*` (HUD memakai skor dan waktu; level/combo hanya di game over) |
 | Hati (nyawa) | `--heart-{full,lost}` `--heart-size` `--heart-gap` |
@@ -125,7 +126,7 @@ Kiri biru (`--side-left-*`), kanan koral (`--side-right-*`). Tinggi `--answer-h`
 | `data-feedback="bad"` | goyang horizontal + lencana ✗ merah di pojok |
 
 ### 4.4 Kartu ekspresi — `.expr-card` (`--left` / `--right`)
-Putih, garis 1px (`--side-*-line`), radius 24, padding 24, isi: tag "SISI KIRI/KANAN" (pil kecil) + ekspresi 48px.
+Putih, garis 1px (`--side-*-line`), radius 24, padding 24, isi: tag "SISI KIRI/KANAN" (pil kecil) + ekspresi 48px. **Warna teks soal satu token** `--color-question-text` untuk kedua sisi dan semua tipe (tambah, kurang, kali, bagi, pecahan, desimal); tanpa warna per sisi/operator/tipe dan tanpa opacity pada kondisi normal. Pengecualian yang disengaja: state kalah memudar (opacity .6, A28).
 `data-size="s|m|l|xl"` mengecilkan ekspresi panjang. Ekspresi mendukung pecahan bertumpuk (`.frac`). Soal akar (√), pangkat, dan kurung sudah dihapus dari game.
 | State | Perilaku |
 | --- | --- |
@@ -136,8 +137,10 @@ Putih, garis 1px (`--side-*-line`), radius 24, padding 24, isi: tag "SISI KIRI/K
 
 ### 4.5 Pil — `.pill` (+ `--score`, `--time` di HUD; `--level`, `--combo` di statistik game over)
 Latar & garis 2px per keluarga warna, radius 16, `--shadow-pill`, padding 8 × 16. Bagian: `.pill__icon`, `.pill__text` > `.pill__label` (eyebrow) + `.pill__value`. Lencana bintang skor = `.star-tile`.
+**Skor (HUD):** hanya lencana bintang + angka (tanpa kata "SKOR"); teks tersembunyi "Skor" untuk pembaca layar, tanpa `aria-live` (tidak berisik). Lebar stabil: `tabular-nums` + `--score-min-w`.
+**Waktu (HUD, `.hud-time`):** tanpa kotak dan tanpa tulisan; ikon jam (`clock`, garis 2,2, `--hud-time-icon`, tinggi `1em` = tinggi angka) di kiri angka (`--hud-time-text`), jarak `--space-8`. `role="timer"`, `aria-live="off"`, teks tersembunyi "Sisa waktu"; lebar stabil (`tabular-nums` + `--hud-time-min-w`). Layar game over tetap memakai `.pill--time` berkotak untuk "Akurasi".
 HUD saat bermain **hanya**: skor, waktu (Time Attack) atau hati (Normal), dan tombol jeda. Tingkat, mode, pengali EXP, dan combo tetap dihitung engine tetapi tidak ditampilkan.
-Waktu: `.is-low` (≤ 10 detik) → nilai berdenyut + warna bahaya; cincin timer berkurang.
+Waktu: `.is-low` (≤ 10 detik) → angka dan ikon merah (`--bad-bg`) dan berdenyut (skala `low-time`); dengan `prefers-reduced-motion` tanpa denyut, diganti garis bawah statis pada angka (bukan hanya warna). SFX tick tidak berubah.
 
 ### 4.5b Nyawa — `.hearts` > `.heart` (mode Normal)
 Hanya ikon hati, tanpa wadah dan tanpa tulisan. Penuh = hati terisi (`--heart-full`), hilang = hati outline (`--heart-lost`): beda bentuk, bukan hanya warna. Ukuran `--heart-size` (≥ 20px), jarak `--heart-gap`; 5 hati (Easy) muat di 360px. Pembungkus `role="img"` dengan `aria-label` "Nyawa N dari M". Saat nyawa berkurang, hati yang hilang mengecil + bergetar (`heart-hit`, hanya `transform`/`opacity`; instan bila `prefers-reduced-motion`).
@@ -258,7 +261,7 @@ Koordinat desain 576 × 260 (`--ss-*`, unit `--ss-u`). Papan kayu (gradasi kunin
 | A15 | Pause/Cara Main = modal; di layar sempit = bottom sheet | pola mobile umum |
 | A17 | Tombol ikon 40px diperluas ke 48px lewat area transparan | aturan area sentuh 48px |
 | A18 | Spasi menjeda game hanya bila fokus tidak di tombol/input | footer Figma menyebut "Spasi / P"; tidak merusak keyboard standar |
-| A19 | Cincin timer dijadikan indikator progres (`stroke-dashoffset`, diperbarui tiap detik) | ikon Figma berupa cincin |
+| A19 | (digantikan A48) Cincin timer sebagai indikator progres | ikon Figma berupa cincin |
 | A20 | Semua benda adalah SVG yang digambar untuk proyek ini dalam satu gaya (A45) | aset Figma hanya tersedia untuk bulu/gajah |
 | A21 | Elips abu-abu tengah latar dan persegi `#f4f7fb` di belakang bulu (`17:657`) diabaikan | tidak terlihat di screenshot / artefak |
 | A22 | Durasi & easing animasi diwarisi dari implementasi sebelumnya | Figma statis |
@@ -284,6 +287,7 @@ Koordinat desain 576 × 260 (`--ss-*`, unit `--ss-u`). Papan kayu (gradasi kunin
 | A45 | Gajah dihapus dari daftar benda (sulit dikenali) dan dekorasi beranda memakai bulu + batu. Bulu, kapas, bantal, dumbel digambar ulang agar jelas di ±42px: bulu bergerigi dengan tangkai, kapas = buah kapas dengan kelopak cokelat + batang + daun, bantal lavender berumbai + lipatan tengah, dumbel hijau tebal. `og-image.png` dibuat ulang tanpa gajah (`scripts/make-og.mjs`) | benda lama mirip daun / awan / mentega; bantal kuning menyatu dengan papan kuning |
 | A46 | Pemilihan tipe soal disederhanakan: chip "Mix", tombol "Pilih semua", dan "Hapus semua" dihapus (Figma menampilkannya; prompt pemilik proyek menang). Banyak tipe tercentang = soal campuran, tiap sisi memilih tipe merata dari daftar (boleh beda tipe). Ringkasan: daftar tipe, atau "Semua tipe" bila keenamnya aktif. Pengaturan lama ber-"mix" dimigrasi menjadi keenam tipe. Tidak ada ekspresi bonus (sudah dihapus sebelumnya), jadi tidak ada perilaku khusus saat keenam tipe aktif | permintaan pemilik proyek; satu cara memilih lebih sederhana |
 | A47 | Beranda dirapikan (Figma menampilkannya; prompt pemilik proyek menang): teks "Selisih minimal … • Salah = … • skor …" di bawah kesulitan dan ringkasan "Medium • Time Attack • Tambah, Kali" di bawah Main dihapus; tombol "Pengaturan" dan mekanisme lipat dihapus di semua ukuran (pengaturan selalu tampil; desktop memang tidak pernah punya tombol itu); "Cara Main" menjadi tombol ikon "?" di baris Musik/SFX; chip tipe soal berupa ikon 3 × 2 tanpa kotak centang di HP (≤ 720px dan landscape pendek); pil Nyala/Mati disembunyikan di HP; landscape pendek memakai dua kolom (hero kiri, pengaturan kanan); hiasan jungkat-jungkit beranda diperkecil di HP agar 390 × 844 tanpa scroll | beranda ringkas; info yang sama ada di Cara Main |
+| A48 | Indikator HUD dirapikan (prompt pemilik proyek menang atas Figma): kata "SKOR" dan "WAKTU" dihapus; waktu tanpa kotak, ikon jam di kiri angka (ikon cincin progres dan `.timer-ring*` dihapus, A19 tidak berlaku); skor tetap berkotak. Satu warna teks soal (`--color-question-text`): akar masalah lama = `--side-left-expr` (sky-950) berbeda dari `--side-right-expr` (purple-950); kedua token dihapus. State kalah (opacity .6, kontras 4,0:1) sengaja tidak diubah, dilaporkan ke pemilik proyek | bar atas lebih ringkas; teks soal seragam |
 | A33 | Skala font teks kecil dinaikkan dari Figma: eyebrow 10→12, tag 12→14, badan/tagline/pil 14→16, nilai HUD 20→24, tombol utama 24→28 (keycap 32→36). Proporsi komponen ikut menyesuaikan lewat padding/tinggi isi | permintaan: font terlalu kecil di Figma, terutama di HP |
 | A32 | Gambar OG dan ikon aplikasi digambar ulang dalam palet Figma | produk harus konsisten |
 

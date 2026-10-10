@@ -25,7 +25,7 @@ export type IconName =
   | 'music'
   | 'target'
   | 'streak'
-  | 'timer';
+  | 'clock';
 
 interface IconDef {
   viewBox: string;
@@ -129,10 +129,9 @@ const ICONS: Record<IconName, IconDef> = {
     viewBox: '0 0 20 20',
     body: '<path fill="currentColor" d="M10 18.73c-3.9 0-6.88-2.8-6.88-6.82 0-1 .24-2 .7-3 .46-.9 1.1-1.7 1.97-2.38.34-.26.65-.56.92-.9.4-.48.7-1 .93-1.6.18-.47.25-1.03.22-1.67l-.04-.94c0-.12.13-.2.24-.14l.8.47c1.1.65 2 1.6 2.63 2.8.77 1.44 1.12 2.77 1.05 3.95 0 .03.01.07.04.1.03.03.06.03.08.03.02 0 .05-.01.08-.04.41-.46.7-.93.86-1.4l.26-.73c.03-.1.15-.14.24-.06l.57.52a7.6 7.6 0 012.14 3.8c.16.76.19 1.5.1 2.2-.2 2.8-3.1 6.8-6.9 6.8z"/>',
   },
-  timer: {
-    viewBox: '0 0 20 20',
-    body: '<circle class="timer-ring__track" cx="10" cy="10" r="8.6" fill="none" stroke-width="2.2"/><circle class="timer-ring__bar" cx="10" cy="10" r="8.6" fill="none" stroke-width="2.5" stroke-linecap="round" pathLength="100" transform="rotate(-90 10 10)"/>',
-    className: 'timer-ring',
+  clock: {
+    viewBox: '0 0 24 24',
+    body: `<circle cx="12" cy="12" r="9" ${STROKE} stroke-width="2.2"/><path d="M12 7v5.2l3.4 2" ${STROKE} stroke-width="2.2"/>`,
   },
 };
 

@@ -2,7 +2,7 @@ import { DIFFICULTY_CONFIG, TIME_ATTACK } from '../config/difficulty';
 import type { GameSettings } from '../game/settings';
 import { createIconButton } from './components/button';
 import { icon } from './components/icons';
-import { createPill, createStarTile, pillIcon } from './components/pill';
+import { createPill, createStarTile } from './components/pill';
 import { h, setText } from './dom';
 import { restartClass } from './effects';
 
@@ -22,8 +22,17 @@ export class Hud {
   readonly el: HTMLElement;
   readonly pauseBtn: HTMLButtonElement;
 
-  private readonly score = createPill({ variant: 'score', lead: createStarTile(), label: 'Skor', value: '0' });
-  private readonly time = createPill({ variant: 'time', lead: pillIcon(icon('timer')), label: 'Waktu', value: '1:00' });
+  /** Hanya angka (tanpa kata "Skor"); nama untuk pembaca layar ada di teks tersembunyi. */
+  private readonly score = createPill({ variant: 'score', lead: createStarTile(), value: '0' });
+  /** Waktu (Time Attack): ikon jam + angka, tanpa kotak dan tanpa tulisan. role="timer" tidak dibacakan tiap detik. */
+  private readonly timeValue = h('span', { class: 'hud-time__value' }, '1:00');
+  private readonly time = h(
+    'div',
+    { class: 'hud-time', role: 'timer', 'aria-live': 'off', 'data-hud': 'time' },
+    h('span', { class: 'hud-time__icon', 'aria-hidden': 'true' }, icon('clock')),
+    h('span', { class: 'sr-only' }, 'Sisa waktu'),
+    this.timeValue,
+  );
   /** Hanya ikon hati; keadaan dibacakan lewat aria-label ("Nyawa 2 dari 3"). */
   private readonly hearts = h('span', { class: 'hearts', role: 'img' });
   private heartEls: HTMLElement[] = [];
@@ -34,6 +43,7 @@ export class Hud {
   constructor() {
     this.pauseBtn = createIconButton({ icon: 'pause', label: 'Jeda (P)', id: 'btn-pause', dataHud: 'pause' });
     this.score.el.id = 'hud-score-pill';
+    this.score.el.querySelector('.pill__text')?.prepend(h('span', { class: 'sr-only' }, 'Skor'));
     this.score.value?.setAttribute('id', 'hud-score');
     this.el = h(
       'header',
@@ -42,7 +52,7 @@ export class Hud {
         'div',
         { class: 'hud__inner' },
         h('div', { class: 'hud__group hud__group--left' }, this.score.el),
-        h('div', { class: 'hud__group hud__group--center' }, this.time.el, this.hearts),
+        h('div', { class: 'hud__group hud__group--center' }, this.time, this.hearts),
         h('div', { class: 'hud__group hud__group--right' }, this.pauseBtn),
       ),
     );
@@ -75,10 +85,8 @@ export class Hud {
   }
 
   setTime(timeLeft: number): void {
-    setText(this.time.value!, formatTime(timeLeft));
-    const progress = Math.min(1, Math.max(0, timeLeft / TIME_ATTACK.startSeconds));
-    this.time.el.style.setProperty('--timer-progress', String(progress));
-    this.time.el.classList.toggle('is-low', timeLeft <= TIME_ATTACK.tickFromSeconds);
+    setText(this.timeValue, formatTime(timeLeft));
+    this.time.classList.toggle('is-low', timeLeft <= TIME_ATTACK.tickFromSeconds);
   }
 
   /**

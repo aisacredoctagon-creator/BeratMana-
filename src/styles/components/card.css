@@ -4,7 +4,6 @@
   --_tag-bg: var(--side-left-tag-bg);
   --_tag-line: var(--side-left-tag-line);
   --_tag-text: var(--side-left-tag-text);
-  --_expr: var(--side-left-expr);
   position: relative;
   container-type: inline-size;
   display: flex;
@@ -29,7 +28,6 @@
   --_tag-bg: var(--side-right-tag-bg);
   --_tag-line: var(--side-right-tag-line);
   --_tag-text: var(--side-right-tag-text);
-  --_expr: var(--side-right-expr);
 }
 
 /* "SISI KIRI" / "SISI KANAN" */
@@ -54,7 +52,7 @@
   margin-block: auto; /* ekspresi di tengah ruang di bawah tag, bila kartu lebih tinggi dari isinya */
   max-inline-size: 100%;
   padding-block: var(--space-4);
-  color: var(--_expr);
+  color: var(--color-question-text); /* satu warna untuk semua teks soal (kiri/kanan, semua tipe) */
   font-size: calc(var(--fs-expr) * var(--expr-scale, 1));
   font-weight: var(--fw-semibold);
   line-height: var(--lh-expr);
