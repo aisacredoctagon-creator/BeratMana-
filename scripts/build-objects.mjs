@@ -6,7 +6,7 @@
 //   2. tambahkan entri ke OBJECTS di bawah (folder = nama folder Fluent persis, id = slug unik, name = label Indonesia,
 //      category = kosmetik saja, size = tingkat ukuran), lalu jalankan skrip ini.
 // Skrip: salin SVG → WARNA diselaraskan dengan palet game (soft) → optimasi SVGO (id diberi awalan id objek) → tambah KONTUR (seperti objek lama: garis tebal rata, sudut membulat,
-// warna = nuansa gelap dari warna dominan objek; bisa ditimpa lewat `outline` di OBJECTS) → hitung bounding box isi lewat Chrome
+// warna = nuansa LEMBUT (lebih terang dari versi awal) dari warna dominan objek; bisa ditimpa lewat `outline` di OBJECTS) → hitung bounding box isi lewat Chrome
 // (getBBox) → tulis viewBox rapat ke isi + tebal kontur (dasar objek menyentuh dasar gambar, terpusat) →
 // src/config/items.data.ts (aspek + skala). Kontur = salinan semua bentuk di belakang objek, berisi + bergaris warna kontur.
 import { chromium } from 'playwright-core';
@@ -67,11 +67,16 @@ const recolor = (svg) => svg.replace(/((?:fill|stroke|stop-color)=")(#[0-9a-fA-F
 /** Tebal kontur (sisi luar) = rasio × sisi terpanjang isi. Objek lama: 6/200 ≈ 3% dari gambar; 0,04 menjaga garis terlihat di slot 43 px (HP). */
 const OUTLINE = 0.04;
 
+/** Warna kontur = warna dominan objek yang digelapkan secukupnya agar tetap terlihat sebagai garis, tetapi lembut: terang (HSL) di antara min dan maks, dan paling sedikit OUTLINE_STEP di bawah terang aslinya. */
+const OUTLINE_L_MIN = 0.34;
+const OUTLINE_L_MAX = 0.55;
+const OUTLINE_STEP = 0.14;
+
 /** category: 'berat' | 'ringan' | 'menengah' (murni kosmetik, tidak memengaruhi hasil hitungan). */
 const OBJECTS = [
   // terlihat berat
   { id: 'elephant', folder: 'Elephant', name: 'Gajah', category: 'berat', size: 'lg' },
-  { id: 'hippopotamus', folder: 'Hippopotamus', name: 'Kuda nil', category: 'berat', size: 'lg' },
+  { id: 'hippopotamus', folder: 'Hippopotamus', name: 'Kuda nil', category: 'berat', size: 'lg', outline: '#64748b' }, // abu-abu: kontur slate (bukan merah muda dari moncong)
   { id: 'whale', folder: 'Whale', name: 'Paus', category: 'berat', size: 'lg' },
   { id: 'anchor', folder: 'Anchor', name: 'Jangkar', category: 'berat', size: 'md' },
   { id: 'brick', folder: 'Brick', name: 'Batu bata', category: 'berat', size: 'md' },
@@ -132,7 +137,7 @@ for (const o of OBJECTS) {
   });
   // kontur + bounding box di Chrome (DOM asli, getBBox akurat)
   const res = await page.evaluate(
-    async ([svg, outlineOverride, ratio]) => {
+    async ([svg, outlineOverride, ratio, lMin, lMax, step]) => {
       const doc = new DOMParser().parseFromString(svg, 'image/svg+xml');
       const root = doc.documentElement;
       // bounding box isi tanpa kontur
@@ -160,12 +165,22 @@ for (const o of OBJECTS) {
         const mx = Math.max(r, g, b), mn = Math.min(r, g, b);
         const sat = mx === 0 ? 0 : (mx - mn) / mx;
         const key = (r >> 4) + ',' + (g >> 4) + ',' + (b >> 4);
-        const e = bins.get(key) ?? { n: 0, sat, r, g, b };
+        const lum = (mx + mn) / 510;
+        const hs = mx === mn ? 0 : (mx - mn) / 255 / (1 - Math.abs(2 * lum - 1)); // saturasi HSL: slate/abu-abu kebiruan rendah, oranye/merah tinggi
+        const e = bins.get(key) ?? { n: 0, sat, hs, r, g, b };
         e.n += sat > 0.25 ? 2 : 1; // warna jenuh diutamakan
         bins.set(key, e);
       }
+      // warna dominan: utamakan warna JENUH (itulah "warna objek"); netral/gelap (mata, sayap hitam, roda) hanya bila warna jenuh sedikit
       let best = null;
-      for (const e of bins.values()) if (!best || e.n > best.n) best = e;
+      let bestColor = null;
+      let total = 0;
+      for (const e of bins.values()) {
+        total += e.n;
+        if (!best || e.n > best.n) best = e;
+        if (e.hs > 0.55 && Math.max(e.r, e.g, e.b) >= 100 && (!bestColor || e.n > bestColor.n)) bestColor = e;
+      }
+      if (bestColor && bestColor.n >= total * 0.2) best = bestColor;
       const toHsl = (r, g, b) => {
         r /= 255; g /= 255; b /= 255;
         const mx = Math.max(r, g, b), mn = Math.min(r, g, b), l = (mx + mn) / 2, d = mx - mn;
@@ -182,7 +197,7 @@ for (const o of OBJECTS) {
       let color = outlineOverride;
       if (!color) {
         const [h, sat, l] = best ? toHsl(best.r, best.g, best.b) : [215, 0.2, 0.3];
-        color = hex(h, Math.min(1, sat * 0.95 + 0.05), Math.max(0.16, Math.min(0.3, l * 0.42)));
+        color = hex(h, Math.min(0.85, sat * 0.9 + 0.08), Math.max(lMin, Math.min(lMax, Math.min(l * 0.75, l - step))));
       }
 
       // klon bentuk (tanpa defs) → berisi + bergaris warna kontur, ditaruh di BELAKANG objek
@@ -210,7 +225,7 @@ for (const o of OBJECTS) {
       root.setAttribute('height', String(r2(h)));
       return { svg: new XMLSerializer().serializeToString(root), color, aspect: w / h };
     },
-    [data, o.outline ?? null, OUTLINE],
+    [data, o.outline ?? null, OUTLINE, OUTLINE_L_MIN, OUTLINE_L_MAX, OUTLINE_STEP],
   );
   const out = optimize(res.svg, { multipass: true, floatPrecision: 2, plugins: ['preset-default'] }).data;
   const r2 = (n) => Math.round(n * 100) / 100;
