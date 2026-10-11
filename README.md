@@ -148,7 +148,7 @@ Langkah menambah objek baru:
    GIT_LFS_SKIP_SMUDGE=1 git clone --depth 1 --filter=blob:none --sparse https://github.com/microsoft/fluentui-emoji /tmp/fluent
    git -C /tmp/fluent sparse-checkout set "assets/<Nama emoji>/Flat" ...   # tambahkan folder yang dipakai (nama folder persis, mis. "Soccer ball")
    ```
-2. Tambahkan satu baris ke daftar `OBJECTS` di [`scripts/build-objects.mjs`](scripts/build-objects.mjs): `id` (slug unik), `folder` (nama folder Fluent persis), `name` (label Indonesia), `category` (berat / ringan / menengah, **murni kosmetik**), `size` (lg / md / sm) dan, bila perlu, `outline` (warna kontur).
+2. Tambahkan satu baris ke daftar `OBJECTS` di [`scripts/build-objects.mjs`](scripts/build-objects.mjs): `id` (slug unik), `folder` (nama folder Fluent persis), `name` (label Indonesia), `category` (berat / ringan / menengah, **murni kosmetik**), `size` (lg / md / sm) dan, bila perlu, `tone` (`dark` bawaan atau `soft` untuk kontur lebih terang) atau `outline` (warna kontur).
 3. Jalankan `FLUENT_DIR=/tmp/fluent node scripts/build-objects.mjs` (butuh Chrome terpasang). Skrip menyelaraskan warna ke palet game (lebih lembut), menambah kontur seperti objek lama, mengoptimasi lewat SVGO, merapatkan `viewBox` ke isi (dasar objek menyentuh papan, terpusat), lalu menulis SVG dan `items.data.ts`.
 4. `npm test` (memeriksa jumlah objek 28–36, id unik, berkas ada, total di bawah 150 KB, konten terlarang, dan aturan pasangan) lalu cek visual. Skrip tidak ikut build.
 

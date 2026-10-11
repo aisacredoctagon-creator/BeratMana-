@@ -67,34 +67,39 @@ const recolor = (svg) => svg.replace(/((?:fill|stroke|stop-color)=")(#[0-9a-fA-F
 /** Tebal kontur (sisi luar) = rasio × sisi terpanjang isi. Objek lama: 6/200 ≈ 3% dari gambar; 0,04 menjaga garis terlihat di slot 43 px (HP). */
 const OUTLINE = 0.04;
 
-/** Warna kontur = warna dominan objek yang digelapkan secukupnya agar tetap terlihat sebagai garis, tetapi lembut: terang (HSL) di antara min dan maks, dan paling sedikit OUTLINE_STEP di bawah terang aslinya. */
-const OUTLINE_L_MIN = 0.34;
-const OUTLINE_L_MAX = 0.55;
-const OUTLINE_STEP = 0.14;
+/**
+ * Dua nada kontur (per objek lewat `tone` di OBJECTS; bawaan 'dark'):
+ *  - 'dark'  = warna dominan objek digelapkan banyak: terang (HSL) = 0,42 × aslinya, dibatasi 0,16–0,30 (nada awal).
+ *  - 'soft'  = nuansa lebih lembut dari warna JENUH dominan: terang di antara 0,34–0,55 dan ≥ 0,14 di bawah terang aslinya.
+ */
+const OUTLINE_TONES = {
+  dark: { min: 0.16, max: 0.3, factor: 0.42, step: 0, saturatedFirst: false },
+  soft: { min: 0.34, max: 0.55, factor: 0.75, step: 0.14, saturatedFirst: true },
+};
 
 /** category: 'berat' | 'ringan' | 'menengah' (murni kosmetik, tidak memengaruhi hasil hitungan). */
 const OBJECTS = [
   // terlihat berat
   { id: 'elephant', folder: 'Elephant', name: 'Gajah', category: 'berat', size: 'lg' },
-  { id: 'hippopotamus', folder: 'Hippopotamus', name: 'Kuda nil', category: 'berat', size: 'lg', outline: '#64748b' }, // abu-abu: kontur slate (bukan merah muda dari moncong)
+  { id: 'hippopotamus', folder: 'Hippopotamus', name: 'Kuda nil', category: 'berat', size: 'lg' },
   { id: 'whale', folder: 'Whale', name: 'Paus', category: 'berat', size: 'lg' },
   { id: 'anchor', folder: 'Anchor', name: 'Jangkar', category: 'berat', size: 'md' },
   { id: 'brick', folder: 'Brick', name: 'Batu bata', category: 'berat', size: 'md' },
   { id: 'rock', folder: 'Rock', name: 'Batu', category: 'berat', size: 'md' },
-  { id: 'bowling', folder: 'Bowling', name: 'Bola bowling', category: 'berat', size: 'md' },
+  { id: 'bowling', folder: 'Bowling', name: 'Bola bowling', category: 'berat', size: 'md', tone: 'soft' },
   { id: 'automobile', folder: 'Automobile', name: 'Mobil', category: 'berat', size: 'lg' },
   { id: 'delivery-truck', folder: 'Delivery truck', name: 'Truk pengantar', category: 'berat', size: 'lg' },
   { id: 'bus', folder: 'Bus', name: 'Bus', category: 'berat', size: 'lg' },
   { id: 'locomotive', folder: 'Locomotive', name: 'Lokomotif', category: 'berat', size: 'lg' },
-  { id: 'rocket', folder: 'Rocket', name: 'Roket', category: 'berat', size: 'md' },
+  { id: 'rocket', folder: 'Rocket', name: 'Roket', category: 'berat', size: 'md', tone: 'soft' },
   { id: 'ship', folder: 'Ship', name: 'Kapal', category: 'berat', size: 'lg' },
   // terlihat ringan
   { id: 'feather', folder: 'Feather', name: 'Bulu', category: 'ringan', size: 'sm' },
   { id: 'balloon', folder: 'Balloon', name: 'Balon', category: 'ringan', size: 'sm' },
-  { id: 'bubbles', folder: 'Bubbles', name: 'Gelembung', category: 'ringan', size: 'sm' },
+  { id: 'bubbles', folder: 'Bubbles', name: 'Gelembung', category: 'ringan', size: 'sm', tone: 'soft' },
   { id: 'butterfly', folder: 'Butterfly', name: 'Kupu-kupu', category: 'ringan', size: 'sm' },
   { id: 'leaf', folder: 'Leaf fluttering in wind', name: 'Daun tertiup angin', category: 'ringan', size: 'sm' },
-  { id: 'snowflake', folder: 'Snowflake', name: 'Kepingan salju', category: 'ringan', size: 'sm' },
+  { id: 'snowflake', folder: 'Snowflake', name: 'Kepingan salju', category: 'ringan', size: 'sm', tone: 'soft' },
   { id: 'honeybee', folder: 'Honeybee', name: 'Lebah', category: 'ringan', size: 'sm' },
   { id: 'kite', folder: 'Kite', name: 'Layang-layang', category: 'ringan', size: 'sm' },
   { id: 'candle', folder: 'Candle', name: 'Lilin', category: 'ringan', size: 'sm' },
@@ -137,7 +142,7 @@ for (const o of OBJECTS) {
   });
   // kontur + bounding box di Chrome (DOM asli, getBBox akurat)
   const res = await page.evaluate(
-    async ([svg, outlineOverride, ratio, lMin, lMax, step]) => {
+    async ([svg, outlineOverride, ratio, tone]) => {
       const doc = new DOMParser().parseFromString(svg, 'image/svg+xml');
       const root = doc.documentElement;
       // bounding box isi tanpa kontur
@@ -180,7 +185,7 @@ for (const o of OBJECTS) {
         if (!best || e.n > best.n) best = e;
         if (e.hs > 0.55 && Math.max(e.r, e.g, e.b) >= 100 && (!bestColor || e.n > bestColor.n)) bestColor = e;
       }
-      if (bestColor && bestColor.n >= total * 0.2) best = bestColor;
+      if (tone.saturatedFirst && bestColor && bestColor.n >= total * 0.2) best = bestColor;
       const toHsl = (r, g, b) => {
         r /= 255; g /= 255; b /= 255;
         const mx = Math.max(r, g, b), mn = Math.min(r, g, b), l = (mx + mn) / 2, d = mx - mn;
@@ -197,7 +202,9 @@ for (const o of OBJECTS) {
       let color = outlineOverride;
       if (!color) {
         const [h, sat, l] = best ? toHsl(best.r, best.g, best.b) : [215, 0.2, 0.3];
-        color = hex(h, Math.min(0.85, sat * 0.9 + 0.08), Math.max(lMin, Math.min(lMax, Math.min(l * 0.75, l - step))));
+        color = tone.saturatedFirst
+          ? hex(h, Math.min(0.85, sat * 0.9 + 0.08), Math.max(tone.min, Math.min(tone.max, Math.min(l * tone.factor, l - tone.step))))
+          : hex(h, Math.min(1, sat * 0.95 + 0.05), Math.max(tone.min, Math.min(tone.max, l * tone.factor)));
       }
 
       // klon bentuk (tanpa defs) → berisi + bergaris warna kontur, ditaruh di BELAKANG objek
@@ -225,7 +232,7 @@ for (const o of OBJECTS) {
       root.setAttribute('height', String(r2(h)));
       return { svg: new XMLSerializer().serializeToString(root), color, aspect: w / h };
     },
-    [data, o.outline ?? null, OUTLINE, OUTLINE_L_MIN, OUTLINE_L_MAX, OUTLINE_STEP],
+    [data, o.outline ?? null, OUTLINE, OUTLINE_TONES[o.tone ?? 'dark']],
   );
   const out = optimize(res.svg, { multipass: true, floatPrecision: 2, plugins: ['preset-default'] }).data;
   const r2 = (n) => Math.round(n * 100) / 100;
