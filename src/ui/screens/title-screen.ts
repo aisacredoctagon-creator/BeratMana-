@@ -47,7 +47,7 @@ export function createTitleScreen(settings: GameSettings, onChange: (s: GameSett
       h(
         'section',
         { class: 'title__hero' },
-        createTitle('game-title', 'Berat', 'Mana?'),
+        createTitle('game-title', 'menu'),
         deco.el,
         h('div', { class: 'play-block' }, playBtn, h('p', { class: 'best' }, 'Rekor: ', bestValue)),
       ),

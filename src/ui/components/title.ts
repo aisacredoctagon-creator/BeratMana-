@@ -5,17 +5,36 @@ const FONT_WAIT_MS = 2000;
 
 const pending = new WeakMap<HTMLElement, () => void>();
 
+export type TitleVariant = 'ingame' | 'menu';
+
+/** Teks per varian: [kata normal, kata tekanan] dalam urutan tampil/baca. Kata tekanan = yang merah, besar, dan beranimasi. */
+const TITLE_PARTS: Record<TitleVariant, Array<{ text: string; emphasis: boolean }>> = {
+  ingame: [
+    { text: 'Mana yang lebih', emphasis: false },
+    { text: 'Berat?', emphasis: true },
+  ],
+  menu: [
+    { text: 'Berat', emphasis: true },
+    { text: 'Mana?', emphasis: false },
+  ],
+};
+
 /**
- * Judul game satu baris: teks pembuka (Montserrat 700) + kata aksen (Montserrat 900, huruf kapital, merah muda).
- * Satu komponen untuk layar game dan layar judul; gaya di src/styles/components/title.css. Lihat DESIGN.md §4.14.
+ * Judul game satu baris, satu komponen untuk dua layar (DESIGN.md §4.14): kata normal (Montserrat 700) + kata tekanan
+ * (Montserrat 900, kapital, merah, besar, beranimasi). Varian menentukan teks dan susunan; gaya di components/title.css.
+ * Urutan DOM = urutan visual = urutan baca ("Mana yang lebih Berat?" / "Berat Mana?").
  */
-export function createTitle(id: string, lead: string, accent: string): HTMLHeadingElement {
-  // spasi di antara dua span dipertahankan di DOM (nama aksesibel "Mana yang lebih Berat?"); secara visual jaraknya dari CSS
-  return h('h1', { id, class: 'title-line' }, h('span', { class: 'title-line__lead' }, lead), ' ', h('span', { class: 'title-line__accent' }, accent));
+export function createTitle(id: string, variant: TitleVariant): HTMLHeadingElement {
+  const nodes: Array<Node | string> = [];
+  TITLE_PARTS[variant].forEach((part, i) => {
+    if (i > 0) nodes.push(' '); // spasi di DOM untuk nama aksesibel; jarak visual dari CSS
+    nodes.push(h('span', { class: part.emphasis ? 'title-line__emphasis' : 'title-line__plain' }, part.text));
+  });
+  return h('h1', { id, class: 'title-line', 'data-variant': variant }, ...nodes);
 }
 
 /**
- * Memutar animasi "BERAT?" miring sekali (DESIGN.md §4.14): dipanggil layar SETIAP masuk (router.showScreen), bukan tiap ronde.
+ * Memutar animasi kata tekanan ("BERAT?"/"BERAT") miring sekali (DESIGN.md §4.14): dipanggil layar SETIAP masuk (router.showScreen), bukan tiap ronde.
  * Urutan: lurus (idle) → tunggu font Montserrat + tab terlihat → play (CSS: jeda → jatuh → pantulan → getar) → done (tetap miring).
  * Panggilan baru membatalkan yang lama; satu-satunya timer (batas tunggu font) dan listener dibersihkan. `onImpact` dipanggil
  * saat benturan (akhir fase jatuh, untuk SFX). Dengan prefers-reduced-motion judul langsung miring statis (CSS), tanpa onImpact.
@@ -27,7 +46,7 @@ export function playTitleTilt(title: HTMLElement, onImpact?: () => void): void {
     title.dataset.tilt = 'done';
     return;
   }
-  const accent = title.querySelector('.title-line__accent');
+  const emphasis = title.querySelector('.title-line__emphasis');
   let cancelled = false;
   let timer = 0;
   let raf = 0;
@@ -47,7 +66,7 @@ export function playTitleTilt(title: HTMLElement, onImpact?: () => void): void {
     title.dataset.tilt = 'play';
     let tail = 2; // pantulan (settle) dan getaran (shake) harus sama-sama selesai sebelum keadaan akhir dipasang
     const onEnd = (e: AnimationEvent): void => {
-      if (e.target !== accent) return;
+      if (e.target !== emphasis) return;
       if (e.animationName === 'title-tilt-fall') onImpact?.();
       else if ((e.animationName === 'title-tilt-settle' || e.animationName === 'title-tilt-shake') && --tail === 0) {
         title.dataset.tilt = 'done'; // keadaan akhir: tetap miring, will-change dilepas

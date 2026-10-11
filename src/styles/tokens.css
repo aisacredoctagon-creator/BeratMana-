@@ -117,8 +117,8 @@
   --text-muted-on-app: var(--color-slate-600); /* di atas --surface-app */
   --text-subtle: var(--color-slate-300); /* hanya dekorasi (pemisah) */
   --text-on-accent: var(--color-white);
-  --title-lead: var(--color-slate-800); /* judul: teks pembuka (13,6:1 di atas latar) */
-  --title-accent: var(--color-rose-500); /* judul: kata aksen, flat sesuai referensi (3,4:1; teks besar ≥ 3:1) */
+  --title-plain: var(--color-slate-800); /* judul: kata normal (13,6:1 di atas latar) */
+  --title-emphasis: var(--color-rose-500); /* judul: kata tekanan, flat sesuai referensi (3,4:1; teks besar ≥ 3:1) */
   --icon-neutral: var(--color-slate-600);
 
   --focus-ring: var(--color-indigo-500);
@@ -244,10 +244,13 @@
 
   /* ukuran = desain * u, dengan lantai agar tetap terbaca di HP */
   /* judul (diukur dari gambar referensi, u = 1,25): kata aksen 72u, teks pembuka 0,6 × aksen, jarak 0,43 × aksen.
-     Satu baris selalu: lebar total ≈ 9,76 × --fs-title-heavy, jadi di layar sempit ukuran mengikuti lebar viewport (9,2vw). */
+     Satu baris selalu (in-game: lebar total ≈ 9,3 × --fs-title-heavy), jadi di layar sempit ukuran mengikuti lebar viewport (9,2vw). */
   --fs-title-heavy: clamp(1.5rem, 9.2vw, calc(72 * var(--u)));
-  --fs-title-lead: calc(var(--fs-title-heavy) * 0.6);
-  --title-gap: calc(var(--fs-title-heavy) * 0.43);
+  --fs-title-plain: calc(var(--fs-title-heavy) * 0.6); /* kata normal, varian in-game */
+  --fs-title-plain-menu: calc(var(--fs-title-heavy) * 0.5); /* kata normal, varian menu (hierarki: tekanan di depan, normal lebih kecil) */
+  /* jarak antar kata (flex gap). Lama: 0,43 × tekanan (celah tinta ≈ 0,94 em kata normal); dirapatkan ≈ 27% */
+  --title-gap-ingame: calc(var(--fs-title-heavy) * 0.27);
+  --title-gap-menu: calc(var(--fs-title-heavy) * 0.26);
   --title-room-block: calc(var(--fs-title-heavy) * 0.12); /* ruang kosong di sekitar judul untuk kemiringan "BERAT?" (prompt berikutnya) */
   --title-room-inline: calc(var(--fs-title-heavy) * 0.1);
   --fs-h2: max(1.75rem, calc(40 * var(--u)));

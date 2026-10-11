@@ -1,33 +1,43 @@
-/* ===== Judul game: .title-line (teks pembuka + kata aksen) =====
-   Dipakai di layar game ("Mana yang lebih BERAT?") dan layar judul ("Berat MANA?"). Gaya sama, hanya teks yang beda.
+/* ===== Judul game: .title-line (kata normal .title-line__plain + kata tekanan .title-line__emphasis) =====
+   Dipakai di layar game ("Mana yang lebih BERAT?", data-variant="ingame") dan layar judul ("BERAT Mana?", data-variant="menu").
+   Gaya sama; varian hanya mengatur urutan kata (di DOM), jarak, dan ukuran kata normal. Kata tekanan SELALU yang merah, besar, dan miring.
    Tidak ada overflow: hidden di sini maupun di pembungkus langsung; ruang kosong (--title-room-*) disediakan untuk
-   kemiringan kata aksen pada tugas berikutnya. Teks tetap teks sungguhan (h1). */
+   kemiringan kata tekanan. Teks tetap teks sungguhan (h1). */
 .title-line {
   display: flex;
   flex-wrap: nowrap;
   align-items: baseline;
   justify-content: center;
-  gap: var(--title-gap);
+  gap: var(--title-gap-ingame);
   /* ruang untuk kemiringan = padding yang dibatalkan margin negatif: tidak menambah tinggi tata letak, tetapi tidak ada yang terpotong */
   margin: calc(-1 * var(--title-room-block)) calc(-1 * var(--title-room-inline));
   padding: var(--title-room-block) var(--title-room-inline);
   max-inline-size: 100%;
   font-family: var(--font-title);
-  font-size: var(--fs-title-heavy); /* patokan em; teks pembuka mengecil lewat --fs-title-lead */
+  font-size: var(--fs-title-heavy); /* patokan em; kata normal mengecil lewat --fs-title-plain */
   line-height: var(--lh-title);
   letter-spacing: var(--ls-none);
   text-align: center;
   white-space: nowrap;
 }
 
-.title-line__lead {
-  color: var(--title-lead);
-  font-size: var(--fs-title-lead);
+.title-line__plain {
+  color: var(--title-plain);
+  font-size: var(--fs-title-plain);
   font-weight: var(--font-weight-title-regular);
 }
 
-.title-line__accent {
-  color: var(--title-accent);
+/* varian menu: "BERAT" (tekanan) di depan, "Mana?" (normal) lebih kecil di belakang */
+.title-line[data-variant='menu'] {
+  gap: var(--title-gap-menu);
+}
+
+.title-line[data-variant='menu'] .title-line__plain {
+  font-size: var(--fs-title-plain-menu);
+}
+
+.title-line__emphasis {
+  color: var(--title-emphasis);
   font-weight: var(--font-weight-title-heavy);
   text-transform: uppercase;
   transform-origin: var(--title-tilt-origin);
@@ -35,7 +45,7 @@
 
 /* ---- animasi miring (DESIGN.md §4.14). Keadaan awal = lurus (tanpa atribut / data-tilt="idle"), jadi tidak ada kilatan miring.
    data-tilt diatur oleh playTitleTilt() (components/title.ts) tiap layar masuk: idle → play → done. Hanya transform/translate. ---- */
-.title-line[data-tilt='play'] .title-line__accent {
+.title-line[data-tilt='play'] .title-line__emphasis {
   will-change: transform, translate; /* hanya selama animasi; dilepas saat data-tilt="done" */
   animation:
     title-tilt-fall var(--title-tilt-fall) var(--title-tilt-ease) var(--title-tilt-delay) both,
@@ -43,14 +53,14 @@
     title-tilt-shake var(--title-shake-duration) var(--ease-out) calc(var(--title-tilt-delay) + var(--title-tilt-fall)) forwards;
 }
 
-.title-line[data-tilt='done'] .title-line__accent {
+.title-line[data-tilt='done'] .title-line__emphasis {
   transform: rotate(var(--title-tilt-angle));
 }
 
 /* reduced-motion: tanpa gerak; langsung miring statis di sudut akhir (sesuai gambar referensi) */
 @media (prefers-reduced-motion: reduce) {
-  .title-line .title-line__accent,
-  .title-line[data-tilt] .title-line__accent {
+  .title-line .title-line__emphasis,
+  .title-line[data-tilt] .title-line__emphasis {
     transform: rotate(var(--title-tilt-angle));
     animation: none;
     will-change: auto;

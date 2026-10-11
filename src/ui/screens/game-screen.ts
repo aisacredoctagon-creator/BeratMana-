@@ -41,7 +41,7 @@ export function createGameScreen(): GameScreen {
       h(
         'div',
         { class: 'game__head' },
-        createTitle('question', 'Mana yang lebih', 'Berat?'),
+        createTitle('question', 'ingame'),
       ),
       h('div', { class: 'game__board' }, seesaw.el, h('div', { id: 'fx-layer', class: 'fx-layer', 'aria-hidden': 'true' })),
       h('div', { class: 'game__answers' }, btnLeft, btnRight),
