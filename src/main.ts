@@ -15,7 +15,6 @@ import './styles/screens/game.css';
 import './styles/screens/over.css';
 import './styles/motion.css';
 
-import { preloadItems } from './config/items';
 import { GameSession } from './game/session';
 import type { EndReason } from './game/session';
 import { AudioManager } from './services/audio';
@@ -36,7 +35,6 @@ import { currentScreen, setTitleImpact, showScreen } from './ui/screens/router';
 import { createTitleScreen } from './ui/screens/title-screen';
 
 installSpringEasing();
-void preloadItems();
 
 // rekor format lama (bm.best) → key per kombinasi; hanya entri yang PASTI terpetakan, sisanya dilaporkan
 const migration = migrateLegacyBest();

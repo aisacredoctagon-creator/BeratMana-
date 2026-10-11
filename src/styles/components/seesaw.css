@@ -64,10 +64,13 @@
   inset-inline-start: calc(var(--ss-item-right-x) * var(--ss-u));
 }
 
+/* gambar objek: kotak (--item-scale × slot) terpusat dan menempel di dasar slot; objek di dalamnya muat (contain) dan duduk di dasar */
 .seesaw__item img {
   display: block;
-  inline-size: 100%;
-  block-size: 100%;
+  inline-size: calc(100% * var(--item-scale, 1));
+  block-size: calc(100% * var(--item-scale, 1));
+  margin-inline: auto;
+  margin-block-start: calc(100% * (1 - var(--item-scale, 1))); /* persen margin = lebar slot (persegi) */
   object-fit: contain;
   object-position: center bottom;
   pointer-events: none;

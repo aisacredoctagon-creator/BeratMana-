@@ -64,7 +64,8 @@ Satu-satunya pintu: `src/services/records.ts` (`getBest`, `submitScore`) dan `sr
 ```
 src/
   config/difficulty.ts   DIFFICULTY_CONFIG + semua konstanta tuning
-  config/items.ts        daftar benda (gambar) + preload
+  config/items.ts        daftar benda (36 objek Fluent Emoji Flat), pemasangan pasangan acak, preload
+  config/items.data.ts   data per objek (DIHASILKAN scripts/build-objects.mjs)
   generator/             PURE, tanpa DOM, mudah diuji
     rational.ts            aritmetika pecahan eksak (tanpa float)
     expression.ts          Expr, token label, format angka gaya Indonesia
@@ -82,7 +83,7 @@ src/
     base.css  motion.css  fonts.css
     components/            button, card, pill, controls, hud, seesaw, overlay
     screens/               title, game, over
-public/                  favicon, manifest, ikon, sw.js, assets/items/, assets/seesaw/
+public/                  favicon, manifest, ikon, sw.js, assets/objects/, assets/seesaw/
 scripts/                 build-figma-art.mjs, make-icons.mjs, check-tokens.mjs, visual/ (e2e, screenshot)
 references/              screenshot Figma sumber + hasil implementasi
 DESIGN.md                dokumentasi design system  ·  CLAUDE.md  aturan kerja
@@ -136,13 +137,22 @@ Contoh: tipe "persen". Ada empat langkah.
 
 Lalu tambahkan `percent` ke daftar di `TYPE_SETS` pada `generator.test.ts`; semua tes aturan wajib (tidak pernah sama, hasil benar, selisih sesuai kesulitan, dst.) langsung berlaku untuk tipe baru. Bila ada label baru, perluas parser kecil `evaluate()` di file tes tersebut.
 
-## Mengganti gambar benda
+## Menambah atau mengganti objek
 
-Benda ada di `public/assets/items/` dan didaftarkan di [`src/config/items.ts`](src/config/items.ts).
+Benda di jungkat-jungkit adalah **36 objek Microsoft Fluent Emoji gaya Flat** (MIT; lihat Kredit). SVG ada di `public/assets/objects/<id>.svg`, datanya di [`src/config/items.data.ts`](src/config/items.data.ts) (dihasilkan skrip, jangan diedit tangan) dan dipakai oleh [`src/config/items.ts`](src/config/items.ts).
 
-- Semua benda adalah SVG yang digambar untuk proyek ini (satu gaya). `node scripts/build-figma-art.mjs` hanya merakit penyangga jungkat-jungkit dari vektor Figma (`scripts/figma-src/`) dan tidak menyentuh benda. Untuk mengganti: timpa file dengan nama yang sama, atau tambah/ubah entri di `ITEMS` (SVG/PNG/WebP).
-- Warna di dalam SVG memakai nilai heks yang sama dengan palet `tokens.css`, karena gambar yang dimuat lewat `<img>` tidak bisa membaca variabel CSS.
-- Gaya: isi datar lembut + garis lebih gelap sewarna (±3% lebar gambar) + sorotan putih tipis, tanpa gradasi. Gambar persegi (viewBox 200 × 200), latar transparan, benda menempel di **dasar** gambar supaya duduk rapi di atas papan. Detail di DESIGN.md §9.
+Langkah menambah objek baru:
+
+1. Ambil SVG-nya dengan clone ringan di luar proyek (hanya gaya **Flat**, tanpa varian skin tone):
+   ```bash
+   GIT_LFS_SKIP_SMUDGE=1 git clone --depth 1 --filter=blob:none --sparse https://github.com/microsoft/fluentui-emoji /tmp/fluent
+   git -C /tmp/fluent sparse-checkout set "assets/<Nama emoji>/Flat" ...   # tambahkan folder yang dipakai (nama folder persis, mis. "Soccer ball")
+   ```
+2. Tambahkan satu baris ke daftar `OBJECTS` di [`scripts/build-objects.mjs`](scripts/build-objects.mjs): `id` (slug unik), `folder` (nama folder Fluent persis), `name` (label Indonesia), `category` (berat / ringan / menengah, **murni kosmetik**), `size` (lg / md / sm) dan, bila perlu, `outline` (warna kontur).
+3. Jalankan `FLUENT_DIR=/tmp/fluent node scripts/build-objects.mjs` (butuh Chrome terpasang). Skrip menyelaraskan warna ke palet game (lebih lembut), menambah kontur seperti objek lama, mengoptimasi lewat SVGO, merapatkan `viewBox` ke isi (dasar objek menyentuh papan, terpusat), lalu menulis SVG dan `items.data.ts`.
+4. `npm test` (memeriksa jumlah objek 28–36, id unik, berkas ada, total di bawah 150 KB, konten terlarang, dan aturan pasangan) lalu cek visual. Skrip tidak ikut build.
+
+Aturan pasangan: kedua sisi tidak boleh objek yang sama, dan objek tidak boleh sama dengan objek di sisi yang sama pada ronde sebelumnya. Pemilihan murni acak: kategori objek tidak pernah memengaruhi sisi yang menang. Hanya pasangan ronde berikutnya yang di-decode lebih dulu (bukan seluruh daftar). Konten yang **dikecualikan**: orang dan bagian tubuh, bendera, simbol agama atau politik, senjata, bom, alkohol, rokok, tengkorak, simbol bahaya, dan apa pun yang tidak ramah anak. Detail gaya dan ukuran di DESIGN.md §9.
 
 ## Audio
 
@@ -164,9 +174,10 @@ Dua toggle terpisah (Musik, SFX), masing-masing hanya mute/unmute dan tersimpan.
 | Font **Titan One** (400, subset latin; hanya notifikasi combo) | paket npm `@fontsource/titan-one`, berkas di `public/fonts/` beserta teks lisensinya | SIL Open Font License 1.1 |
 | Font **Poppins** (600, subset latin; kata normal judul) | paket npm `@fontsource/poppins`, berkas di `public/fonts/` beserta teks lisensinya | SIL Open Font License 1.1 |
 | Font **Montserrat** (900, subset latin; kata tekanan judul) | paket npm `@fontsource/montserrat`, berkas di `public/fonts/` beserta teks lisensinya | SIL Open Font License 1.1 |
+| Objek jungkat-jungkit (36, gaya Flat; diwarnai ulang ke palet game dan diberi kontur oleh `scripts/build-objects.mjs`) | **[Microsoft Fluent Emoji](https://github.com/microsoft/fluentui-emoji)** (MIT, © Microsoft Corporation), teks lisensi di `public/assets/objects/LICENSE-fluent-emoji.txt` | MIT |
 | Ikon api (notifikasi combo) | Ant Design Icons (`ant-design:fire-filled`), via desain Figma | MIT |
 | Ilustrasi penyangga segitiga; ikon chevron, suara, jeda | file desain Figma milik pemilik proyek, dirakit oleh `scripts/build-figma-art.mjs` | © pemilik proyek |
-| Benda (bulu, landasan, balon, bola bowling, kapas, batu, bantal, dumbel, mobil), ikon lain (centang, silang, hati, piala, bagikan, dll.), ikon aplikasi, gambar OG | digambar untuk proyek ini | © pemilik proyek |
+| ikon lain (centang, silang, hati, piala, bagikan, dll.), ikon aplikasi, gambar OG | digambar untuk proyek ini | © pemilik proyek |
 | **Musik dan efek suara** | **tidak ada berkas audio**; semuanya disintesis oleh kode (Web Audio API) di `src/services/audio.ts` | © pemilik proyek |
 | Alat pengembangan (tidak ikut ke situs): Vite, Vitest (MIT), TypeScript, sharp, playwright-core (Apache-2.0) | npm | lihat masing-masing paket |
 

@@ -1,5 +1,5 @@
 import { TIME_ATTACK } from '../config/difficulty';
-import { pickItemPair } from '../config/items';
+import { pickItemPair, preloadPair } from '../config/items';
 import type { Item } from '../config/items';
 import { comboNoticeFor, comboNoticeText } from '../game/combo-notice';
 import { GameEngine } from '../game/engine';
@@ -49,6 +49,8 @@ export class GameView {
   private lastFrame = 0;
   private lastTickSecond = Infinity;
   private lastItems: [string, string] | null = null;
+  /** Pasangan objek ronde berikutnya: dipilih lebih awal dan di-decode di latar supaya objek berganti tanpa kedip. */
+  private nextItems: [Item, Item] | null = null;
   private running = false;
   private paused = false;
 
@@ -61,6 +63,7 @@ export class GameView {
     ui.btnLeft.addEventListener('click', () => this.answer('left'));
     ui.btnRight.addEventListener('click', () => this.answer('right'));
     ui.hud.pauseBtn.addEventListener('click', () => this.pause());
+    this.queueItems(null); // pasangan ronde pertama sudah di-decode sebelum pemain menekan Main
   }
 
   get isRunning(): boolean {
@@ -136,12 +139,18 @@ export class GameView {
     this.pending.push({ left: ms, fn });
   }
 
+  private queueItems(previous: readonly [string, string] | null): void {
+    this.nextItems = pickItemPair(Math.random, previous);
+    void preloadPair(this.nextItems);
+  }
+
   private beginRound(): void {
     const engine = this.engine;
     if (!engine) return;
     const q = engine.nextQuestion(false);
-    const items = pickItemPair(Math.random, this.lastItems);
+    const items = this.nextItems ?? pickItemPair(Math.random, this.lastItems);
     this.lastItems = [items[0].id, items[1].id];
+    this.queueItems(this.lastItems);
     this.ui.cardLeft.set(q.left);
     this.ui.cardRight.set(q.right);
     this.ui.seesaw.setLabel(`Bandingkan ${spokenLabel(q.left)} dengan ${spokenLabel(q.right)}`);

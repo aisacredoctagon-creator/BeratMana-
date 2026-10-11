@@ -62,9 +62,13 @@ export class Seesaw {
   setItems(items: readonly [Item, Item]): void {
     this.imgs.left.src = items[0].src;
     this.imgs.right.src = items[1].src;
-    // puncak objek yang sebenarnya (untuk menempelkan ujung ekor box soal)
-    this.beam.querySelector<HTMLElement>('.seesaw__item--left')?.style.setProperty('--item-top', String(items[0].top ?? 0));
-    this.beam.querySelector<HTMLElement>('.seesaw__item--right')?.style.setProperty('--item-top', String(items[1].top ?? 0));
+    // skala gambar di slot dan puncak objek yang sebenarnya (untuk menempelkan ujung ekor box soal)
+    const sides = ['left', 'right'] as const;
+    sides.forEach((side, i) => {
+      const slot = this.beam.querySelector<HTMLElement>(`.seesaw__item--${side}`);
+      slot?.style.setProperty('--item-scale', String(items[i]?.scale ?? 1));
+      slot?.style.setProperty('--item-top', String(items[i]?.top ?? 0));
+    });
   }
 
   /** Menampilkan dekorasi diam: benda terlihat, papan bebas bergoyang lewat CSS. */

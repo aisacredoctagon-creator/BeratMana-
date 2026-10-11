@@ -25,7 +25,7 @@ const findItem = (id: string): Item => ITEMS.find((i) => i.id === id) ?? (ITEMS[
 /** Layar judul: logo (judul), hiasan jungkat-jungkit, tombol Main, pengaturan (selalu tampil), toggle suara + tombol "?" Cara Main. */
 export function createTitleScreen(settings: GameSettings, onChange: (s: GameSettings) => void): TitleScreen {
   const deco = new Seesaw({ rock: true });
-  deco.showStatic([findItem('bulu'), findItem('batu')]);
+  deco.showStatic([findItem('feather'), findItem('rock')]);
 
   const bestValue = h('strong', { id: 'title-best' }, '0');
   const playBtn = createButton({ id: 'btn-play', label: 'Main', variant: 'primary' });

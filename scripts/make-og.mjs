@@ -27,7 +27,7 @@ await page.evaluate(async (base) => {
   right.set(makeExpr('mul', rat(12), [txt('3 × 4')]));
   const seesaw = new Seesaw({ id: 'og-seesaw', bubbles: { left: left.el, right: right.el } }); // box soal menempel di objek
   const find = (id) => ITEMS.find((i) => i.id === id);
-  seesaw.showStatic([find('bulu'), find('batu')]);
+  seesaw.showStatic([find('feather'), find('rock')]);
   seesaw.reveal('left'); // sisi kiri lebih berat (16 > 12), bukan yang gambarnya besar
 
   document.documentElement.style.setProperty('--u', '1.12px'); // kanvas desain 1280 × 992 → 1200 × 630

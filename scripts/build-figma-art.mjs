@@ -1,6 +1,6 @@
 // Merakit potongan vektor hasil ekspor Figma (scripts/figma-src/*.svg) menjadi SVG utuh:
 //   public/assets/seesaw/stand.svg
-// (benda di public/assets/items/ digambar langsung sebagai SVG proyek; skrip ini tidak menyentuhnya)
+// (objek di public/assets/objects/ dibuat scripts/build-objects.mjs dari Fluent Emoji; skrip ini tidak menyentuhnya)
 // Posisi tiap potongan diturunkan dari persentase inset pada kode referensi Figma
 // (frame 17:248). Jalankan sekali: node scripts/build-figma-art.mjs
 import { readFileSync, writeFileSync } from 'node:fs';
