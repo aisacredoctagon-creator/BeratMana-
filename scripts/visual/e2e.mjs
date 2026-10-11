@@ -37,6 +37,7 @@ await page.waitForSelector('#btn-play');
 const types = () => page.$$eval('#chips input:checked', (els) => els.map((e) => e.value));
 const saved = () => page.evaluate(() => JSON.parse(localStorage.getItem('bm.settings') ?? 'null'));
 check('tidak ada teks info di bawah kesulitan maupun di bawah Main, dan tidak ada tombol Pengaturan', !(await page.$('#difficulty-hint')) && !(await page.$('#play-summary')) && !(await page.$('#btn-settings')));
+check('judul menu: komponen .title-line (Montserrat 700 + 900 kapital), deskripsi "Berat = hasil hitungan…" tidak ada di menu', await page.evaluate(() => { const t = document.querySelector('#game-title'); const lead = t.querySelector('.title-line__lead'), acc = t.querySelector('.title-line__accent'); const cs = getComputedStyle; return t.tagName === 'H1' && t.classList.contains('title-line') && cs(lead).fontWeight === '700' && cs(acc).fontWeight === '900' && cs(acc).textTransform === 'uppercase' && /Montserrat/.test(cs(lead).fontFamily) && !document.querySelector('#screen-title .tagline') && !/hasil hitungan|ukuran visual/.test(document.querySelector('#screen-title').textContent); }));
 check('"Cara Main" = tombol ikon "?" (aria-label, title, tanpa teks) di baris Musik/SFX', (await page.getAttribute('#btn-howto', 'aria-label')) === 'Cara Main' && (await page.getAttribute('#btn-howto', 'title')) === 'Cara Main' && (await page.textContent('#btn-howto')).trim() === '' && (await page.evaluate(() => { const t = [...document.querySelectorAll('#screen-title .toggles > *')].map((e) => Math.round(e.getBoundingClientRect().top)); return t.length === 3 && new Set(t).size === 1; })));
 check('default: Penjumlahan + Perkalian', JSON.stringify(await types()) === JSON.stringify(['add', 'mul']));
 check('tidak ada chip Mix, Pilih semua, atau Hapus semua', (await page.$$eval('#chips label', (e) => e.length)) === 6 && (await page.$$('#chips input[value="mix"], #btn-all, #btn-none')).length === 0 && !(await page.textContent('#settings')).match(/mix|pilih semua|hapus semua/i));
@@ -61,6 +62,7 @@ check('pengaturan tersimpan setelah reload', (await page.isChecked('input[name="
 await page.click('#btn-play');
 await ready();
 check('layar game tampil + HUD mode Normal (hati, tanpa pil waktu)', (await page.getAttribute('#screen-game', 'data-mode')) === 'normal' && (await page.isVisible('.hearts')) && !(await page.isVisible('.hud-time')));
+check('judul game: komponen yang sama dengan menu, satu baris, "Mana yang lebih BERAT?"', await page.evaluate(() => { const t = document.querySelector('#question'); const m = document.querySelector('#game-title'); const cs = getComputedStyle; const same = ['fontFamily', 'fontWeight', 'color', 'textTransform'].every((k) => cs(t.querySelector('.title-line__lead'))[k] === cs(m.querySelector('.title-line__lead'))[k] && cs(t.querySelector('.title-line__accent'))[k] === cs(m.querySelector('.title-line__accent'))[k]); const r = t.getBoundingClientRect(); const l = t.querySelector('.title-line__lead').getBoundingClientRect(), a = t.querySelector('.title-line__accent').getBoundingClientRect(); return t.className === m.className && same && t.textContent === 'Mana yang lebih Berat?' && Math.abs(l.bottom - a.bottom) < r.height && a.left >= l.right && t.scrollWidth <= t.clientWidth + 1; }));
 check('HUD hanya skor, hati, jeda: elemen lama hilang', (await page.$$eval('#screen-game .pill--level, #screen-game .pill--mode, #screen-game .pill--combo, #screen-game .pill__badge, #screen-game .pill--lives, #screen-game #btn-sound, #screen-game .tagline', (e) => e.length)) === 0);
 check('hati: 2 nyawa Hard, aria-label tersembunyi', (await page.getAttribute('.hearts', 'aria-label')) === 'Nyawa 2 dari 2' && (await page.$$eval('.heart[data-state="full"]', (e) => e.length)) === 2);
 const side = await answer(false);
@@ -137,6 +139,7 @@ check('Keluar ke Menu → layar judul', await page.isVisible('#btn-play'));
 
 // ---- Cara Main ----
 await page.click('#btn-howto');
+check('Cara Main tetap menjelaskan "Berat = hasil hitungan"', (await page.textContent('#overlay-howto')).includes('Berat = hasil hitungan'));
 check('modal Cara Main + fokus', (await page.evaluate(() => document.activeElement.id)) === 'btn-howto-close');
 await page.keyboard.press('Escape');
 check('Esc menutup Cara Main', !(await page.isVisible('#overlay-howto')));

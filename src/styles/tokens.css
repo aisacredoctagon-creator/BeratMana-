@@ -117,7 +117,8 @@
   --text-muted-on-app: var(--color-slate-600); /* di atas --surface-app */
   --text-subtle: var(--color-slate-300); /* hanya dekorasi (pemisah) */
   --text-on-accent: var(--color-white);
-  --text-emphasis: var(--color-orange-700); /* turunan: pengganti #f65540 (kontras 4,8:1) */
+  --title-lead: var(--color-slate-800); /* judul: teks pembuka (13,6:1 di atas latar) */
+  --title-accent: var(--color-rose-500); /* judul: kata aksen, flat sesuai referensi (3,4:1; teks besar ≥ 3:1) */
   --icon-neutral: var(--color-slate-600);
 
   --focus-ring: var(--color-indigo-500);
@@ -225,15 +226,6 @@
   --base-bg: var(--color-emerald-500);
   --base-line: var(--color-emerald-600);
 
-  /* gradasi kata "Berat?" pada judul */
-  /* Figma: gradasi amber→oranye→merah muda membentang di SELURUH judul; kata "Berat?" hanya menampilkan 73–100%
-     (diukur dari screenshot: dimulai koral). Titik awal = campuran oranye 54% + merah muda 46%. */
-  --title-accent: linear-gradient(
-    90deg,
-    color-mix(in srgb, var(--color-orange-500) 54%, var(--color-rose-500)) 0%,
-    var(--color-rose-500) 100%
-  );
-
   /* latar: tiga cahaya radial halus dari Figma */
   --app-glows:
     radial-gradient(ellipse calc(768 * var(--u)) calc(397 * var(--u)) at 50% -10%, var(--alpha-glow-yellow) 0%, var(--transparent) 60%),
@@ -241,15 +233,23 @@
 
   /* ---------- TIPOGRAFI ---------- */
   --font-display: 'Fredoka Variable', 'Fredoka', ui-rounded, 'Nunito', system-ui, sans-serif;
-  --font-body: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  /* judul (HANYA judul): Montserrat 700 untuk teks pembuka, 900 untuk kata aksen; cadangan berukuran sama (fonts.css) */
+  --font-title: 'Montserrat', 'Montserrat Fallback', system-ui, sans-serif;
+  --font-weight-title-regular: 700;
+  --font-weight-title-heavy: 900;
 
   --fw-medium: 500;
   --fw-semibold: 600;
   --fw-bold: 700;
 
   /* ukuran = desain * u, dengan lantai agar tetap terbaca di HP */
-  --fs-h1: clamp(1.625rem, 8.2vw, calc(60 * var(--u))); /* judul pertanyaan: tetap satu baris di 360px */
-  --fs-hero: max(2.125rem, calc(60 * var(--u))); /* judul layar judul */
+  /* judul (diukur dari gambar referensi, u = 1,25): kata aksen 72u, teks pembuka 0,6 × aksen, jarak 0,43 × aksen.
+     Satu baris selalu: lebar total ≈ 9,76 × --fs-title-heavy, jadi di layar sempit ukuran mengikuti lebar viewport (9,2vw). */
+  --fs-title-heavy: clamp(1.5rem, 9.2vw, calc(72 * var(--u)));
+  --fs-title-lead: calc(var(--fs-title-heavy) * 0.6);
+  --title-gap: calc(var(--fs-title-heavy) * 0.43);
+  --title-room-block: calc(var(--fs-title-heavy) * 0.12); /* ruang kosong di sekitar judul untuk kemiringan "BERAT?" (prompt berikutnya) */
+  --title-room-inline: calc(var(--fs-title-heavy) * 0.1);
   --fs-h2: max(1.75rem, calc(40 * var(--u)));
   --fs-expr: clamp(1.125rem, 17.4cqi, calc(48 * var(--u))); /* cqi = lebar isi kartu */
   --fs-score-hero: max(2.5rem, calc(64 * var(--u)));
@@ -261,6 +261,7 @@
   --fs-eyebrow: max(0.75rem, calc(12 * var(--u)));
 
   --lh-h1: 1;
+  --lh-title: 1; /* tinggi baris = tinggi font, sama seperti judul lama (lh 1) */
   --lh-expr: 1;
   --lh-value: 1.2;
   --lh-body: 1.4;
@@ -353,7 +354,6 @@
   --shadow-fx-text: 0 calc(2 * var(--u)) calc(6 * var(--u)) var(--alpha-ink-07);
   --shadow-combo-notice: 0 calc(3 * var(--u)) 0 var(--alpha-ink-07);
   --shadow-combo-notice-hot: 0 calc(3 * var(--u)) 0 var(--alpha-ink-07), 0 0 calc(14 * var(--u)) var(--combo-notice-glow);
-  --shadow-title: drop-shadow(0 calc(1 * var(--u)) calc(0.5 * var(--u)) var(--alpha-ink-05));
   --blur-bar: 6px;
   --blur-scrim: 3px;
 

@@ -3,6 +3,7 @@ import { createComboNotice } from '../components/combo-notice';
 import type { ComboNoticeView } from '../components/combo-notice';
 import { createExpressionCard } from '../components/expression-card';
 import type { ExpressionCard } from '../components/expression-card';
+import { createTitle } from '../components/title';
 import { h } from '../dom';
 import { Hud } from '../hud';
 import { Seesaw } from '../seesaw';
@@ -40,7 +41,7 @@ export function createGameScreen(): GameScreen {
       h(
         'div',
         { class: 'game__head' },
-        h('h1', { id: 'question', class: 'h1' }, 'Mana yang Lebih ', h('span', { class: 'h1__accent' }, 'Berat?')),
+        createTitle('question', 'Mana yang lebih', 'Berat?'),
       ),
       h('div', { class: 'game__board' }, seesaw.el, h('div', { id: 'fx-layer', class: 'fx-layer', 'aria-hidden': 'true' })),
       h('div', { class: 'game__answers' }, btnLeft, btnRight),

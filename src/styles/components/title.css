@@ -1,0 +1,33 @@
+/* ===== Judul game: .title-line (teks pembuka + kata aksen) =====
+   Dipakai di layar game ("Mana yang lebih BERAT?") dan layar judul ("Berat MANA?"). Gaya sama, hanya teks yang beda.
+   Tidak ada overflow: hidden di sini maupun di pembungkus langsung; ruang kosong (--title-room-*) disediakan untuk
+   kemiringan kata aksen pada tugas berikutnya. Teks tetap teks sungguhan (h1). */
+.title-line {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: baseline;
+  justify-content: center;
+  gap: var(--title-gap);
+  /* ruang untuk kemiringan = padding yang dibatalkan margin negatif: tidak menambah tinggi tata letak, tetapi tidak ada yang terpotong */
+  margin: calc(-1 * var(--title-room-block)) calc(-1 * var(--title-room-inline));
+  padding: var(--title-room-block) var(--title-room-inline);
+  max-inline-size: 100%;
+  font-family: var(--font-title);
+  font-size: var(--fs-title-heavy); /* patokan em; teks pembuka mengecil lewat --fs-title-lead */
+  line-height: var(--lh-title);
+  letter-spacing: var(--ls-none);
+  text-align: center;
+  white-space: nowrap;
+}
+
+.title-line__lead {
+  color: var(--title-lead);
+  font-size: var(--fs-title-lead);
+  font-weight: var(--font-weight-title-regular);
+}
+
+.title-line__accent {
+  color: var(--title-accent);
+  font-weight: var(--font-weight-title-heavy);
+  text-transform: uppercase;
+}

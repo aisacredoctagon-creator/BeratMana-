@@ -3,6 +3,7 @@ import './styles/tokens.css';
 import './styles/base.css';
 import './styles/components/button.css';
 import './styles/components/card.css';
+import './styles/components/title.css';
 import './styles/components/pill.css';
 import './styles/components/controls.css';
 import './styles/components/hud.css';

@@ -70,54 +70,15 @@ button:disabled {
 }
 
 /* ---------- tipografi ---------- */
-.h1,
 .h2 {
   margin: 0;
   font-family: var(--font-display);
   font-weight: var(--fw-semibold);
   text-align: center;
   color: var(--text-strong);
-}
-
-.h1 {
-  font-size: var(--fs-h1);
-  line-height: var(--lh-h1);
-  letter-spacing: var(--ls-h1);
-  filter: var(--shadow-title);
-}
-
-.h1--hero {
-  font-size: var(--fs-hero);
-}
-
-.h2 {
   font-size: var(--fs-h2);
   line-height: var(--lh-h1);
   letter-spacing: var(--ls-h1);
-}
-
-/* kata bergradasi pada judul ("Berat?") */
-.h1__accent {
-  background: var(--title-accent);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-.tagline {
-  margin: 0;
-  font-family: var(--font-body);
-  font-style: italic;
-  font-weight: var(--fw-medium);
-  font-size: var(--fs-body);
-  line-height: var(--lh-body);
-  color: var(--text-body);
-  text-align: center;
-}
-
-.tagline strong {
-  font-weight: var(--fw-bold);
-  color: var(--text-emphasis);
 }
 
 .eyebrow {

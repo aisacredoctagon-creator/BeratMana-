@@ -4,6 +4,7 @@ import type { GameSettings } from '../../game/settings';
 import { getBest } from '../../services/records';
 import { createButton } from '../components/button';
 import { createSwitch, createSwitchIconButton } from '../components/controls';
+import { createTitle } from '../components/title';
 import { h } from '../dom';
 import { Seesaw } from '../seesaw';
 import { SettingsPanel } from '../settings-panel';
@@ -21,7 +22,7 @@ export interface TitleScreen {
 
 const findItem = (id: string): Item => ITEMS.find((i) => i.id === id) ?? (ITEMS[0] as Item);
 
-/** Layar judul: logo, tagline, hiasan jungkat-jungkit, tombol Main, pengaturan (selalu tampil), toggle suara + tombol "?" Cara Main. */
+/** Layar judul: logo (judul), hiasan jungkat-jungkit, tombol Main, pengaturan (selalu tampil), toggle suara + tombol "?" Cara Main. */
 export function createTitleScreen(settings: GameSettings, onChange: (s: GameSettings) => void): TitleScreen {
   const deco = new Seesaw({ rock: true });
   deco.showStatic([findItem('bulu'), findItem('batu')]);
@@ -46,8 +47,7 @@ export function createTitleScreen(settings: GameSettings, onChange: (s: GameSett
       h(
         'section',
         { class: 'title__hero' },
-        h('h1', { id: 'game-title', class: 'h1 h1--hero' }, 'Berat ', h('span', { class: 'h1__accent' }, 'Mana?')),
-        h('p', { class: 'tagline' }, 'Berat = ', h('strong', {}, 'hasil hitungan,'), ' bukan ukuran visual objek!'),
+        createTitle('game-title', 'Berat', 'Mana?'),
         deco.el,
         h('div', { class: 'play-block' }, playBtn, h('p', { class: 'best' }, 'Rekor: ', bestValue)),
       ),

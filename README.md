@@ -153,7 +153,7 @@ Dua toggle terpisah (Musik, SFX), masing-masing hanya mute/unmute dan tersimpan.
 - Perbandingan nilai memakai `Rat` (pecahan integer): `0,1 + 0,2` sama persis dengan `0,3`, `1/3 + 1/6` dengan `1/2`.
 - Generator memilih nilai target bersama untuk kedua sisi, membangun ekspresi A ≈ target dan B ≈ target·(1 ± selisih), lalu memvalidasi eksak. Jika pemain mencentang tipe dengan rentang nilai jauh berbeda (mis. pecahan + perkalian Hard), generator memilih pasangan tipe yang rentangnya beririsan lebih dulu; bila tak ada, soal tetap valid tetapi lebih mudah.
 - `prefers-reduced-motion` dihormati: shake dan partikel dimatikan, transisi dipersingkat.
-- Font Fredoka dan Plus Jakarta Sans (lisensi OFL) di-self-host lewat paket `@fontsource`, hanya subset latin.
+- Font Fredoka (lisensi OFL) di-self-host lewat paket `@fontsource-variable`, dan Montserrat 700/900 (judul saja, OFL) sebagai berkas woff2 di `public/fonts/` (dari paket `@fontsource/montserrat`), semuanya hanya subset latin.
 - Double-tap zoom, seleksi teks, dan scroll bounce dicegah lewat CSS (`touch-action: manipulation`, `overscroll-behavior: none`); pinch-zoom tetap boleh demi aksesibilitas.
 
 ## Kredit & lisensi aset
@@ -161,7 +161,7 @@ Dua toggle terpisah (Musik, SFX), masing-masing hanya mute/unmute dan tersimpan.
 | Bagian | Sumber | Lisensi |
 | --- | --- | --- |
 | Font **Fredoka** (variabel, subset latin) | paket npm `@fontsource-variable/fredoka` | SIL Open Font License 1.1 |
-| Font **Plus Jakarta Sans** (miring 500/700, subset latin) | paket npm `@fontsource/plus-jakarta-sans` | SIL Open Font License 1.1 |
+| Font **Montserrat** (700 dan 900, subset latin; hanya judul game) | paket npm `@fontsource/montserrat`, berkas di `public/fonts/` beserta teks lisensinya | SIL Open Font License 1.1 |
 | Ikon api (notifikasi combo) | Ant Design Icons (`ant-design:fire-filled`), via desain Figma | MIT |
 | Ilustrasi penyangga segitiga; ikon chevron, suara, jeda | file desain Figma milik pemilik proyek, dirakit oleh `scripts/build-figma-art.mjs` | © pemilik proyek |
 | Benda (bulu, landasan, balon, bola bowling, kapas, batu, bantal, dumbel, mobil), ikon lain (centang, silang, hati, piala, bagikan, dll.), ikon aplikasi, gambar OG | digambar untuk proyek ini | © pemilik proyek |

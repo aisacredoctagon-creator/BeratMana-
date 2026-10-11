@@ -43,7 +43,7 @@ Warna berlabel **"turunan"** di `tokens.css` tidak ada di Figma (lihat §10).
 | --- | --- |
 | Permukaan | `--surface-app` `--surface-bar` `--surface-card` `--surface-sunken` `--surface-scrim` |
 | Garis | `--line-bar` `--line-control` |
-| Teks | `--text-strong` `--text-body` `--text-muted` `--text-muted-on-app` `--text-subtle` `--text-on-accent` `--text-emphasis` |
+| Teks | `--text-strong` `--text-body` `--text-muted` `--text-muted-on-app` `--text-subtle` `--text-on-accent` |
 | Fokus | `--focus-ring` |
 | Hasil | `--good-bg` `--good-soft` `--good-line` `--bad-bg` `--bad-soft` `--flash-good` `--flash-bad` |
 | Sisi kiri | `--side-left-{bg,line,solid,glow,tag-bg,tag-line,tag-text}` |
@@ -53,14 +53,14 @@ Warna berlabel **"turunan"** di `tokens.css` tidak ada di Figma (lihat §10).
 | Pil | `--pill-{score,level,mode,combo,time}-*` `--star-tile-*` (HUD memakai skor dan waktu; level/combo hanya di game over) |
 | Hati (nyawa) | `--heart-{full,lost}` `--heart-size` `--heart-gap` |
 | Jungkat-jungkit | `--beam-*` `--pin-*` `--base-*` |
-| Judul | `--title-accent` (gradasi "Berat?") |
+| Judul | `--title-lead` (slate-800) `--title-accent` (rose-500, flat) |
 
 ### 3.3 Tipografi
 
 | Peran | Font | Bobot | Ukuran (desain) | Token |
 | --- | --- | --- | --- | --- |
-| H1 (judul) | Fredoka | 600 | 60 / 60, tracking −0,01em | `--fs-h1` `--lh-h1` `--ls-h1` |
-| H2 (judul modal/game over) | Fredoka | 600 | 40 *(turunan)* | `--fs-h2` |
+| Judul game (satu baris) | **Montserrat** | pembuka 700, aksen 900 | aksen **72** *(turunan)*, pembuka 0,6 × aksen (43,2), lh 1 | `--font-title` `--fs-title-heavy` `--fs-title-lead` `--lh-title` |
+| H2 (judul modal/game over) | Fredoka | 600 | 40 *(turunan)* | `--fs-h2` `--lh-h1` `--ls-h1` |
 | Ekspresi kartu | Fredoka | 600 | 48 / 48, tracking 0,02em | `--fs-expr` `--lh-expr` `--ls-expr` |
 | Skor besar (game over) | Fredoka | 600 | 64 *(turunan)* | `--fs-score-hero` |
 | Nilai HUD | Fredoka | 600 | **24** (Figma 20) / 1,2 | `--fs-value` `--lh-value` |
@@ -69,9 +69,8 @@ Warna berlabel **"turunan"** di `tokens.css` tidak ada di Figma (lihat §10).
 | Teks besar (daftar Cara Main) | Fredoka | 500–600 | **18** *(turunan)* | `--fs-body-lg` |
 | Tag kartu, hint | Fredoka | 600 | **14** (Figma 12) / 1,3, UPPERCASE, tracking 0,05em | `--fs-tag` `--lh-tag` `--ls-tag` |
 | Eyebrow HUD | Fredoka | 600 | **12** (Figma 10) / 1,2, UPPERCASE | `--fs-eyebrow` `--lh-eyebrow` `--ls-eyebrow` |
-| Tagline | Plus Jakarta Sans | 500 / 700 miring | **16** (Figma 14) / 1,4 | `--font-body` |
 
-Aturan: judul dan angka = Fredoka; hanya kalimat penjelas miring (tagline) yang memakai Plus Jakarta Sans. Label kecil selalu UPPERCASE + tracking. Angka memakai `font-variant-numeric: tabular-nums` pada skor/timer. Jangan pakai bobot di luar 500/600/700.
+Aturan: angka dan teks UI = Fredoka; **Montserrat HANYA untuk judul game** (`.title-line`, §4.14), bobot 700 dan 900 saja. Label kecil selalu UPPERCASE + tracking. Angka memakai `font-variant-numeric: tabular-nums` pada skor/timer. Jangan pakai bobot di luar 500/600/700 (kecuali judul: 700/900).
 
 ### 3.4 Spasi, radius, garis
 - **Spasi** `--space-{2,4,6,8,10,12,14,16,20,22,24,30,40,64,128}` (nama = px di kanvas desain).
@@ -176,7 +175,7 @@ Kapsul kecil berisi ikon (api untuk tingkat ≥ 2, bintang untuk pemanasan) + te
 - **Tingkat**: warna (`--combo-notice-{bg,line,text,icon}-{1,2,4}`: 1 rose muda, 2–3 hangat/amber, 4–5 panas/rose + cahaya), ukuran (`--combo-notice-scale-1…5`, lebih kecil di ≤ 720px), dan partikel (`COMBO_NOTICE.particles` = 0/6/8/10/14, maks 14) naik bersama tingkat. Bukan hanya warna: teks dan ikon selalu ada.
 - **Animasi** (`--dur-combo-notice` 1200 ms, hanya `transform`/`opacity`, keyframes di `motion.css`): `combo-notice-in` (masuk dari kanan dengan pegas) → tahan dengan denyut (`combo-pulse`) dan kilau (`combo-shine`) → keluar menggeser + memudar. Notifikasi baru saat yang lama masih tampil memakai `combo-notice-swap` (pop di tempat, timer keluar diulang), tidak menumpuk. Partikel (`.combo-notice__spark`) terbang ke kiri/atas (tidak keluar tepi kanan layar dan tidak turun ke kartu), jangkauan `--combo-spark-reach`. `prefers-reduced-motion`: hanya fade (`combo-notice-fade`), tanpa geser, denyut, kilau, dan partikel.
 - **Bunyi dan getar**: `'combo'` di `services/audio.ts` memainkan `comboNotes(level)` (`services/combo-sfx.ts`): arpeggio naik triangle + lapisan oktaf sinus, 3 nada (pemanasan, lebih lembut) sampai 7 nada + denting kilau (tingkat ≥ 4), akar naik per tingkat, dimulai `COMBO_SFX.delay` setelah bunyi jawaban benar. Volume `COMBO_SFX.volume` (< volume 'correct'). Mengikuti toggle SFX dan aturan autoplay. Haptic berjenjang (`COMBO_HAPTIC`).
-- **Posisi aman**: tidak menimpa kartu, benda/jungkat-jungkit, atau tombol jawab di semua ukuran uji (360–1920, landscape HP). Di HP portrait ia menutupi sebagian ujung kanan judul "Mana yang Lebih Berat?" selama ±1,2 detik (A42).
+- **Posisi aman**: tidak menimpa kartu, benda/jungkat-jungkit, atau tombol jawab di semua ukuran uji (360–1920, landscape HP). Di HP portrait ia menutupi sebagian ujung kanan judul "Mana yang lebih BERAT?" selama ±1,2 detik (A42).
 
 ### 4.13 Toast — `.toast`
 Pil gelap (slate-800), teks putih, `--shadow-toast`, muncul dari bawah. `role="status"`.
@@ -186,13 +185,21 @@ Koordinat desain 576 × 260 (`--ss-*`, unit `--ss-u`). Papan kayu (gradasi kunin
 
 ---
 
+### 4.14 Judul — `.title-line` (`createTitle(id, lead, accent)`, `src/ui/components/title.ts`)
+Satu komponen untuk judul layar game ("Mana yang lebih **BERAT?**", `#question`) dan layar judul ("Berat **MANA?**", `#game-title`); gaya identik, hanya teks yang berbeda. Elemen `<h1>`, teks sungguhan; kata aksen ditulis "Berat?" di DOM dan dikapitalkan lewat `text-transform` (pembaca layar tidak mengeja huruf).
+- **Susunan:** satu baris di semua lebar (flex, baseline sejajar, rata tengah). Kata pembuka dan aksen dipisah `--title-gap` (0,43 × aksen). Di layar sempit font mengecil mengikuti lebar viewport (`--fs-title-heavy: clamp(1.5rem, 9.2vw, 72u)`); lebar total ≈ 9,76 × ukuran aksen, jadi tetap muat di 320–430px tanpa pecah baris.
+- **Gaya (diukur dari gambar referensi `judul-miring.png`, u = 1,25):** pembuka Montserrat Bold 700, slate-800 (`--title-lead`), ukuran 0,6 × aksen; aksen Montserrat Black 900, huruf kapital, rose-500 flat (`--title-accent`), 72u; letter-spacing 0; tanpa bayangan/outline. Kemiringan ±5° pada aksen di gambar BELUM dikerjakan (prompt berikutnya).
+- **Ruang kemiringan:** padding `--title-room-block/inline` dibatalkan margin negatif (tidak menambah tinggi tata letak) dan tidak ada `overflow: hidden` pada pembungkusnya.
+- **Font:** self-host di `public/fonts/` (woff2 latin 700 dan 900, lisensi OFL ikut disalin), `font-display: swap`, di-preload dari `index.html`. Cadangan "Montserrat Fallback" = Arial Bold dengan `size-adjust` (111% / 108%) dan override ascent/descent supaya tidak ada layout shift (diuji dengan font diperlambat 2 detik: selisih lebar < 1px, tinggi sama, CLS 0).
+- **Kontras:** pembuka 13,6:1; aksen rose-500 di atas latar 3,4:1 (lolos untuk teks besar ≥ 3:1, di bawah 4,5:1; mengikuti gambar referensi, A54).
+
 ## 5. Layout layar game
 
 ```
 ┌───────────────────────── HUD (bar putih 90%, blur) ─────────────────────────┐
 │ [Skor]                  [Waktu] atau [♥♥♥♥♥]                      [⏸]    │
 ├──────────────────────────────────────────────────────────────────────────────┤
-│                    Mana yang Lebih Berat?   (H1, "Berat?" bergradasi)         │
+│               Mana yang lebih  BERAT?   (judul, Montserrat 700 + 900)         │
 │        [ SISI KIRI 32 + 15 ]             [ SISI KANAN 23 × 3 ]                │
 │                ▽ (ekor)                          ▽ (ekor)                    │
 │              (benda kiri)  ── jungkat-jungkit 576 × 260 ──  (benda kanan)     │
@@ -271,10 +278,10 @@ Koordinat desain 576 × 260 (`--ss-*`, unit `--ss-u`). Papan kayu (gradasi kunin
 | A21 | Elips abu-abu tengah latar dan persegi `#f4f7fb` di belakang bulu (`17:657`) diabaikan | tidak terlihat di screenshot / artefak |
 | A22 | Durasi & easing animasi diwarisi dari implementasi sebelumnya | Figma statis |
 | A23 | Tilt papan 12° (sebelumnya 14°) | papan Figma lebih lebar |
-| A24 | Gradasi "Berat?" mulai dari koral (campuran oranye 54% + merah muda), bukan kuning | diukur dari screenshot Figma: gradasi membentang di seluruh judul, kata terakhir hanya menampilkan 73–100% |
+| A24 | (digantikan A54: aksen judul kini flat rose-500) Gradasi "Berat?" mulai dari koral (campuran oranye 54% + merah muda), bukan kuning | diukur dari screenshot Figma: gradasi membentang di seluruh judul, kata terakhir hanya menampilkan 73–100% |
 | A25 | Ukuran judul pertanyaan `--fs-h1` ikut lebar viewport di layar sempit; judul layar judul memakai `--fs-hero` (60) | satu baris di 360px |
 | A26 | Layout landscape pendek dua kolom (kartu+papan kiri, tombol jawab kanan) | Figma hanya 1280 × 992 |
-| A27 | Tagline "Berat = hasil hitungan…" hanya di beranda; dihapus dari layar game (A40) | permintaan pemilik proyek |
+| A27 | (A54: tagline di beranda juga dihapus; kalimatnya tetap ada di pop-up Cara Main) Tagline "Berat = hasil hitungan…" hanya di beranda; dihapus dari layar game (A40) | permintaan pemilik proyek |
 | A28 | Kartu menang: cincin hijau + latar hijau muda; kalah: ekspresi memudar; nilai "= N" sebagai pil gelap menempel di tepi bawah (ikon ✓ dihapus oleh A52) | diganti A52 |
 | A30 | Pil statistik game over memakai keluarga warna pil HUD (rekor=kuning, akurasi=biru langit, streak=merah muda, benar/salah=hijau) | konsisten dengan HUD |
 | A31 | Tombol jawab: yang tidak dipilih menjadi abu-abu saat hasil ditampilkan; yang dipilih tetap berwarna dan beranimasi (pop / goyang), tanpa lencana (A52) | diganti A52 |
@@ -298,6 +305,7 @@ Koordinat desain 576 × 260 (`--ss-*`, unit `--ss-u`). Papan kayu (gradasi kunin
 | A51 | Box soal berbentuk speech bubble dengan ekor, menempel di atas objek (target pemilik proyek; Figma menampilkan dua kartu di atas papan). Baris kartu dikeluarkan dari alur layout sehingga jungkat-jungkit dan objek bergeser ke atas ±35–104px (disetujui); di landscape pendek papan di dasar kolom. Nilai "= N" menjadi baris kecil di dalam box (bukan pil di tepi bawah yang bertabrakan dengan ekor). aria-label memakai kata ("2 kali 21"). Tag "SISI KIRI/KANAN" sudah ada dan dipertahankan | benda dan box kini berdekatan; pembaca layar membaca soal dengan jelas |
 | A52 | Feedback jawaban tanpa ikon (permintaan pemilik proyek): lencana ✓ di box, lencana ✓/✗ di tombol, dan ikon di pil "Benar!/Salah" dihapus. Penanda visual = overlay warna pada box yang dipilih (hijau bila benar; merah `--bad-line`/`--bad-soft` bila salah; sisi benar saat salah di-fade, lihat A53). Tombol yang dipilih TIDAK diberi overlay (merah di atas tombol merah tidak terbedakan, hijau menjadi keruh di atas biru/merah); penandanya gerak yang sudah ada (pop / goyang). Isyarat nonvisual: `#sr-status` (aria-live polite) mengumumkan "Benar…"/"Salah…" tiap jawaban, gerak, SFX, haptic. Berlaku untuk `prefers-reduced-motion`: overlay tetap tampil, gerak dimatikan | box lebih bersih; makna tidak hanya lewat warna karena ada teks pil, aria-live, dan gerak |
 | A53 | Sisi benar saat jawaban SALAH tidak lagi berwarna hijau, tetapi di-fade out (box + objek, `--opacity-faded`); overlay merah pada jawaban yang dipilih dan seluruh state benar tidak berubah. Nilai 0,65 (bukan 0,35–0,5 yang diminta awal) karena teks soal di bawah 0,6 gagal kontras 4,5:1 (0,5 = 3,1:1; 0,65 = 4,7:1); alternatif "hanya box-hantu + objek 0,4 dengan teks tegas" ditolak pemilik proyek demi kesederhanaan. Tombol jawab tidak ikut di-fade. aria-live "Salah. Sisi … yang lebih berat: …" sudah menyebut sisi benar | permintaan pemilik proyek; keterbacaan nilai dijaga |
+| A54 | Judul game memakai Montserrat (pembuka 700, aksen 900 kapital, rose-500 flat) sesuai gambar referensi pemilik proyek (menggantikan Fredoka + gradasi, A24). Satu komponen `.title-line` di game dan beranda; beranda tetap "Berat MANA?" (keputusan pemilik proyek), game "Mana yang lebih BERAT?". Satu baris di semua lebar (font mengecil di layar sempit). Tagline beranda dihapus (kalimat tetap di Cara Main); font Plus Jakarta Sans, `--font-body`, `--text-emphasis`, `--shadow-title`, `--fs-h1`, `--fs-hero` dihapus karena tidak terpakai. Warna aksen 3,4:1 di atas latar (teks besar, di bawah aturan 4,5:1); alternatif rose-600 = 4,37:1 | permintaan pemilik proyek; gambar referensi menang atas Figma |
 | A33 | Skala font teks kecil dinaikkan dari Figma: eyebrow 10→12, tag 12→14, badan/tagline/pil 14→16, nilai HUD 20→24, tombol utama 24→28 (keycap 32→36). Proporsi komponen ikut menyesuaikan lewat padding/tinggi isi | permintaan: font terlalu kecil di Figma, terutama di HP |
 | A32 | Gambar OG dan ikon aplikasi digambar ulang dalam palet Figma | produk harus konsisten |
 
