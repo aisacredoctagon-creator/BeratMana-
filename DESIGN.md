@@ -1,4 +1,5 @@
 # DESIGN.md — Design System "Berat Mana?"
+| A59 | Box soal tidak lagi mencadangkan ruang untuk nilai jawaban: `min-block-size` box (`--bubble-min-h`) dan tinggi baris nilai (`--bubble-value-h`) dihapus; box setinggi isi sebelum menjawab dan melebar ke atas sebesar nilai + `--question-answer-gap` setelah menjawab (permintaan pemilik proyek; arah ke atas dipilih karena jangkar sudah di tepi bawah/ekor). Tinggi sebelum menjawab turun ≈ 20–30 px (98–139 → 79–110 px di 360–1920); setelah menjawab ≈ tinggi lama (selisih ≤ 3,5 px karena jarak 0,25em) | permintaan pemilik proyek; layout shift nol karena terkurung di kartu absolut |
 
 **Sumber kebenaran visual:** frame Figma `Html → Body` (node `17:248`, 1280 × 992; tautan file tidak dicantumkan karena repo publik).
 Figma tidak punya variables/styles, jadi nama token diturunkan dari nama layer dan skala warna (Tailwind) yang dipakai frame.
@@ -127,7 +128,8 @@ Kiri biru (`--side-left-*`), kanan koral (`--side-right-*`). Tinggi `--answer-h`
 | `data-feedback="bad"` | goyang horizontal; tanpa lencana/ikon |
 
 ### 4.4 Box soal (speech bubble) — `.expr-card` (`--left` / `--right`)
-Box putih bersudut `--radius-xl` dengan **ekor kecil membulat di tengah bawah** yang menunjuk objek, **menempel di atas objeknya** dan ikut naik-turun bersama objek saat jungkat-jungkit miring, tanpa ikut berputar (teks selalu tegak). Isi: tag "SISI KIRI/KANAN" (pil kecil) + ekspresi + satu baris nilai "= N" (ruangnya selalu dicadangkan, tampil lewat opacity: tinggi box stabil).
+Box putih bersudut `--radius-xl` dengan **ekor kecil membulat di tengah bawah** yang menunjuk objek, **menempel di atas objeknya** dan ikut naik-turun bersama objek saat jungkat-jungkit miring, tanpa ikut berputar (teks selalu tegak). Isi: tag "SISI KIRI/KANAN" (pil kecil) + ekspresi + satu baris nilai "= N" yang HANYA ada setelah menjawab (lihat "Dua keadaan tinggi" di bawah).
+- **Dua keadaan tinggi (A59):** (1) **belum menjawab** = box hanya setinggi tag + ekspresi + padding normal (`--bubble-pad`): tanpa `min-height`, tanpa baris nilai (tinggi 0), tanpa ruang cadangan; (2) **setelah menjawab** (`data-result` terpasang di kedua box, bersamaan) = baris nilai melebar sebesar tinggi nilai (`--fs-body` × `--lh-body`) + `--question-answer-gap` (0,25em dari font nilai; bukan angka tetap), jadi kedua box bertambah sama besar. Teknik: `.expr-card__value` = grid `0fr → 1fr` (`--dur-base` 200 ms, `--ease-out`) dengan pembungkus klip `.expr-card__value-clip` (`overflow: hidden`, `min-block-size: 0`); nilai muncul bersama lewat opacity/pop yang sudah ada. **Arah melebar = ke atas**: kartu `position: absolute` dengan `inset-block-end: 0` pada jangkar nol-ukuran, sehingga tepi bawah dan ekor tetap di titik yang sama dan objek, jungkat-jungkit, tombol, HUD tidak bergeser (kenaikan tinggi terkurung di kartu absolut). Menciut ke tinggi awal **langsung** saat ronde baru (transisi hanya di keadaan `[data-result]`; box sedang tak terlihat), jadi tidak ada sisa lebar atau kilatan, juga saat menjawab beruntun cepat. Reduced-motion: tinggi berubah langsung (aturan global). Ini pengecualian dari aturan "animasi hanya transform/opacity": tinggi dianimasikan pada satu kartu absolut kecil karena `scaleY` akan mendistorsi ekspresi dan ekor.
 - **Warna:** garis 1px biru muda (kiri, `--bubble-line-left`) dan merah muda (kanan, `--bubble-line-right`), turunan 55% dari `--side-*-line` ke putih; bayangan halus senada (`--side-*-glow`) lewat `filter: drop-shadow` pada wadah, sehingga garis dan bayangan menyambung mulus sampai ke ekor. **Warna teks soal satu token** `--color-question-text` untuk kedua sisi dan semua tipe (tambah, kurang, kali, bagi, pecahan, desimal); tanpa warna per sisi/operator/tipe dan tanpa opacity pada kondisi normal.
 - **Ekor:** `.expr-card__tail` = persegi `--bubble-tail` dirotasi 45° dengan latar dan garis yang sama (sudut ujung membulat). Posisi ekor terpisah dari posisi box: box digeser `--bubble-shift` (terdaftar `@property <length>`) agar tidak keluar tepi jungkat-jungkit (`--bubble-edge`), sedangkan ekor tetap di tengah objek (`left = 50% − shift`, dibatasi `--bubble-tail-min` dari sudut).
 - **Penempelan di objek:** kartu dipasang di dalam `.seesaw__item` lewat jangkar nol-ukuran `.seesaw__anchor` di puncak objek yang sebenarnya (`--item-top` = bagian kosong di atas gambar, `Item.top` di `items.ts`, default 0) dikurangi `--bubble-gap` dan `--bubble-tail-depth` (ujung ekor berjarak satu token spasi kecil dari objek). Jangkar diputar BALIK `rotate(-tilt)` dengan transisi/durasi yang sama seperti papan, jadi rotasi bersih 0. Lebar box `--bubble-w` ≈ 40–48% lebar jungkat-jungkit (`cqi`).
@@ -141,7 +143,7 @@ Box putih bersudut `--radius-xl` dengan **ekor kecil membulat di tengah bawah** 
 | `data-result="faded"` | sisi benar saat jawaban SALAH: tanpa overlay/warna/ikon; box + objek di sisi itu di-fade (`.seesaw__item[data-faded]`, opacity `--opacity-faded` = 0,65, transisi opacity `--dur-base`); teks tidak dipudarkan lebih jauh; baris "= N" tampil |
 | `data-result="wrong"` | overlay merah: latar `--bad-soft`, garis `--bad-line`, glow `--alpha-glow-rose`; HANYA pada box yang dipilih pemain bila salah; geometri, lapisan, durasi, dan easing sama persis dengan `win`; teks tidak dipudarkan (kontras terjaga); baris "= N" tampil |
 | `data-result="lose"` | box yang tidak dipilih dan tidak benar (hanya muncul saat jawaban benar; tidak ikut `faded`): baris "= N" tampil, teks soal dan tag agak pudar (opacity .6) |
-| Antar ronde | ikut animasi masuk/keluar objek (opacity + scale); posisi absolut → tanpa layout shift |
+| Antar ronde | ikut animasi masuk/keluar objek (opacity + scale); posisi absolut → tanpa layout shift; tinggi kembali ke keadaan awal (tanpa baris nilai) seketika |
 
 ### 4.5 Pil — `.pill` (+ `--score`, `--time` di HUD; `--level`, `--combo` di statistik game over)
 Latar & garis 2px per keluarga warna, radius 16, `--shadow-pill`, padding 8 × 16. Bagian: `.pill__icon`, `.pill__text` > `.pill__label` (eyebrow) + `.pill__value`. Lencana bintang skor = `.star-tile`.
@@ -253,7 +255,7 @@ Satu komponen untuk judul layar game (`variant="ingame"`: "Mana yang lebih **BER
 | ≥ 1280 × 992 | persis Figma kecuali bagian HUD/tagline yang disederhanakan (A40) |
 | 961–1279 | `--u` mengecil mengikuti viewport |
 | 721–960 (tablet portrait) | padding HUD mengecil; papan, kartu, tombol jawab selebar isi (orientasi portrait) |
-| ≤ 720 | token padding/jarak mengecil; box soal lebih ringkas (`--bubble-min-h`); modal menjadi bottom sheet |
+| ≤ 720 | token padding/jarak mengecil; box soal lebih ringkas (`--bubble-pad`); modal menjadi bottom sheet |
 | Landscape pendek (tinggi ≤ 520) | tata letak dua kolom (lihat §5), `--u` mengikuti tinggi 560 |
 
 ## 9. Aset

@@ -69,16 +69,23 @@ await page.evaluate(() => { window.__tiltEv = 0; document.addEventListener('anim
 check('judul game (variant ingame): "Mana yang lebih" normal lalu "BERAT?" tekanan, gaya kata sama dengan menu, satu baris, jarak = token ingame', await page.evaluate(() => { const t = document.querySelector('#question'); const m = document.querySelector('#game-title'); const cs = getComputedStyle; const [pl, em] = t.children; const mem = m.querySelector('.title-line__emphasis'), mpl = m.querySelector('.title-line__plain'); const same = ['fontFamily', 'fontWeight', 'color', 'textTransform'].every((k) => cs(pl)[k] === cs(mpl)[k] && cs(em)[k] === cs(mem)[k]); const l = pl.getBoundingClientRect(), a = em.getBoundingClientRect(); const fsE = parseFloat(cs(em).fontSize); return t.className === m.className && t.dataset.variant === 'ingame' && pl.className === 'title-line__plain' && em.className === 'title-line__emphasis' && same && t.textContent === 'Mana yang lebih Berat?' && Math.abs(parseFloat(cs(pl).fontSize) / fsE - 0.6) < 0.01 && Math.abs(parseFloat(cs(t).columnGap) / fsE - 0.27) < 0.01 && Math.abs(l.bottom - a.bottom) < t.getBoundingClientRect().height && a.left >= l.right - fsE * 0.1 && document.documentElement.scrollWidth <= innerWidth + 1; }));
 check('HUD hanya skor, hati, jeda: elemen lama hilang', (await page.$$eval('#screen-game .pill--level, #screen-game .pill--mode, #screen-game .pill--combo, #screen-game .pill__badge, #screen-game .pill--lives, #screen-game #btn-sound, #screen-game .tagline', (e) => e.length)) === 0);
 check('hati: 2 nyawa Hard, aria-label tersembunyi', (await page.getAttribute('.hearts', 'aria-label')) === 'Nyawa 2 dari 2' && (await page.$$eval('.heart[data-state="full"]', (e) => e.length)) === 2);
+const boxH = () => page.evaluate(() => { const r = (q) => document.querySelector(q).getBoundingClientRect(); return { l: r('#card-left').height, r: r('#card-right').height, vl: r('#card-left .expr-card__value').height, vr: r('#card-right .expr-card__value').height, below: r('#card-left').bottom - r('#card-left .expr-card__expr').bottom }; });
+const boxPre = await boxH();
+check('box soal sebelum menjawab: tanpa ruang cadangan (baris nilai tinggi 0, tanpa min-height, ruang bawah ekspresi = padding saja)', boxPre.vl === 0 && boxPre.vr === 0 && (await page.evaluate(() => getComputedStyle(document.querySelector('#card-left')).minHeight)) === '0px' && boxPre.below < 30);
 const side = await answer(false);
 await page.waitForTimeout(300);
 const fb = await page.getAttribute(side === 'left' ? '#btn-left' : '#btn-right', 'data-feedback');
 check('jawaban benar → feedback good + skor naik', fb === 'good' && (await page.textContent('#hud-score')) !== '0');
 check('benar: overlay hijau di box yang dipilih (lebih berat), box lain memudar, tanpa ikon ✓/✗ di box/tombol/pil', (await page.$$eval('.expr-card__mark, .answer__badge, #screen-game .seesaw__verdict .icon, .expr-card .icon, .answer[data-feedback] .icon--check, .answer[data-feedback] .icon--cross', (e) => e.length)) === 0 && (await page.$eval(side === 'left' ? '#card-left' : '#card-right', (e) => e.dataset.result)) === 'win' && (await page.$$eval('.expr-card[data-result="wrong"], .expr-card[data-result="faded"], .seesaw__item[data-faded]', (e) => e.length)) === 0);
+const boxPost = await boxH();
+check('box soal melebar setelah menjawab sebesar nilai + jarak, kedua box sama besar dan bersamaan', boxPost.vl > 15 && boxPost.vl === boxPost.vr && Math.abs(boxPost.l - boxPre.l - boxPost.vl) < 0.6 && Math.abs(boxPost.r - boxPre.r - boxPost.vr) < 0.6);
 check('benar: aria-live mengumumkan "Benar" dan pil hanya teks', (await page.textContent('#sr-status')).startsWith('Benar') && (await page.textContent('#screen-game .seesaw__verdict')) === 'Benar!');
 check('animasi judul game tidak berulang saat ronde berganti', (await page.evaluate(() => window.__tiltEv)) === 0 && (await page.getAttribute('#question', 'data-tilt')) === 'done');
 check('kartu pemenang ditandai', (await page.$$eval('.expr-card[data-result="win"]', (e) => e.length)) === 1 && (await page.$$eval('.expr-card[data-result="lose"]', (e) => e.length)) === 1);
 await page.waitForTimeout(1300);
 await ready();
+const boxNext = await boxH();
+check('ronde baru: box kembali ke tinggi awal (tanpa sisa ruang nilai atau hasil)', boxNext.vl === 0 && boxNext.vr === 0 && (await page.$$eval('.expr-card[data-result]', (e) => e.length)) === 0);
 
 // ---- notifikasi combo: streak 3 = pemanasan, hilang sendiri, tidak menangkap sentuhan ----
 check('belum ada notifikasi combo di streak 1', !(await page.$eval('.combo-notice', (n) => n.classList.contains('is-on'))));
