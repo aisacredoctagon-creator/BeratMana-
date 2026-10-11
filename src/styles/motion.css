@@ -218,49 +218,51 @@
 
 /* ---------- notifikasi combo (transform/opacity saja) ----------
    masuk dari pinggir dengan pegas → tahan → keluar menggeser dan memudar. 'swap' = menggantikan yang masih tampil. */
+/* notifikasi combo arcade: slot menempel di tepi kanan layar; masuk meluncur dari luar dengan "hantaman" (overshoot), tahan, keluar ke sisi yang sama */
 @keyframes combo-notice-in {
   0% {
     opacity: 0;
-    transform: translateX(var(--combo-notice-in-x)) scale(0.6);
-    animation-timing-function: var(--ease-pop);
-  }
-  16% {
-    opacity: 1;
-    transform: translateX(0) scale(1.12);
+    transform: translateX(var(--combo-notice-in-x));
     animation-timing-function: var(--ease-out);
   }
-  26%,
-  78% {
+  12% {
+    opacity: 1;
+    transform: translateX(var(--combo-notice-overshoot-x));
+    animation-timing-function: var(--ease-out);
+  }
+  18%,
+  80% {
     opacity: 1;
     transform: none;
     animation-timing-function: ease-in;
   }
   100% {
     opacity: 0;
-    transform: translateX(var(--combo-notice-out-x)) scale(0.92);
+    transform: translateX(var(--combo-notice-out-x));
   }
 }
 
+/* menggantikan notifikasi yang masih tampil: tetap di tempat, "hantam" kecil lalu tahan dan keluar */
 @keyframes combo-notice-swap {
   0% {
     opacity: 1;
-    transform: scale(0.86);
+    transform: scale(0.88);
     animation-timing-function: var(--ease-pop);
   }
-  16% {
+  12% {
     opacity: 1;
-    transform: scale(1.14);
+    transform: scale(1.1);
     animation-timing-function: var(--ease-out);
   }
-  26%,
-  78% {
+  18%,
+  80% {
     opacity: 1;
     transform: none;
     animation-timing-function: ease-in;
   }
   100% {
     opacity: 0;
-    transform: translateX(var(--combo-notice-out-x)) scale(0.92);
+    transform: translateX(var(--combo-notice-out-x));
   }
 }
 
@@ -277,29 +279,9 @@
   }
 }
 
-@keyframes combo-flicker {
-  to {
-    transform: scale(1.18) rotate(-6deg);
-  }
-}
-
 @keyframes combo-pulse {
   to {
-    transform: scale(1.05);
-  }
-}
-
-@keyframes combo-shine {
-  0% {
-    opacity: 0;
-    transform: translateX(-120%);
-  }
-  30% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-    transform: translateX(380%);
+    scale: 1.05;
   }
 }
 

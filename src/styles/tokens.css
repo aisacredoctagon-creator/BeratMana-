@@ -189,20 +189,15 @@
   /* nyawa = hanya ikon hati (turunan): penuh = isi merah, hilang = outline abu (beda bentuk, bukan hanya warna) */
   --heart-full: var(--color-rose-500);
   --heart-lost: var(--color-slate-500);
-  /* notifikasi combo (turunan; 1 = pemanasan, 2–3 hangat, 4–5 panas) */
-  --combo-notice-bg-1: var(--color-rose-50);
-  --combo-notice-line-1: var(--color-rose-300);
-  --combo-notice-text-1: var(--color-rose-800);
-  --combo-notice-icon-1: var(--color-rose-500);
-  --combo-notice-bg-2: var(--color-amber-50);
-  --combo-notice-line-2: var(--color-amber-300);
-  --combo-notice-text-2: var(--color-amber-900);
-  --combo-notice-icon-2: var(--color-orange-500);
-  --combo-notice-bg-4: var(--color-rose-100);
-  --combo-notice-line-4: var(--color-rose-400);
-  --combo-notice-text-4: var(--color-rose-800);
-  --combo-notice-icon-4: var(--color-rose-600);
-  --combo-notice-glow: var(--alpha-glow-rose);
+  /* notifikasi combo arcade (turunan; DESIGN.md §4.12): teks besar tanpa wadah. Isi = gradasi atas→bawah per "panas":
+     A = tingkat 1–2 (kuning), B = tingkat 3 (oranye), C = tingkat 4–5 (merah-oranye); kontur + bayangan keras gelap */
+  --combo-fill-a-top: var(--color-amber-200);
+  --combo-fill-a-bottom: var(--color-amber-400);
+  --combo-fill-b-top: var(--color-amber-300);
+  --combo-fill-b-bottom: var(--color-orange-500);
+  --combo-fill-c-top: var(--color-orange-500);
+  --combo-fill-c-bottom: var(--color-rose-600);
+  --combo-outline: var(--color-slate-900); /* kontur gelap tebal: 17:1 di atas latar game, tinggi terhadap semua isi */
   --combo-spark-1: var(--color-amber-400);
   --combo-spark-2: var(--color-rose-400);
   --combo-spark-3: var(--color-sky-400);
@@ -237,6 +232,7 @@
   --font-title: 'Montserrat', 'Montserrat Fallback', system-ui, sans-serif;
   --font-weight-title-regular: 700;
   --font-weight-title-heavy: 900;
+  --font-combo: 'Titan One', 'Montserrat', system-ui, sans-serif; /* HANYA notifikasi combo (arcade) */
 
   --fw-medium: 500;
   --fw-semibold: 600;
@@ -355,8 +351,7 @@
   --shadow-stand: drop-shadow(0 calc(2 * var(--ss-u)) calc(1 * var(--ss-u)) var(--alpha-ink-06))
     drop-shadow(0 calc(4 * var(--ss-u)) calc(1.5 * var(--ss-u)) var(--alpha-ink-07));
   --shadow-fx-text: 0 calc(2 * var(--u)) calc(6 * var(--u)) var(--alpha-ink-07);
-  --shadow-combo-notice: 0 calc(3 * var(--u)) 0 var(--alpha-ink-07);
-  --shadow-combo-notice-hot: 0 calc(3 * var(--u)) 0 var(--alpha-ink-07), 0 0 calc(14 * var(--u)) var(--combo-notice-glow);
+  --shadow-combo-text: drop-shadow(calc(4 * var(--u)) calc(4 * var(--u)) 0 var(--combo-outline)); /* bayangan keras "timbul" ke kanan-bawah, tanpa blur */
   --blur-bar: 6px;
   --blur-scrim: 3px;
 
@@ -413,16 +408,30 @@
   --score-min-w: 5.5ch; /* angka skor sampai "12.345" tidak menggeser bar atas */
   --hud-time-min-w: 4ch; /* "m:ss" */
   --hud-time-icon-size: 1em; /* sama dengan tinggi angka waktu */
-  --fs-combo-notice: max(1rem, calc(22 * var(--u)));
-  --combo-notice-top: var(--space-8);
-  --combo-notice-icon: 1.2em;
-  --combo-notice-scale-1: 0.82;
+  /* notifikasi combo arcade: ukuran kata ("COMBO"/"MAKS") tingkat 1 mengikuti lebar dan tinggi layar (clamp); angka pengali
+     lebih besar; tingkat naik = skala naik (tingkat 5 tetap muat di 320px) */
+  --fs-combo-word: clamp(1.125rem, min(8vw, 3.6dvh), calc(44 * var(--u)));
+  --combo-num-ratio: 1.6; /* angka pengali = kata × ini */
+  --combo-extra-ratio: 0.8; /* "· 25" (streak) = kata × ini */
+  --combo-stroke: max(2px, calc(3 * var(--u))); /* tebal kontur (sisi luar) */
+  --combo-bleed-start: calc(50% - 50vw); /* lapisan notifikasi selebar layar walau .game dibatasi lebarnya */
+  --combo-bleed-size: 100vw;
+  --combo-gap: 0.2em; /* jarak kata–angka–streak */
+  --lh-combo: 1;
+  --fs-combo-num: calc(1em * var(--combo-num-ratio));
+  --fs-combo-extra: calc(1em * var(--combo-extra-ratio));
+  --combo-skew: 8deg; /* condong; sisi masuk selalu kanan → condong ke kiri, searah gerak */
+  --combo-rotate: 3deg;
+  --combo-notice-scale-1: 0.78;
   --combo-notice-scale-2: 1;
-  --combo-notice-scale-3: 1.06;
-  --combo-notice-scale-4: 1.12;
-  --combo-notice-scale-5: 1.18;
+  --combo-notice-scale-3: 1.08;
+  --combo-notice-scale-4: 1.16;
+  --combo-notice-scale-5: 1.24;
+  /* posisi: tepat di bawah judul. Tinggi judul = ukuran × lh; + tinta "BERAT?" yang miring turun ±0,28 × ukuran di bawah kotaknya */
+  --combo-notice-top: calc(var(--game-pad-top) + var(--fs-title-heavy) * (var(--lh-title) + 0.28) + var(--space-8));
   --combo-notice-in-x: 140%;
-  --combo-notice-out-x: 45%;
+  --combo-notice-out-x: 120%;
+  --combo-notice-overshoot-x: -6%;
   --combo-spark-size: max(4px, calc(8 * var(--u)));
   --combo-spark-reach: max(40px, calc(84 * var(--u)));
   --control-min-h: var(--tap-min);
@@ -509,7 +518,7 @@
   --dur-verdict: 900ms;
   --dur-shake: 420ms;
   --dur-pop: 320ms;
-  --dur-combo-notice: 1200ms; /* seluruh notifikasi combo: masuk, tahan, keluar */
+  --dur-combo-notice: 1800ms; /* seluruh notifikasi combo: masuk ±0,25 dtk, tahan ±1,1 dtk, keluar ±0,3 dtk */
   --dur-combo-pulse: 420ms;
   --dur-combo-shine: 700ms;
   --dur-combo-spark: 650ms;
@@ -552,11 +561,6 @@
     --game-pad-bottom: calc(16 * var(--u));
     --bubble-pad: calc(12 * var(--u));
     --bubble-min-h: calc(130 * var(--u));
-    --combo-notice-scale-1: 0.8;
-    --combo-notice-scale-2: 0.9;
-    --combo-notice-scale-3: 0.94;
-    --combo-notice-scale-4: 0.98;
-    --combo-notice-scale-5: 1.02;
     --fs-expr: clamp(1.125rem, 24cqi, calc(48 * var(--u)));
     --gutter: max(var(--space-12), var(--safe-left));
   }
@@ -582,5 +586,6 @@
     --game-pad-bottom: calc(8 * var(--u));
     --hud-pad-top: calc(6 * var(--u));
     --hud-pad-bottom: calc(8 * var(--u));
+    --combo-notice-top: calc(var(--game-pad-top) + var(--space-4)); /* judul tidak tampil di landscape pendek */
   }
 }

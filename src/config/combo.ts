@@ -11,6 +11,9 @@ export const COMBO_NOTICE = {
   particles: [0, 6, 8, 10, 14],
 } as const;
 
+/** Font arcade teks combo (HANYA notifikasi combo); dimuat lebih awal supaya notifikasi pertama tidak memakai font cadangan. */
+export const COMBO_FONT_FAMILY = '"Titan One"';
+
 /** SFX notifikasi combo (arpeggio naik). Semua disintesis Web Audio, tanpa berkas. */
 export const COMBO_SFX = {
   /** Volume per nada. Sengaja di bawah 'correct' (0,4) supaya tidak mengalahkan bunyi jawaban benar. */

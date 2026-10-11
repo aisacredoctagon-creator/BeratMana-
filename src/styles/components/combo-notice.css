@@ -1,37 +1,21 @@
-/* ===== Notifikasi combo: .combo-notice (data-level 1–5, data-kind warmup|rise|max) =====
-   Pojok kanan atas area main, dekoratif (tidak menangkap sentuhan). Animasi hanya transform/opacity
-   (keyframes di motion.css). Lihat DESIGN.md §4.12. */
+/* ===== Notifikasi combo arcade: .combo-notice (data-level 1–5, data-kind warmup|rise|max) =====
+   Teks besar TANPA wadah (tanpa pil/border/latar), tepat di bawah judul, menempel di tepi kanan layar dan meluncur dari luar.
+   Struktur: .combo-notice (lapisan selebar layar, memotong sumbu x → tidak ada scroll horizontal) > .combo-notice__slot
+   (dianimasikan: transform/opacity) > .combo-notice__face (condong + denyut) > .combo-notice__word/__num/__extra.
+   Tiap kata = tiga lapis: ::before kontur gelap tebal, ::after isi gradasi, teks asli transparan (hanya untuk ukuran).
+   Dekoratif (aria-hidden, pointer-events: none); pembaca layar dilayani live region game. Lihat DESIGN.md §4.12. */
 .combo-notice {
-  --_bg: var(--combo-notice-bg-1);
-  --_line: var(--combo-notice-line-1);
-  --_text: var(--combo-notice-text-1);
-  --_icon: var(--combo-notice-icon-1);
+  --_top: var(--combo-fill-a-top);
+  --_bottom: var(--combo-fill-a-bottom);
   --_scale: var(--combo-notice-scale-1);
-  --_shadow: var(--shadow-combo-notice);
   position: absolute;
   z-index: var(--z-combo-notice);
   inset-block-start: var(--combo-notice-top);
-  inset-inline-end: max(var(--gutter), var(--safe-right));
+  inset-inline-start: var(--combo-bleed-start);
+  inline-size: var(--combo-bleed-size);
+  overflow-x: clip;
   display: none;
   pointer-events: none;
-  will-change: transform, opacity;
-}
-
-.combo-notice[data-level='2'],
-.combo-notice[data-level='3'] {
-  --_bg: var(--combo-notice-bg-2);
-  --_line: var(--combo-notice-line-2);
-  --_text: var(--combo-notice-text-2);
-  --_icon: var(--combo-notice-icon-2);
-}
-
-.combo-notice[data-level='4'],
-.combo-notice[data-level='5'] {
-  --_bg: var(--combo-notice-bg-4);
-  --_line: var(--combo-notice-line-4);
-  --_text: var(--combo-notice-text-4);
-  --_icon: var(--combo-notice-icon-4);
-  --_shadow: var(--shadow-combo-notice-hot);
 }
 
 .combo-notice[data-level='2'] {
@@ -39,7 +23,15 @@
 }
 
 .combo-notice[data-level='3'] {
+  --_top: var(--combo-fill-b-top);
+  --_bottom: var(--combo-fill-b-bottom);
   --_scale: var(--combo-notice-scale-3);
+}
+
+.combo-notice[data-level='4'],
+.combo-notice[data-level='5'] {
+  --_top: var(--combo-fill-c-top);
+  --_bottom: var(--combo-fill-c-bottom);
 }
 
 .combo-notice[data-level='4'] {
@@ -54,69 +46,85 @@
   display: block;
 }
 
-.combo-notice.is-enter {
+.combo-notice__slot {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-end: max(var(--gutter), var(--safe-right)); /* tepi kanan + area aman (notch) */
+  will-change: transform, opacity;
+}
+
+.combo-notice.is-enter .combo-notice__slot {
   animation: combo-notice-in var(--dur-combo-notice) both;
 }
 
-.combo-notice.is-swap {
+.combo-notice.is-swap .combo-notice__slot {
   animation: combo-notice-swap var(--dur-combo-notice) both;
 }
 
 .combo-notice__face {
   position: relative;
   display: inline-flex;
-  align-items: center;
-  gap: var(--space-8);
-  overflow: hidden; /* menahan kilau di dalam kapsul */
-  padding: var(--space-6) var(--space-14) var(--space-6) var(--space-10);
-  border: var(--border-2) solid var(--_line);
-  border-radius: var(--radius-lg);
-  background: var(--_bg);
-  color: var(--_text);
-  box-shadow: var(--_shadow);
-  font-size: calc(var(--fs-combo-notice) * var(--_scale));
-  font-weight: var(--fw-semibold);
-  line-height: var(--lh-value);
+  align-items: baseline;
+  gap: var(--combo-gap);
+  font-family: var(--font-combo);
+  font-size: calc(var(--fs-combo-word) * var(--_scale));
+  line-height: var(--lh-combo);
   white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: var(--ls-none);
   font-variant-numeric: tabular-nums;
+  transform: skewX(var(--combo-skew));
+  rotate: var(--combo-rotate);
+  filter: var(--shadow-combo-text);
 }
 
 .combo-notice.is-on .combo-notice__face {
-  animation: combo-pulse var(--dur-combo-pulse) var(--ease-in-out) calc(var(--dur-combo-notice) * 0.26) 2 alternate both;
+  animation: combo-pulse var(--dur-combo-pulse) var(--ease-in-out) calc(var(--dur-combo-notice) * 0.22) 2 alternate both;
 }
 
-/* kilau: pita terang menyapu kapsul sekali */
-.combo-notice__face::after {
-  content: '';
+.combo-notice__word,
+.combo-notice__num,
+.combo-notice__extra {
+  position: relative;
+  color: transparent; /* teks asli hanya menentukan ukuran; yang terlihat = ::before (kontur) dan ::after (isi) */
+}
+
+.combo-notice__num {
+  font-size: var(--fs-combo-num);
+}
+
+.combo-notice__extra {
+  font-size: var(--fs-combo-extra);
+}
+
+.combo-notice__word::before,
+.combo-notice__num::before,
+.combo-notice__extra::before,
+.combo-notice__word::after,
+.combo-notice__num::after,
+.combo-notice__extra::after {
+  content: attr(data-text);
   position: absolute;
-  inset-block: 0;
-  inset-inline-start: 0;
-  inline-size: 35%;
-  background: linear-gradient(90deg, transparent, var(--alpha-white-40), transparent);
-  opacity: 0;
-  pointer-events: none;
+  inset: 0;
 }
 
-.combo-notice.is-on .combo-notice__face::after {
-  animation: combo-shine var(--dur-combo-shine) var(--ease-out) calc(var(--dur-combo-notice) * 0.2) 1 both;
+.combo-notice__word::before,
+.combo-notice__num::before,
+.combo-notice__extra::before {
+  color: var(--combo-outline);
+  -webkit-text-stroke: calc(var(--combo-stroke) * 2) var(--combo-outline); /* setengah dalam tertutup isi → tebal luar = --combo-stroke */
 }
 
-.combo-notice__icon {
-  display: grid;
-  flex: none;
-  color: var(--_icon);
+.combo-notice__word::after,
+.combo-notice__num::after,
+.combo-notice__extra::after {
+  color: transparent;
+  background: linear-gradient(180deg, var(--_top) 0%, var(--_bottom) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
 }
 
-.combo-notice__icon .icon {
-  inline-size: var(--combo-notice-icon);
-  block-size: var(--combo-notice-icon);
-}
-
-.combo-notice[data-level='5'].is-on .combo-notice__icon {
-  animation: combo-flicker var(--dur-slow) var(--ease-in-out) infinite alternate;
-}
-
-/* partikel kecil: terbang ke kiri/atas/bawah dari tengah kapsul (jumlah dibatasi di TS) */
+/* partikel kecil: terbang dari tengah teks ke arah dalam layar (kiri/atas/bawah); jumlahnya dibatasi di TS */
 .combo-notice__sparks {
   position: absolute;
   inset: 0;
@@ -154,19 +162,16 @@
   background: var(--combo-spark-5);
 }
 
-/* prefers-reduced-motion: hanya fade (tanpa geser, denyut, kilau, partikel). !important diperlukan karena
-   aturan global di motion.css mempersingkat semua animasi menjadi instan. */
+/* prefers-reduced-motion: hanya fade singkat di posisinya (tanpa luncuran, denyut, atau partikel). !important diperlukan
+   karena aturan global di motion.css mempersingkat semua animasi menjadi instan. */
 @media (prefers-reduced-motion: reduce) {
-  .combo-notice.is-enter,
-  .combo-notice.is-swap {
+  .combo-notice.is-enter .combo-notice__slot,
+  .combo-notice.is-swap .combo-notice__slot {
     animation: combo-notice-fade var(--dur-combo-notice) both !important;
     animation-duration: var(--dur-combo-notice) !important;
   }
 
-  .combo-notice.is-on .combo-notice__face,
-  .combo-notice.is-on .combo-notice__face::after,
-  .combo-notice.is-on .combo-notice__icon,
-  .combo-notice__sparks {
+  .combo-notice.is-on .combo-notice__face {
     animation: none !important;
   }
 

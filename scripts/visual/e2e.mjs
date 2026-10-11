@@ -87,10 +87,12 @@ await page.waitForTimeout(1300);
 await ready();
 await answer(false);
 await page.waitForTimeout(350);
-check('notifikasi combo muncul di streak 3 ("COMBO 3")', (await page.$eval('.combo-notice', (n) => n.classList.contains('is-on'))) && (await page.textContent('.combo-notice__text')) === 'COMBO 3');
-check('notifikasi combo tidak menangkap sentuhan', (await page.$eval('.combo-notice', (n) => getComputedStyle(n).pointerEvents)) === 'none');
-await page.waitForTimeout(1500);
-check('notifikasi combo hilang sendiri (~1,2 dtk)', !(await page.$eval('.combo-notice', (n) => n.classList.contains('is-on'))));
+check('notifikasi combo muncul di streak 3 ("COMBO" + angka 3), teks sumber sama, aria-hidden, diumumkan lewat live region', (await page.$eval('.combo-notice', (n) => n.classList.contains('is-on'))) && (await page.textContent('.combo-notice__word')) === 'COMBO' && (await page.textContent('.combo-notice__num')) === '3' && (await page.getAttribute('.combo-notice', 'aria-hidden')) === 'true' && (await page.textContent('#sr-status')).includes('COMBO 3'));
+check('combo arcade: tanpa pil/wadah (tanpa latar, border, radius, bayangan wadah, ikon), angka lebih besar dari kata, font arcade', await page.evaluate(() => { const f = document.querySelector('.combo-notice__face'); const cs = getComputedStyle; const w = cs(document.querySelector('.combo-notice__word')), n = cs(document.querySelector('.combo-notice__num')); return cs(f).backgroundColor === 'rgba(0, 0, 0, 0)' && cs(f).borderTopWidth === '0px' && cs(f).borderTopLeftRadius === '0px' && cs(f).boxShadow === 'none' && !document.querySelector('.combo-notice svg, .combo-notice .icon') && parseFloat(n.fontSize) > parseFloat(w.fontSize) * 1.4 && /Titan One/.test(w.fontFamily); }));
+check('combo arcade: diletakkan tepat di bawah judul (relatif judul), menempel di tepi kanan, tanpa scroll horizontal saat tampil', await page.evaluate(() => { const n = document.querySelector('.combo-notice').getBoundingClientRect(); const t = document.querySelector('#question').getBoundingClientRect(); const s = document.querySelector('.combo-notice__slot').getBoundingClientRect(); return n.top >= t.bottom && innerWidth - s.right < innerWidth * 0.1 && document.documentElement.scrollWidth <= innerWidth + 1 && document.body.scrollWidth <= innerWidth + 1; }));
+check('notifikasi combo tidak menangkap sentuhan (lapisan dan slot)', (await page.$eval('.combo-notice', (n) => getComputedStyle(n).pointerEvents)) === 'none' && (await page.$eval('.combo-notice__slot', (n) => getComputedStyle(n).pointerEvents)) === 'none');
+await page.waitForTimeout(2000);
+check('notifikasi combo hilang sendiri (~1,8 dtk) dan dibersihkan (tanpa kelas aktif, tanpa partikel)', !(await page.$eval('.combo-notice', (n) => n.classList.contains('is-on'))) && (await page.$$eval('.combo-notice__spark', (e) => e.length)) === 0 && (await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)));
 await ready();
 
 // ---- jeda ----
