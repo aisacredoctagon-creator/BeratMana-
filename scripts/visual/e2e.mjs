@@ -67,6 +67,8 @@ const side = await answer(false);
 await page.waitForTimeout(300);
 const fb = await page.getAttribute(side === 'left' ? '#btn-left' : '#btn-right', 'data-feedback');
 check('jawaban benar → feedback good + skor naik', fb === 'good' && (await page.textContent('#hud-score')) !== '0');
+check('benar: overlay hijau di box yang dipilih (lebih berat), box lain memudar, tanpa ikon ✓/✗ di box/tombol/pil', (await page.$$eval('.expr-card__mark, .answer__badge, #screen-game .seesaw__verdict .icon, .expr-card .icon, .answer[data-feedback] .icon--check, .answer[data-feedback] .icon--cross', (e) => e.length)) === 0 && (await page.$eval(side === 'left' ? '#card-left' : '#card-right', (e) => e.dataset.result)) === 'win' && (await page.$$eval('.expr-card[data-result="wrong"]', (e) => e.length)) === 0);
+check('benar: aria-live mengumumkan "Benar" dan pil hanya teks', (await page.textContent('#sr-status')).startsWith('Benar') && (await page.textContent('#screen-game .seesaw__verdict')) === 'Benar!');
 check('kartu pemenang ditandai', (await page.$$eval('.expr-card[data-result="win"]', (e) => e.length)) === 1 && (await page.$$eval('.expr-card[data-result="lose"]', (e) => e.length)) === 1);
 await page.waitForTimeout(1300);
 await ready();
@@ -110,9 +112,15 @@ check('tombol M tidak lagi mengubah suara', (await page.getAttribute('#tgl-music
 
 // ---- game over (2 nyawa Hard) ----
 await ready().catch(() => {});
-await answer(true);
-await page.waitForTimeout(1500);
+const wrongSide = await answer(true);
+await page.waitForTimeout(400);
+const other = wrongSide === 'left' ? '#card-right' : '#card-left';
+check('salah: overlay merah HANYA di box yang dipilih, box benar tetap hijau', (await page.$eval(wrongSide === 'left' ? '#card-left' : '#card-right', (e) => e.dataset.result)) === 'wrong' && (await page.$eval(other, (e) => e.dataset.result)) === 'win' && (await page.$$eval('.expr-card[data-result="lose"]', (e) => e.length)) === 0);
+check('salah: tanpa ikon ✓/✗, tombol terpilih beranimasi goyang, aria-live "Salah"', (await page.$$eval('.expr-card__mark, .answer__badge, #screen-game .seesaw__verdict .icon, .expr-card .icon, .answer[data-feedback] .icon--check, .answer[data-feedback] .icon--cross', (e) => e.length)) === 0 && (await page.getAttribute(wrongSide === 'left' ? '#btn-left' : '#btn-right', 'data-feedback')) === 'bad' && (await page.textContent('#sr-status')).startsWith('Salah') && (await page.textContent('#screen-game .seesaw__verdict')) === 'Salah');
+check('salah: overlay merah terbaca (latar box dipilih ≠ box benar ≠ default)', await page.evaluate(([a, b]) => { const bg = (q) => getComputedStyle(document.querySelector(q)).backgroundColor; return bg(a) !== bg(b); }, [wrongSide === 'left' ? '#card-left' : '#card-right', other]));
+await page.waitForTimeout(1100);
 await ready();
+check('ronde berikut: overlay dan feedback dilepas', (await page.$$eval('.expr-card[data-result], .answer[data-feedback]', (e) => e.length)) === 0);
 await answer(true);
 await page.waitForSelector('#screen-over:not([hidden])', { timeout: 8000 });
 check('game over: nyawa habis', (await page.textContent('#over-title')) === 'Nyawa Habis!');

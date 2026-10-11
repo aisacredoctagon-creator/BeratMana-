@@ -58,7 +58,6 @@ export function createAnswerButton(side: AnswerSide, id: string, label: string):
     'button',
     { type: 'button', id, class: `answer answer--${side}`, 'aria-label': label, disabled: true },
     h('span', { class: 'answer__tile' }, icon(side === 'left' ? 'chevronLeft' : 'chevronRight')),
-    h('span', { class: 'answer__badge', 'aria-hidden': 'true' }, icon('check'), icon('cross')),
   );
 }
 

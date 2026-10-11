@@ -10,6 +10,7 @@ import { spokenLabel } from '../generator/expression';
 import type { AudioManager } from '../services/audio';
 import { haptics } from '../services/haptics';
 import { setAnswerFeedback } from './components/button';
+import type { CardResult } from './components/expression-card';
 import { $, setText } from './dom';
 import { burst, flash, floatText, shake } from './effects';
 import type { GameScreen } from './screens/game-screen';
@@ -183,8 +184,9 @@ export class GameView {
     if (engine.settings.mode === 'time') hud.setTime(engine.timeLeft);
 
     const q = res.question;
-    cardLeft.reveal(q.left, q.heavier === 'left');
-    cardRight.reveal(q.right, q.heavier === 'right');
+    const resultOf = (s: Side): CardResult => (q.heavier === s ? 'win' : res.picked === s ? 'wrong' : 'lose');
+    cardLeft.reveal(q.left, resultOf('left'));
+    cardRight.reveal(q.right, resultOf('right'));
     setAnswerFeedback(res.picked === 'left' ? this.ui.btnLeft : this.ui.btnRight, res.correct ? 'good' : 'bad');
     seesaw.showVerdict(res.correct);
 

@@ -13,7 +13,7 @@ Figma tidak punya variables/styles, jadi nama token diturunkan dari nama layer d
 1. **Mainan, bukan dasbor.** Bentuk bulat besar (radius 16–24), garis tebal 2px, permukaan putih di atas latar biru-abu muda, dan tombol **3D "chunky"** yang benar-benar turun saat ditekan.
 2. **Satu keluarga warna = satu makna.** Kuning = skor, hijau = benar/pengaturan aktif, ungu = pilihan terpilih, merah muda = combo (game over)/kanan, biru langit = waktu, biru = kiri. Jangan memakai warna itu untuk makna lain.
 3. **Kiri biru, kanan koral.** Tombol jawab, kartu ekspresi, dan label sisi memakai pasangan warna yang sama.
-4. **Warna tidak pernah satu-satunya penanda.** Selalu disertai ikon (✓/✗), teks, atau bentuk.
+4. **Feedback jawaban memakai overlay warna pada jawaban yang dipilih, tanpa ikon.** Isyarat nonvisual (aria-live, gerak, SFX, haptic) wajib menyertai.
 5. **Satu kanvas, skala fluid.** Desain dibuat di 1280 × 992; semua ukuran = `N × var(--u)` sehingga tampil sama di 1280px dan mengecil rapi sampai 360px.
 
 ## 2. Skala fluid (`--u`)
@@ -122,8 +122,8 @@ Kiri biru (`--side-left-*`), kanan koral (`--side-right-*`). Tinggi `--answer-h`
 | Pressed (`:active`) | turun `--press-travel`, bayangan solid → 0 |
 | Disabled | `--btn-off-*`, turun `--press-travel-sm` (belum bisa dijawab / sedang animasi) |
 | Focus-visible | cincin `--focus-ring` |
-| `data-feedback="good"` | animasi pop + lencana ✓ hijau di pojok |
-| `data-feedback="bad"` | goyang horizontal + lencana ✗ merah di pojok |
+| `data-feedback="good"` | animasi pop (denyut kecil); tanpa lencana/ikon |
+| `data-feedback="bad"` | goyang horizontal; tanpa lencana/ikon |
 
 ### 4.4 Box soal (speech bubble) — `.expr-card` (`--left` / `--right`)
 Box putih bersudut `--radius-xl` dengan **ekor kecil membulat di tengah bawah** yang menunjuk objek, **menempel di atas objeknya** dan ikut naik-turun bersama objek saat jungkat-jungkit miring, tanpa ikut berputar (teks selalu tegak). Isi: tag "SISI KIRI/KANAN" (pil kecil) + ekspresi + satu baris nilai "= N" (ruangnya selalu dicadangkan, tampil lewat opacity: tinggi box stabil).
@@ -131,13 +131,14 @@ Box putih bersudut `--radius-xl` dengan **ekor kecil membulat di tengah bawah** 
 - **Ekor:** `.expr-card__tail` = persegi `--bubble-tail` dirotasi 45° dengan latar dan garis yang sama (sudut ujung membulat). Posisi ekor terpisah dari posisi box: box digeser `--bubble-shift` (terdaftar `@property <length>`) agar tidak keluar tepi jungkat-jungkit (`--bubble-edge`), sedangkan ekor tetap di tengah objek (`left = 50% − shift`, dibatasi `--bubble-tail-min` dari sudut).
 - **Penempelan di objek:** kartu dipasang di dalam `.seesaw__item` lewat jangkar nol-ukuran `.seesaw__anchor` di puncak objek yang sebenarnya (`--item-top` = bagian kosong di atas gambar, `Item.top` di `items.ts`, default 0) dikurangi `--bubble-gap` dan `--bubble-tail-depth` (ujung ekor berjarak satu token spasi kecil dari objek). Jangkar diputar BALIK `rotate(-tilt)` dengan transisi/durasi yang sama seperti papan, jadi rotasi bersih 0. Lebar box `--bubble-w` ≈ 40–48% lebar jungkat-jungkit (`cqi`).
 - **Ekspresi:** `data-size="s|m|l|xl"` mengecilkan ekspresi panjang (font mengikuti lebar box lewat `cqi`; 'xl' boleh dua baris); pecahan bertumpuk (`.frac`). Box tumbuh ke atas (ekor tetap) untuk pecahan bertumpuk. Soal akar, pangkat, dan kurung sudah dihapus dari game.
-- **Aksesibilitas:** `aria-label` membacakan kata ("Sisi kiri: 2 kali 21", pecahan "3 per 7 kurang 2 per 5", lewat `spokenLabel`); ekspresi mentah di `data-expr` (untuk pengujian). Ekor dan lencana ✓ `aria-hidden`. Jungkat-jungkit game memakai `role="group"` (bukan `img`, supaya box terbaca pembaca layar).
+- **Aksesibilitas:** `aria-label` membacakan kata ("Sisi kiri: 2 kali 21", pecahan "3 per 7 kurang 2 per 5", lewat `spokenLabel`); ekspresi mentah di `data-expr` (untuk pengujian). Ekor `aria-hidden`. Jungkat-jungkit game memakai `role="group"` (bukan `img`, supaya box terbaca pembaca layar).
 - **Ketahanan:** diuji dengan ekspresi terpanjang tiap tipe (pecahan Hard, desimal 3 angka, 2 digit × 2 digit, 1980 ÷ 20, dll.) di 360–1920px dan landscape, datar dan miring: tanpa overflow, tanpa keluar layar, tanpa menimpa HUD/judul/tombol/titik tumpu/box lawan; font terkecil ≥ 12px.
 | State | Perilaku |
 | --- | --- |
 | Default | box putih, garis dan bayangan senada sisi |
-| `data-result="win"` | latar `--good-soft`, garis `--good-line`, lencana ✓ di pojok, baris "= N" tampil |
-| `data-result="lose"` | baris "= N" tampil, teks soal dan tag agak pudar (opacity .6) |
+| `data-result="win"` | overlay hijau: latar `--good-soft`, garis `--good-line`; sisi yang lebih berat (jawaban benar); baris "= N" tampil |
+| `data-result="wrong"` | overlay merah: latar `--bad-soft`, garis `--bad-line`, glow `--alpha-glow-rose`; HANYA pada box yang dipilih pemain bila salah; geometri, lapisan, durasi, dan easing sama persis dengan `win`; teks tidak dipudarkan (kontras terjaga); baris "= N" tampil |
+| `data-result="lose"` | box yang tidak dipilih dan tidak benar (hanya muncul saat jawaban benar): baris "= N" tampil, teks soal dan tag agak pudar (opacity .6) |
 | Antar ronde | ikut animasi masuk/keluar objek (opacity + scale); posisi absolut → tanpa layout shift |
 
 ### 4.5 Pil — `.pill` (+ `--score`, `--time` di HUD; `--level`, `--combo` di statistik game over)
@@ -249,7 +250,7 @@ Koordinat desain 576 × 260 (`--ss-*`, unit `--ss-u`). Papan kayu (gradasi kunin
 | --- | --- | --- |
 | A1 | State hover/pressed/disabled/focus semua tombol (lihat §4) | pola tombol 3D Figma: bayangan solid = tinggi tekan |
 | A2 | Tombol nonaktif memakai slate-300/200/400 | kebalikan dari tombol aktif; slate-400 ditambahkan |
-| A3 | Umpan balik jawaban: lencana ✓/✗ di tombol, kartu pemenang hijau, pil "Benar!/Salah" di atas pin | aturan "jangan hanya warna" |
+| A3 | Umpan balik jawaban: box pemenang hijau, box yang dipilih tetapi salah merah, pil "Benar!/Salah" (teks saja) di atas pin; tanpa ikon ✓/✗ (lihat A52) | diganti A52 |
 | A4 | Latar "Benar" emerald-700 dan "Salah" rose-700 (teks putih) | emerald/rose Figma terlalu terang untuk teks putih kecil |
 | A5 | Teks kecil memakai varian lebih gelap (rose-700, sky-700, orange-700) | kontras Figma 3,1–3,8:1 < 4,5:1 |
 | A6 | Nyawa (mode Normal) menggantikan pil waktu; hanya ikon hati (A40) | slot waktu tidak dipakai di Normal |
@@ -271,9 +272,9 @@ Koordinat desain 576 × 260 (`--ss-*`, unit `--ss-u`). Papan kayu (gradasi kunin
 | A25 | Ukuran judul pertanyaan `--fs-h1` ikut lebar viewport di layar sempit; judul layar judul memakai `--fs-hero` (60) | satu baris di 360px |
 | A26 | Layout landscape pendek dua kolom (kartu+papan kiri, tombol jawab kanan) | Figma hanya 1280 × 992 |
 | A27 | Tagline "Berat = hasil hitungan…" hanya di beranda; dihapus dari layar game (A40) | permintaan pemilik proyek |
-| A28 | Kartu menang: cincin hijau + ✓ di pojok + latar hijau muda; kalah: ekspresi memudar; nilai "= N" sebagai pil gelap menempel di tepi bawah | umpan balik tidak hanya warna |
+| A28 | Kartu menang: cincin hijau + latar hijau muda; kalah: ekspresi memudar; nilai "= N" sebagai pil gelap menempel di tepi bawah (ikon ✓ dihapus oleh A52) | diganti A52 |
 | A30 | Pil statistik game over memakai keluarga warna pil HUD (rekor=kuning, akurasi=biru langit, streak=merah muda, benar/salah=hijau) | konsisten dengan HUD |
-| A31 | Tombol jawab: yang tidak dipilih menjadi abu-abu saat hasil ditampilkan; yang dipilih memakai lencana ✓/✗ | feedback tidak hanya warna |
+| A31 | Tombol jawab: yang tidak dipilih menjadi abu-abu saat hasil ditampilkan; yang dipilih tetap berwarna dan beranimasi (pop / goyang), tanpa lencana (A52) | diganti A52 |
 | A34 | Layar judul: tombol Main + rekor berada di kolom kiri di bawah jungkat-jungkit; kolom kanan hanya pengaturan dan satu baris Musik · SFX · "?" (dua kolom seimbang; landscape pendek juga dua kolom). Pesan "Pilih minimal 1 tipe soal" memakai toast (A46) | rapi, tanpa baris kosong |
 | A35 | Orientasi portrait: papan, kartu, dan tombol jawab memakai lebar penuh isi (bukan 576/672/473 satuan) | terlihat kecil di tablet portrait |
 | A36 | Tombol game over "Ubah Pengaturan" diganti "Ke Beranda" (id `btn-home`); menu Jeda tetap "Keluar ke Menu" | tujuannya layar judul; "beranda" = istilah layar itu |
@@ -291,6 +292,7 @@ Koordinat desain 576 × 260 (`--ss-*`, unit `--ss-u`). Papan kayu (gradasi kunin
 | A48 | Indikator HUD dirapikan (prompt pemilik proyek menang atas Figma): kata "SKOR" dan "WAKTU" dihapus; waktu tanpa kotak, ikon jam di kiri angka (ikon cincin progres dan `.timer-ring*` dihapus, A19 tidak berlaku); skor tetap berkotak. Satu warna teks soal (`--color-question-text`): akar masalah lama = `--side-left-expr` (sky-950) berbeda dari `--side-right-expr` (purple-950); kedua token dihapus. State kalah (opacity .6, kontras 4,0:1) sengaja tidak diubah, dilaporkan ke pemilik proyek | bar atas lebih ringkas; teks soal seragam |
 | A49 | Footer petunjuk keyboard (komponen `.keybar`, `.keyhint`, `.keycap`) dihapus dari layar game di semua ukuran, termasuk versi web (Figma menampilkannya; permintaan pemilik proyek menang). Pintasan keyboard tetap berfungsi dan dijelaskan di Cara Main. Ruang 62 di bawah dipakai area main | game lebih bersih; info yang sama ada di Cara Main |
 | A51 | Box soal berbentuk speech bubble dengan ekor, menempel di atas objek (target pemilik proyek; Figma menampilkan dua kartu di atas papan). Baris kartu dikeluarkan dari alur layout sehingga jungkat-jungkit dan objek bergeser ke atas ±35–104px (disetujui); di landscape pendek papan di dasar kolom. Nilai "= N" menjadi baris kecil di dalam box (bukan pil di tepi bawah yang bertabrakan dengan ekor). aria-label memakai kata ("2 kali 21"). Tag "SISI KIRI/KANAN" sudah ada dan dipertahankan | benda dan box kini berdekatan; pembaca layar membaca soal dengan jelas |
+| A52 | Feedback jawaban tanpa ikon (permintaan pemilik proyek): lencana ✓ di box, lencana ✓/✗ di tombol, dan ikon di pil "Benar!/Salah" dihapus. Penanda visual = overlay warna pada box yang dipilih (hijau bila benar; merah `--bad-line`/`--bad-soft` bila salah, sisi yang benar tetap hijau). Tombol yang dipilih TIDAK diberi overlay (merah di atas tombol merah tidak terbedakan, hijau menjadi keruh di atas biru/merah); penandanya gerak yang sudah ada (pop / goyang). Isyarat nonvisual: `#sr-status` (aria-live polite) mengumumkan "Benar…"/"Salah…" tiap jawaban, gerak, SFX, haptic. Berlaku untuk `prefers-reduced-motion`: overlay tetap tampil, gerak dimatikan | box lebih bersih; makna tidak hanya lewat warna karena ada teks pil, aria-live, dan gerak |
 | A33 | Skala font teks kecil dinaikkan dari Figma: eyebrow 10→12, tag 12→14, badan/tagline/pil 14→16, nilai HUD 20→24, tombol utama 24→28 (keycap 32→36). Proporsi komponen ikut menyesuaikan lewat padding/tinggi isi | permintaan: font terlalu kecil di Figma, terutama di HP |
 | A32 | Gambar OG dan ikon aplikasi digambar ulang dalam palet Figma | produk harus konsisten |
 

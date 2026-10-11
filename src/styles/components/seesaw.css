@@ -162,11 +162,6 @@
   pointer-events: none;
 }
 
-.seesaw__verdict .icon {
-  inline-size: var(--icon-sm);
-  block-size: var(--icon-sm);
-}
-
 .seesaw__verdict[data-v='ok'] {
   background: var(--good-bg);
   animation: verdict-pop var(--dur-verdict) var(--ease-out) both;

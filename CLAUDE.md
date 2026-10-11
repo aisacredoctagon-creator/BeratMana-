@@ -10,7 +10,7 @@ Minigame browser (Vite + TypeScript strict + CSS, tanpa framework). UI berbahasa
 - Butuh nilai baru? Tambahkan token di `tokens.css` dulu (tandai "turunan" bila tidak dari Figma) dan dokumentasikan di `DESIGN.md`.
 - Pakai/komposisikan komponen yang ada (`src/ui/components/`, `src/styles/components/`). Jangan membuat gaya tombol/kartu/pil baru di luar sana.
 - Tombol: semua memakai `--radius-button`; tombol 3D wajib mengompensasi kedalaman bayangannya dengan `margin-block-end` (`--_depth`, lihat DESIGN.md §4) — jangan menambal jarak per layar.
-- Wajib: area sentuh ≥ 48px, kontras teks ≥ 4,5:1, benar/salah tidak hanya warna (ikon ✓/✗), hormati `prefers-reduced-motion`, animasi hanya `transform`/`opacity`.
+- Wajib: area sentuh ≥ 48px, kontras teks ≥ 4,5:1. Feedback jawaban memakai overlay warna pada jawaban yang dipilih, tanpa ikon. Isyarat nonvisual (aria-live, gerak, SFX, haptic) wajib menyertai. Hormati `prefers-reduced-motion`, animasi hanya `transform`/`opacity`.
 - `npm run lint:tokens` harus lulus (ikut `npm test` dan `npm run build`).
 
 ## Deploy (GitHub Pages)

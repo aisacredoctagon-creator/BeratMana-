@@ -10,7 +10,6 @@ export type IconName =
   | 'sound'
   | 'pause'
   | 'check'
-  | 'cross'
   | 'heart'
   | 'heartLost'
   | 'trophy'
@@ -64,11 +63,6 @@ const ICONS: Record<IconName, IconDef> = {
     viewBox: '0 0 24 24',
     body: `<path d="M5 12.5l4.5 4.5L19 7.5" ${STROKE} stroke-width="3.2"/>`,
     className: 'icon--check',
-  },
-  cross: {
-    viewBox: '0 0 24 24',
-    body: `<path d="M6.5 6.5l11 11M17.5 6.5l-11 11" ${STROKE} stroke-width="3.2"/>`,
-    className: 'icon--cross',
   },
   heart: {
     viewBox: '0 0 24 24',

@@ -130,35 +130,17 @@
   transform: none;
 }
 
-/* ✓ pada kartu yang lebih berat */
-.expr-card__mark {
-  position: absolute;
-  inset-block-start: calc(-1 * var(--space-12));
-  inset-inline-end: var(--space-16);
-  display: none;
-  place-items: center;
-  inline-size: var(--badge-mark);
-  block-size: var(--badge-mark);
-  border: var(--border-2) solid var(--surface-card);
-  border-radius: var(--radius-full);
-  background: var(--good-bg);
-  color: var(--text-on-accent);
-  box-shadow: var(--shadow-pill);
-}
-
-.expr-card__mark .icon {
-  inline-size: var(--icon-badge);
-  block-size: var(--icon-badge);
-}
-
+/* overlay warna pada box: hijau = sisi yang lebih berat (jawaban benar), merah = jawaban yang dipilih tetapi salah */
 .expr-card[data-result='win'] {
   --_bg: var(--good-soft);
   --_line: var(--good-line);
   --_glow: var(--alpha-ink-07);
 }
 
-.expr-card[data-result='win'] .expr-card__mark {
-  display: grid;
+.expr-card[data-result='wrong'] {
+  --_bg: var(--bad-soft);
+  --_line: var(--bad-line);
+  --_glow: var(--alpha-glow-rose);
 }
 
 .expr-card[data-result='lose'] .expr-card__expr,

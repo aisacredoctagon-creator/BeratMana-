@@ -1,7 +1,6 @@
 import type { Item } from '../config/items';
 import type { Side } from '../generator';
 import { h } from './dom';
-import { icon } from './components/icons';
 
 export type SeesawState = 'idle' | 'entering' | 'ready' | 'revealing' | 'leaving';
 
@@ -104,11 +103,11 @@ export class Seesaw {
     this.setState('idle');
   }
 
-  /** Pil hasil "✓ Benar!" / "✗ Salah" (ikon + teks, tidak hanya warna). */
+  /** Pil hasil "Benar!" / "Salah" (teks saja, tanpa ikon; latar hijau/merah). */
   showVerdict(ok: boolean): void {
     this.verdict.dataset.v = '';
     void this.verdict.offsetWidth; // mulai ulang animasi
-    this.verdict.replaceChildren(icon(ok ? 'check' : 'cross'), ok ? 'Benar!' : 'Salah');
+    this.verdict.replaceChildren(ok ? 'Benar!' : 'Salah');
     this.verdict.dataset.v = ok ? 'ok' : 'bad';
   }
 

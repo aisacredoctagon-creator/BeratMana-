@@ -127,6 +127,7 @@
   --good-line: var(--color-emerald-500);
   --bad-bg: var(--color-rose-700);
   --bad-soft: var(--color-rose-50);
+  --bad-line: var(--color-rose-500); /* turunan: pasangan --good-line untuk overlay jawaban salah */
   --flash-good: var(--color-emerald-500);
   --flash-bad: var(--color-rose-500);
 
@@ -422,7 +423,6 @@
   --sheet-wide-max-w: calc(560 * var(--u));
   --check-box: calc(24 * var(--u));
   --chip-icon: max(24px, calc(30 * var(--u))); /* ikon tipe soal di mode ringkas (HP) */
-  --badge-mark: calc(32 * var(--u));
 
   /* jarak vertikal tata letak layar game (mengikuti Figma) */
   --gap-title-cards: calc(40 * var(--u));

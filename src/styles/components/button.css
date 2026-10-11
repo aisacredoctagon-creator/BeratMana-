@@ -182,45 +182,6 @@
   box-shadow: var(--shadow-btn-off);
 }
 
-/* lencana ✓ / ✗ di pojok (feedback tidak hanya lewat warna) */
-.answer__badge {
-  position: absolute;
-  inset-block-start: calc(-1 * var(--space-12));
-  inset-inline-end: var(--space-10);
-  display: none;
-  place-items: center;
-  inline-size: var(--badge-mark);
-  block-size: var(--badge-mark);
-  border: var(--border-2) solid var(--surface-card);
-  border-radius: var(--radius-full);
-  color: var(--text-on-accent);
-  box-shadow: var(--shadow-pill);
-}
-
-.answer__badge .icon {
-  inline-size: var(--icon-badge);
-  block-size: var(--icon-badge);
-}
-
-.answer__badge .icon--cross,
-.answer[data-feedback='bad'] .answer__badge .icon--check {
-  display: none;
-}
-
-.answer[data-feedback='bad'] .answer__badge .icon--cross {
-  display: block;
-}
-
-.answer[data-feedback='good'] .answer__badge {
-  display: grid;
-  background: var(--good-bg);
-}
-
-.answer[data-feedback='bad'] .answer__badge {
-  display: grid;
-  background: var(--bad-bg);
-}
-
 .answer[data-feedback='good'] {
   animation: pop var(--dur-pop) var(--ease-pop);
 }
