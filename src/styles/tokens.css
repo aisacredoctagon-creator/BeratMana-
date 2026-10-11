@@ -228,9 +228,9 @@
 
   /* ---------- TIPOGRAFI ---------- */
   --font-display: 'Fredoka Variable', 'Fredoka', ui-rounded, 'Nunito', system-ui, sans-serif;
-  /* judul (HANYA judul): Montserrat 700 untuk teks pembuka, 900 untuk kata aksen; cadangan berukuran sama (fonts.css) */
+  /* judul (HANYA judul): Montserrat Black (900) untuk kata tekanan, Poppins SemiBold (600) untuk kata normal; cadangan berukuran sama (fonts.css) */
   --font-title: 'Montserrat', 'Montserrat Fallback', system-ui, sans-serif;
-  --font-weight-title-regular: 700;
+  --font-title-secondary: 'Poppins', 'Poppins Fallback', system-ui, sans-serif;
   --font-weight-title-heavy: 900;
   --font-combo: 'Titan One', 'Montserrat', system-ui, sans-serif; /* HANYA notifikasi combo (arcade) */
 

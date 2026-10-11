@@ -24,7 +24,8 @@
 .title-line__plain {
   color: var(--title-plain);
   font-size: var(--fs-title-plain);
-  font-weight: var(--font-weight-title-regular);
+  font-family: var(--font-title-secondary);
+  font-weight: var(--fw-semibold);
 }
 
 /* varian menu: "BERAT" (tekanan) di depan, "Mana?" (normal) lebih kecil di belakang */

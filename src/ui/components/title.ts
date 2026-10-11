@@ -20,7 +20,7 @@ const TITLE_PARTS: Record<TitleVariant, Array<{ text: string; emphasis: boolean 
 };
 
 /**
- * Judul game satu baris, satu komponen untuk dua layar (DESIGN.md §4.14): kata normal (Montserrat 700) + kata tekanan
+ * Judul game satu baris, satu komponen untuk dua layar (DESIGN.md §4.14): kata normal (Poppins 600) + kata tekanan
  * (Montserrat 900, kapital, merah, besar, beranimasi). Varian menentukan teks dan susunan; gaya di components/title.css.
  * Urutan DOM = urutan visual = urutan baca ("Mana yang lebih Berat?" / "Berat Mana?").
  */
@@ -35,7 +35,7 @@ export function createTitle(id: string, variant: TitleVariant): HTMLHeadingEleme
 
 /**
  * Memutar animasi kata tekanan ("BERAT?"/"BERAT") miring sekali (DESIGN.md §4.14): dipanggil layar SETIAP masuk (router.showScreen), bukan tiap ronde.
- * Urutan: lurus (idle) → tunggu font Montserrat + tab terlihat → play (CSS: jeda → jatuh → pantulan → getar) → done (tetap miring).
+ * Urutan: lurus (idle) → tunggu font (Montserrat/Poppins) + tab terlihat → play (CSS: jeda → jatuh → pantulan → getar) → done (tetap miring).
  * Panggilan baru membatalkan yang lama; satu-satunya timer (batas tunggu font) dan listener dibersihkan. `onImpact` dipanggil
  * saat benturan (akhir fase jatuh, untuk SFX). Dengan prefers-reduced-motion judul langsung miring statis (CSS), tanpa onImpact.
  */

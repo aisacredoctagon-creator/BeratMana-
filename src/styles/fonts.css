@@ -1,7 +1,7 @@
 /* Font self-host (lisensi OFL), hanya subset latin supaya ringan.
    Fredoka: variabel sumbu bobot 300-700 (paket @fontsource-variable, ikut di-bundle).
-   Montserrat: HANYA bobot 700 dan 900, HANYA untuk judul (DESIGN.md §3.3). File woff2 ada di public/fonts/ (URL tetap,
-   supaya bisa di-preload dari index.html); Vite menambahkan base pada url('/fonts/…') saat build. */
+   Judul (DESIGN.md §3.3): Montserrat 900 untuk kata tekanan, Poppins 600 untuk kata normal. File woff2 ada di public/fonts/
+   (URL tetap, supaya bisa di-preload dari index.html); Vite menambahkan base pada url('/fonts/…') saat build. */
 @font-face {
   font-family: 'Fredoka Variable';
   font-style: normal;
@@ -13,11 +13,11 @@
 }
 
 @font-face {
-  font-family: 'Montserrat';
+  font-family: 'Poppins';
   font-style: normal;
   font-display: swap;
-  font-weight: 700;
-  src: url('/fonts/montserrat-latin-700-normal.woff2') format('woff2');
+  font-weight: 600;
+  src: url('/fonts/poppins-latin-600-normal.woff2') format('woff2');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F,
     U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
@@ -32,16 +32,16 @@
     U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
-/* Cadangan berukuran sama: Arial Bold disesuaikan (size-adjust + override metrik vertikal) ke ukuran Montserrat,
-   sehingga judul tidak bergeser saat Montserrat selesai dimuat (tanpa layout shift). Rasio lebar diukur di Chrome:
-   700 → 1,11; 900 → 1,08. Ascent/descent Montserrat = 96,8% / 25,1% dari em. */
+/* Cadangan berukuran sama: Arial Bold disesuaikan (size-adjust + override metrik vertikal) ke ukuran fontnya, sehingga judul
+   tidak bergeser saat font asli selesai dimuat (tanpa layout shift). Rasio lebar diukur di Chrome: Poppins 600 → 1,095;
+   Montserrat 900 → 1,08. Ascent/descent: Poppins 105% / 35%, Montserrat 96,8% / 25,1% dari em. */
 @font-face {
-  font-family: 'Montserrat Fallback';
-  font-weight: 700;
+  font-family: 'Poppins Fallback';
+  font-weight: 600;
   src: local('Arial Bold'), local('Arial-BoldMT'), local('Helvetica Bold');
-  size-adjust: 111%;
-  ascent-override: 87.2%;
-  descent-override: 22.6%;
+  size-adjust: 109.5%;
+  ascent-override: 95.9%;
+  descent-override: 32%;
   line-gap-override: 0%;
 }
 
