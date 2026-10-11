@@ -113,8 +113,10 @@ Tinggi minimum `--tap-min`.
 ### 4.2 Tombol ikon — `.icon-btn`
 40 × 40 (`--icon-btn`), putih, garis 2px slate-300, radius 16, `--shadow-key`, ikon 20. Area sentuh diperluas ke ≥ 48px lewat `::after`. Pressed: turun + bayangan hilang. Pakai untuk Jeda (HUD).
 
-### 4.3 Tombol jawab "<" dan ">" — `.answer`
-Kiri biru (`--side-left-*`), kanan koral (`--side-right-*`). Tinggi `--answer-h`, radius 24, garis 2px, bayangan 3D (`--shadow-answer-*`). Ubin ikon 64 (`--answer-tile`): latar `--alpha-white-20`, garis `--alpha-white-40`, radius 16, inset; ikon chevron putih 40.
+### 4.3 Tombol jawab (panah tebal kiri/kanan) — `.answer`
+Kiri biru (`--side-left-*`), kanan koral (`--side-right-*`). Tinggi `--answer-h`, radius 24, garis 2px, bayangan 3D (`--shadow-answer-*`). **Panah tebal berekor** (ikon `arrowLeft`/`arrowRight`, SVG inline, viewBox 48 × 32) berdiri langsung di muka tombol, tanpa ubin (A50): putih solid (`currentColor`), sudut membulat (garis + isi sewarna, `stroke-linejoin: round`), lebar `--answer-arrow` = `clamp(96u, 40cqi, 112u)` (±40% lebar tombol lewat `container-type: inline-size` pada `.answer`; batas atas menjaga tinggi panah ≤ 60% tinggi tombol). Bayangan = `filter: drop-shadow(0 --answer-arrow-depth 0 --_solid)` pada pembungkus `.answer__arrow`, dengan `--_solid` = `--side-left-solid`/`--side-right-solid` (satu tingkat lebih gelap dari tombol; abu `--btn-off-solid` saat disabled). Panah kiri adalah CERMIN panah kanan di dalam SVG (`matrix(-1 0 0 1 48 0)`, bukan `scaleX` CSS), sehingga bayangan tetap jatuh ke BAWAH di kedua tombol. Pressed: panah ikut turun bersama tombol dan bayangannya mengecil (`--answer-arrow-depth-pressed`). `aria-hidden` pada panah; `aria-label` tombol tetap.
+
+**Mengganti ikon panah:** ubah `body`/`viewBox` `arrowRight` di `src/ui/components/icons.ts` (dan cerminkan untuk `arrowLeft`), lalu sesuaikan `--answer-arrow`/`--answer-arrow-depth` di `tokens.css`. Varian alternatif **B** (dua nada, tidak dipakai): tambahkan di dalam `<g>` yang sama sebuah path kedua dengan `d` yang sama dan kelas `arrow__shade`, dengan CSS `.arrow__shade { fill: var(--_solid); opacity: .2; clip-path: inset(50% 0 0 0) }` (bagian bawah panah tampak bernada lebih gelap = efek mengilap). Dipilih A karena lebih tegas/kontras di ukuran kecil (360px); B menurunkan kontras badan panah.
 | State | Perilaku |
 | --- | --- |
 | Default | seperti Figma |
@@ -194,7 +196,7 @@ Koordinat desain 576 × 260 (`--ss-*`, unit `--ss-u`). Papan kayu (gradasi kunin
 │        [ SISI KIRI 32 + 15 ]             [ SISI KANAN 23 × 3 ]                │
 │                ▽ (ekor)                          ▽ (ekor)                    │
 │              (benda kiri)  ── jungkat-jungkit 576 × 260 ──  (benda kanan)     │
-│                    [   <  (biru)  ]   [  >  (koral)  ]                        │
+│                    [   ←  (biru)  ]   [  →  (koral)  ]                        │
 └──────────────────────────────────────────────────────────────────────────────┘
 ```
 - Isi utama dibatasi `--main-max-w` (1024) dan rata tengah. Box soal ada di dalam jungkat-jungkit (menempel di atas objek), tombol jawab `--answers-max-w` (473).
@@ -205,8 +207,8 @@ Koordinat desain 576 × 260 (`--ss-*`, unit `--ss-u`). Papan kayu (gradasi kunin
 
 ```
 ┌ HUD: [Skor]              [Waktu / ♥♥♥]            [⏸] ┐
-│   [ SISI KIRI ]    [ SISI KANAN ]         [ < ]       │
-│  ── benda ── jungkat-jungkit ── benda ──   [ > ]       │
+│   [ SISI KIRI ]    [ SISI KANAN ]         [ ← ]       │
+│  ── benda ── jungkat-jungkit ── benda ──   [ → ]       │
 └────────────────────────────────────────────────────────┘
 ```
 
@@ -292,6 +294,7 @@ Koordinat desain 576 × 260 (`--ss-*`, unit `--ss-u`). Papan kayu (gradasi kunin
 | A47 | Beranda dirapikan (Figma menampilkannya; prompt pemilik proyek menang): teks "Selisih minimal … • Salah = … • skor …" di bawah kesulitan dan ringkasan "Medium • Time Attack • Tambah, Kali" di bawah Main dihapus; tombol "Pengaturan" dan mekanisme lipat dihapus di semua ukuran (pengaturan selalu tampil; desktop memang tidak pernah punya tombol itu); "Cara Main" menjadi tombol ikon "?" di baris Musik/SFX; chip tipe soal berupa ikon 3 × 2 tanpa kotak centang di HP (≤ 720px dan landscape pendek); pil Nyala/Mati disembunyikan di HP; landscape pendek memakai dua kolom (hero kiri, pengaturan kanan); hiasan jungkat-jungkit beranda diperkecil di HP agar 390 × 844 tanpa scroll | beranda ringkas; info yang sama ada di Cara Main |
 | A48 | Indikator HUD dirapikan (prompt pemilik proyek menang atas Figma): kata "SKOR" dan "WAKTU" dihapus; waktu tanpa kotak, ikon jam di kiri angka (ikon cincin progres dan `.timer-ring*` dihapus, A19 tidak berlaku); skor tetap berkotak. Satu warna teks soal (`--color-question-text`): akar masalah lama = `--side-left-expr` (sky-950) berbeda dari `--side-right-expr` (purple-950); kedua token dihapus. State kalah (opacity .6, kontras 4,0:1) sengaja tidak diubah, dilaporkan ke pemilik proyek | bar atas lebih ringkas; teks soal seragam |
 | A49 | Footer petunjuk keyboard (komponen `.keybar`, `.keyhint`, `.keycap`) dihapus dari layar game di semua ukuran, termasuk versi web (Figma menampilkannya; permintaan pemilik proyek menang). Pintasan keyboard tetap berfungsi dan dijelaskan di Cara Main. Ruang 62 di bawah dipakai area main | game lebih bersih; info yang sama ada di Cara Main |
+| A50 | Tombol jawab memakai panah tebal berekor ala arcade (varian A: putih solid + bayangan satu tingkat lebih gelap) menggantikan chevron "<" ">"; ubin kaca 64 dihapus (panah langsung di muka tombol). Cara Main: keycap "<" ">" diganti lencana panah kecil berwarna tombol (dekoratif, kata "biru"/"merah" tetap di teks); README/DESIGN menyebut "panah kiri/kanan". Token `--answer-tile`/`--answer-icon` tetap (dipakai layar game over) | permintaan pemilik proyek; panah lebih tegas dan terbaca sekilas |
 | A51 | Box soal berbentuk speech bubble dengan ekor, menempel di atas objek (target pemilik proyek; Figma menampilkan dua kartu di atas papan). Baris kartu dikeluarkan dari alur layout sehingga jungkat-jungkit dan objek bergeser ke atas ±35–104px (disetujui); di landscape pendek papan di dasar kolom. Nilai "= N" menjadi baris kecil di dalam box (bukan pil di tepi bawah yang bertabrakan dengan ekor). aria-label memakai kata ("2 kali 21"). Tag "SISI KIRI/KANAN" sudah ada dan dipertahankan | benda dan box kini berdekatan; pembaca layar membaca soal dengan jelas |
 | A52 | Feedback jawaban tanpa ikon (permintaan pemilik proyek): lencana ✓ di box, lencana ✓/✗ di tombol, dan ikon di pil "Benar!/Salah" dihapus. Penanda visual = overlay warna pada box yang dipilih (hijau bila benar; merah `--bad-line`/`--bad-soft` bila salah; sisi benar saat salah di-fade, lihat A53). Tombol yang dipilih TIDAK diberi overlay (merah di atas tombol merah tidak terbedakan, hijau menjadi keruh di atas biru/merah); penandanya gerak yang sudah ada (pop / goyang). Isyarat nonvisual: `#sr-status` (aria-live polite) mengumumkan "Benar…"/"Salah…" tiap jawaban, gerak, SFX, haptic. Berlaku untuk `prefers-reduced-motion`: overlay tetap tampil, gerak dimatikan | box lebih bersih; makna tidak hanya lewat warna karena ada teks pil, aria-live, dan gerak |
 | A53 | Sisi benar saat jawaban SALAH tidak lagi berwarna hijau, tetapi di-fade out (box + objek, `--opacity-faded`); overlay merah pada jawaban yang dipilih dan seluruh state benar tidak berubah. Nilai 0,65 (bukan 0,35–0,5 yang diminta awal) karena teks soal di bawah 0,6 gagal kontras 4,5:1 (0,5 = 3,1:1; 0,65 = 4,7:1); alternatif "hanya box-hantu + objek 0,4 dengan teks tegas" ditolak pemilik proyek demi kesederhanaan. Tombol jawab tidak ikut di-fade. aria-live "Salah. Sisi … yang lebih berat: …" sudah menyebut sisi benar | permintaan pemilik proyek; keterbacaan nilai dijaga |

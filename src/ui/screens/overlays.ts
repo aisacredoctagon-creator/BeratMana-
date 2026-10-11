@@ -2,6 +2,7 @@ import { createButton } from '../components/button';
 import { createSwitch } from '../components/controls';
 import { createModal } from '../components/modal';
 import type { Modal } from '../components/modal';
+import { icon } from '../components/icons';
 import { h } from '../dom';
 
 export interface PauseModal {
@@ -37,6 +38,10 @@ export interface HowtoModal {
 
 const key = (k: string) => h('kbd', {}, k);
 
+/** Lencana panah kecil berwarna tombol jawab (dekoratif; kata "biru"/"merah" sudah ada di teks). */
+const arrowChip = (side: 'left' | 'right') =>
+  h('span', { class: `howto-arrow howto-arrow--${side}`, 'aria-hidden': 'true' }, icon(side === 'left' ? 'arrowLeft' : 'arrowRight'));
+
 /** Modal "Cara Main". */
 export function createHowtoModal(): HowtoModal {
   const closeBtn = createButton({ id: 'btn-howto-close', label: 'Mengerti', variant: 'primary', block: true });
@@ -44,7 +49,7 @@ export function createHowtoModal(): HowtoModal {
     'ol',
     { class: 'sheet__list' },
     h('li', {}, 'Tiap sisi punya ', h('b', {}, 'hitungan'), '. ', h('b', {}, 'Berat = hasil hitungan'), ', bukan ukuran gambar. Bulu bisa lebih berat dari Batu!'),
-    h('li', {}, 'Tekan tombol biru ', key('<'), ' bila sisi ', h('b', {}, 'kiri'), ' lebih berat, tombol merah ', key('>'), ' bila sisi ', h('b', {}, 'kanan'), ' lebih berat.'),
+    h('li', {}, 'Tekan tombol biru ', arrowChip('left'), ' bila sisi ', h('b', {}, 'kiri'), ' lebih berat, tombol merah ', arrowChip('right'), ' bila sisi ', h('b', {}, 'kanan'), ' lebih berat.'),
     h('li', {}, h('b', {}, 'Time Attack:'), ' 60 detik. Salah = waktu berkurang. Streak 5 = +2 detik.'),
     h('li', {}, h('b', {}, 'Normal:'), ' tanpa timer, nyawa terbatas. Habis nyawa = game over.'),
     h('li', {}, 'Combo naik tiap 5 jawaban benar berturut-turut (×2, ×3, … maks ×5). Salah = combo kembali ke ×1.'),

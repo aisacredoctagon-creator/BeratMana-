@@ -389,6 +389,12 @@
   --answer-h: calc(131 * var(--u));
   --answer-tile: calc(64 * var(--u));
   --answer-icon: calc(40 * var(--u));
+  --answer-arrow: clamp(calc(96 * var(--u)), 40cqi, calc(112 * var(--u))); /* lebar panah tebal (rasio 3:2): ±40% lebar tombol (cqi = lebar .answer), dibatasi agar tingginya ≤ 60% tinggi tombol */
+  --answer-arrow-depth: calc(4 * var(--u)); /* bayangan panah ke bawah */
+  --answer-arrow-depth-pressed: calc(2 * var(--u));
+  --howto-arrow-w: calc(40 * var(--u)); /* lencana panah kecil di pop-up Cara Main */
+  --howto-arrow-h: calc(28 * var(--u));
+  --howto-arrow-icon: calc(24 * var(--u));
   --icon-btn: max(40px, calc(40 * var(--u)));
   --icon-btn-glyph: calc(20 * var(--u));
   --icon-sm: calc(20 * var(--u));
