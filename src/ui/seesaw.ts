@@ -78,6 +78,7 @@ export class Seesaw {
     this.setTilt(null);
     this.setItems(items);
     this.clearVerdict();
+    this.fade(null);
     this.setState('entering');
   }
 
@@ -91,6 +92,15 @@ export class Seesaw {
     this.setState('revealing');
   }
 
+  /** Sisi benar saat jawaban salah di-fade (box + objek); null = tanpa fade. Dilepas saat ronde baru/reset. */
+  fade(side: Side | null): void {
+    for (const s of ['left', 'right'] as const) {
+      const item = this.beam.querySelector<HTMLElement>(`.seesaw__item--${s}`);
+      if (s === side) item?.setAttribute('data-faded', '');
+      else item?.removeAttribute('data-faded');
+    }
+  }
+
   /** Benda keluar dan papan kembali datar. */
   leave(): void {
     this.setTilt(null);
@@ -100,6 +110,7 @@ export class Seesaw {
   reset(): void {
     this.setTilt(null);
     this.clearVerdict();
+    this.fade(null);
     this.setState('idle');
   }
 

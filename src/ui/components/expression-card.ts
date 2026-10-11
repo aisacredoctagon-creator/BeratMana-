@@ -4,7 +4,7 @@ import { h } from '../dom';
 
 type Side = 'left' | 'right';
 type Size = 's' | 'm' | 'l' | 'xl';
-export type CardResult = 'win' | 'wrong' | 'lose';
+export type CardResult = 'win' | 'faded' | 'wrong' | 'lose';
 
 function tokenNode(k: Token): Node {
   if (k.t === 'txt') return h('span', { class: 'op' }, k.v);
@@ -21,7 +21,7 @@ export interface ExpressionCard {
   el: HTMLElement;
   /** Menampilkan ekspresi baru dan menghapus hasil sebelumnya. */
   set(expr: Expr): void;
-  /** Menampilkan nilai hasil hitungan dan menandai kartu: win (lebih berat), wrong (dipilih tetapi salah), lose (sisanya). */
+  /** Menampilkan nilai hasil hitungan dan menandai kartu: win (benar dipilih, hijau), faded (sisi benar saat salah), wrong (dipilih tetapi salah, merah), lose (sisanya). */
   reveal(expr: Expr, result: CardResult): void;
   clear(): void;
 }

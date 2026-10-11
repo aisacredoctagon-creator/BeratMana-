@@ -465,6 +465,9 @@
   --ss-verdict-y: 26;
   --ss-verdict-size: 16;
 
+  /* ---------- OPASITAS ---------- */
+  --opacity-faded: 0.65; /* turunan: sisi benar saat jawaban salah (box + objek); 0,65 = kontras teks soal 4,7:1 */
+
   /* ---------- Z-INDEX ---------- */
   --z-bar: 10;
   --z-overlay: 30;

@@ -179,6 +179,12 @@
   opacity: 1;
 }
 
+/* jawaban salah: sisi benar (box + objek) di-fade; hanya opacity, tanpa pergeseran */
+.seesaw[data-state='revealing'] .seesaw__item[data-faded] {
+  opacity: var(--opacity-faded);
+  transition: opacity var(--dur-base) var(--ease-out);
+}
+
 .seesaw[data-state='entering'] .seesaw__item {
   animation: item-in var(--dur-enter) var(--ease-pop) both;
 }

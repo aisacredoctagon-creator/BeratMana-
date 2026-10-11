@@ -184,10 +184,11 @@ export class GameView {
     if (engine.settings.mode === 'time') hud.setTime(engine.timeLeft);
 
     const q = res.question;
-    const resultOf = (s: Side): CardResult => (q.heavier === s ? 'win' : res.picked === s ? 'wrong' : 'lose');
+    const resultOf = (s: Side): CardResult => (q.heavier === s ? (res.correct ? 'win' : 'faded') : res.picked === s ? 'wrong' : 'lose');
     cardLeft.reveal(q.left, resultOf('left'));
     cardRight.reveal(q.right, resultOf('right'));
     setAnswerFeedback(res.picked === 'left' ? this.ui.btnLeft : this.ui.btnRight, res.correct ? 'good' : 'bad');
+    seesaw.fade(res.correct ? null : q.heavier);
     seesaw.showVerdict(res.correct);
 
     const heavy = q.heavier === 'left' ? q.left : q.right;
