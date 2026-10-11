@@ -1,5 +1,6 @@
 import type { Item } from '../config/items';
 import type { Side } from '../generator';
+import { grassArt, skyArt, standArt } from './components/seesaw-art';
 import { h } from './dom';
 
 export type SeesawState = 'idle' | 'entering' | 'ready' | 'revealing' | 'leaving';
@@ -33,10 +34,12 @@ export class Seesaw {
     this.el = h(
       'div',
       { id: opts.id, class: opts.rock ? 'seesaw seesaw--rock' : 'seesaw', 'data-state': 'idle', role: opts.bubbles ? 'group' : 'img' },
+      skyArt(),
+      h('div', { class: 'seesaw__base', 'aria-hidden': 'true' }),
+      grassArt(),
+      standArt(),
       this.beam,
-      h('img', { class: 'seesaw__stand', src: `${import.meta.env.BASE_URL}assets/seesaw/stand.svg`, alt: '', width: 80, height: 112, draggable: false }),
-      h('div', { class: 'seesaw__base' }),
-      h('div', { class: 'seesaw__pin' }),
+      h('div', { class: 'seesaw__pin', 'aria-hidden': 'true' }),
       this.verdict,
     );
   }

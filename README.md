@@ -83,8 +83,8 @@ src/
     base.css  motion.css  fonts.css
     components/            button, card, pill, controls, hud, seesaw, overlay
     screens/               title, game, over
-public/                  favicon, manifest, ikon, sw.js, assets/objects/, assets/seesaw/
-scripts/                 build-figma-art.mjs, make-icons.mjs, check-tokens.mjs, visual/ (e2e, screenshot)
+public/                  favicon, manifest, ikon, sw.js, fonts/, assets/objects/
+scripts/                 build-objects.mjs, make-icons.mjs, check-tokens.mjs, visual/ (e2e, screenshot)
 references/              screenshot Figma sumber + hasil implementasi
 DESIGN.md                dokumentasi design system  ·  CLAUDE.md  aturan kerja
 ```
@@ -176,7 +176,7 @@ Dua toggle terpisah (Musik, SFX), masing-masing hanya mute/unmute dan tersimpan.
 | Font **Montserrat** (900, subset latin; kata tekanan judul) | paket npm `@fontsource/montserrat`, berkas di `public/fonts/` beserta teks lisensinya | SIL Open Font License 1.1 |
 | Objek jungkat-jungkit (36, gaya Flat; diwarnai ulang ke palet game dan diberi kontur oleh `scripts/build-objects.mjs`) | **[Microsoft Fluent Emoji](https://github.com/microsoft/fluentui-emoji)** (MIT, © Microsoft Corporation), teks lisensi di `public/assets/objects/LICENSE-fluent-emoji.txt` | MIT |
 | Ikon api (notifikasi combo) | Ant Design Icons (`ant-design:fire-filled`), via desain Figma | MIT |
-| Ilustrasi penyangga segitiga; ikon chevron, suara, jeda | file desain Figma milik pemilik proyek, dirakit oleh `scripts/build-figma-art.mjs` | © pemilik proyek |
+| Jungkat-jungkit (papan, penumpu, tanah, awan, bintang), ikon suara dan jeda | digambar untuk proyek ini (SVG inline, `src/ui/components/seesaw-art.ts`) | © pemilik proyek |
 | ikon lain (centang, silang, hati, piala, bagikan, dll.), ikon aplikasi, gambar OG | digambar untuk proyek ini | © pemilik proyek |
 | **Musik dan efek suara** | **tidak ada berkas audio**; semuanya disintesis oleh kode (Web Audio API) di `src/services/audio.ts` | © pemilik proyek |
 | Alat pengembangan (tidak ikut ke situs): Vite, Vitest (MIT), TypeScript, sharp, playwright-core (Apache-2.0) | npm | lihat masing-masing paket |

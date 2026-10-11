@@ -35,6 +35,7 @@
   --color-amber-300: #fcd34d;
   --color-amber-400: #fbbf24;
   --color-amber-500: #f59e0b;
+  --color-amber-600: #d97706; /* turunan: sisi bawah papan jungkat-jungkit */
   --color-amber-700: #b45309;
   --color-amber-900: #78350f;
   --color-orange-500: #f97316;
@@ -42,6 +43,7 @@
 
   --color-emerald-50: #ecfdf5;
   --color-emerald-300: #6ee7b7;
+  --color-emerald-400: #34d399; /* turunan: tanah jungkat-jungkit */
   --color-emerald-500: #10b981;
   --color-emerald-600: #059669;
   --color-emerald-700: #047857; /* turunan: latar "Benar" */
@@ -67,8 +69,6 @@
   --color-rose-600: #e11d48;
   --color-rose-700: #be123c; /* turunan: teks kecil lolos kontras */
   --color-rose-800: #9f1239;
-  --color-red-pin: #c82225;
-  --color-red-pin-deep: #911517;
 
   --color-sky-50: #f0f9ff;
   --color-sky-100: #e0f2fe;
@@ -93,7 +93,6 @@
   --alpha-ink-07: rgba(0, 0, 0, 0.07);
   --alpha-white-20: rgba(255, 255, 255, 0.2);
   --alpha-white-40: rgba(255, 255, 255, 0.4);
-  --alpha-amber-200-70: rgba(253, 230, 138, 0.7);
   --alpha-glow-yellow: rgba(254, 240, 138, 0.4);
   --alpha-glow-sky: rgba(186, 230, 253, 0.3);
   --alpha-glow-blue: rgba(37, 99, 235, 0.22);
@@ -214,12 +213,25 @@
   --beam-fill: linear-gradient(90deg, var(--color-amber-400) 0%, var(--color-amber-300) 50%, var(--color-amber-400) 100%);
   --beam-line: var(--color-amber-500);
   --beam-solid: var(--color-amber-700);
-  --beam-shine: var(--alpha-amber-200-70);
-  --pin-bg: var(--color-rose-500);
-  --pin-line: var(--color-red-pin);
-  --pin-solid: var(--color-red-pin-deep);
-  --base-bg: var(--color-emerald-500);
-  --base-line: var(--color-emerald-600);
+
+  /* jungkat-jungkit (konsep "Klasik Cerah" + awan; gaya datar seperti Fluent Emoji Flat: tanpa kontur gelap, bayangan datar, sorot satu tingkat lebih terang) */
+  --ss-plank-fill: var(--color-amber-400);
+  --ss-plank-edge: var(--color-amber-600); /* sisi bawah papan = bayangan datar */
+  --ss-plank-shine: var(--color-amber-200);
+  --ss-plank-knob: var(--color-amber-500);
+  --ss-pin-fill: var(--color-rose-500);
+  --ss-pin-edge: var(--color-rose-700);
+  --ss-pin-shine: var(--color-rose-300);
+  --ss-stand-light: var(--color-sky-300);
+  --ss-stand-main: var(--color-sky-400);
+  --ss-stand-dark: var(--color-sky-500);
+  --ss-ground-outer: var(--color-emerald-300);
+  --ss-ground-inner: var(--color-emerald-400);
+  --ss-ground-shadow: var(--alpha-ink-07);
+  --ss-grass: var(--color-emerald-500);
+  --ss-cloud: var(--color-white);
+  --ss-cloud-shade: var(--color-sky-100);
+  --ss-star: var(--color-amber-300);
 
   /* latar: tiga cahaya radial halus dari Figma */
   --app-glows:
@@ -345,11 +357,8 @@
   --shadow-btn-primary-pressed: 0 0 0 var(--btn-primary-solid), 0 calc(4 * var(--u)) calc(8 * var(--u)) var(--btn-primary-glow);
   --shadow-btn-off: 0 var(--depth-3d) 0 var(--btn-off-solid);
   /* bagian jungkat-jungkit memakai --ss-u (skala kotak jungkat-jungkit), bukan --u */
-  --shadow-beam: 0 calc(4 * var(--ss-u)) 0 var(--beam-solid);
-  --shadow-pin: 0 calc(4 * var(--ss-u)) 0 var(--pin-solid);
-  --shadow-base: 0 calc(2 * var(--ss-u)) 0 var(--base-line);
-  --shadow-stand: drop-shadow(0 calc(2 * var(--ss-u)) calc(1 * var(--ss-u)) var(--alpha-ink-06))
-    drop-shadow(0 calc(4 * var(--ss-u)) calc(1.5 * var(--ss-u)) var(--alpha-ink-07));
+  --shadow-beam: 0 calc(4 * var(--ss-u)) 0 var(--ss-plank-edge);
+  --shadow-pin: 0 calc(3 * var(--ss-u)) 0 var(--ss-pin-edge);
   --shadow-fx-text: 0 calc(2 * var(--u)) calc(6 * var(--u)) var(--alpha-ink-07);
   --shadow-combo-text: drop-shadow(calc(4 * var(--u)) calc(4 * var(--u)) 0 var(--combo-outline)); /* bayangan keras "timbul" ke kanan-bawah, tanpa blur */
   --blur-bar: 6px;
@@ -457,27 +466,35 @@
   --ss-beam-w: 528;
   --ss-beam-h: 20;
   --ss-beam-y: 119.5; /* sisi atas papan */
-  --ss-beam-shine-inset-x: 2;
-  --ss-beam-shine-inset-y: 4;
-  --ss-beam-shine-h: 6;
+  --ss-beam-shine-inset-x: 10;
+  --ss-beam-shine-inset-y: 3.5;
+  --ss-beam-shine-h: 5;
+  --ss-knob-size: 10; /* kenop bulat di kedua ujung papan */
+  --ss-knob-inset: 7;
   --ss-group-y: 67.5; /* grup yang berputar (tinggi 124, pusat = pusat papan) */
   --ss-group-h: 124;
-  --ss-pin-w: 28;
-  --ss-pin-h: 25;
-  --ss-pin-y: 116.5;
-  --ss-stand-w: 80;
-  --ss-stand-h: 112;
-  --ss-stand-y: 129;
-  --ss-base-w: 162;
-  --ss-base-h: 12;
-  --ss-base-y: 236.5;
+  --ss-pin-w: 30; /* baut/titik tumpu di pusat papan (statis, di atas papan) */
+  --ss-pin-h: 30;
+  --ss-pin-y: 114.5;
+  --ss-pin-shine-size: 10;
+  --ss-pin-shine-x: 5;
+  --ss-pin-shine-y: 4.5;
+  --ss-stand-w: 116; /* penumpu segitiga bulat (SVG inline, statis) */
+  --ss-stand-h: 126;
+  --ss-stand-y: 117;
+  --ss-base-w: 340; /* tanah: elips luar + elips dalam + bayangan di bawah penumpu */
+  --ss-base-h: 28;
+  --ss-base-y: 230;
+  --ss-base-inner-inset: 20;
+  --ss-base-inner-h: 20;
+  --ss-base-shadow-w: 128;
+  --ss-base-shadow-h: 12;
+  --ss-base-shadow-y: 13;
   --ss-item-size: 72;
   --ss-item-left-x: 46;
   --ss-item-right-x: 463;
   --ss-item-bottom: 56; /* tepi bawah benda di dalam grup (papan mulai di 52, +4 menancap) */
   --ss-item-drop: 36;
-  --ss-border: 2;
-  --ss-beam-radius: 10;
   --ss-tilt: 12deg;
   --ss-verdict-y: 26;
   --ss-verdict-size: 16;

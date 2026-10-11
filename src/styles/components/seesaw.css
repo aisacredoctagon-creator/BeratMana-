@@ -32,19 +32,38 @@
   inset-block-start: calc((var(--ss-beam-y) - var(--ss-group-y)) * var(--ss-u));
   inline-size: calc(var(--ss-beam-w) * var(--ss-u));
   block-size: calc(var(--ss-beam-h) * var(--ss-u));
-  border: calc(var(--ss-border) * var(--ss-u)) solid var(--beam-line);
   border-radius: var(--radius-full);
-  background: var(--beam-fill);
+  background: var(--ss-plank-fill);
   box-shadow: var(--shadow-beam);
+}
+
+/* kenop bulat di kedua ujung papan */
+.seesaw__plank::before,
+.seesaw__plank::after {
+  content: '';
+  position: absolute;
+  inset-block-start: calc((var(--ss-beam-h) - var(--ss-knob-size)) / 2 * var(--ss-u));
+  inline-size: calc(var(--ss-knob-size) * var(--ss-u));
+  block-size: calc(var(--ss-knob-size) * var(--ss-u));
+  border-radius: var(--radius-full);
+  background: var(--ss-plank-knob);
+}
+
+.seesaw__plank::before {
+  inset-inline-start: calc(var(--ss-knob-inset) * var(--ss-u));
+}
+
+.seesaw__plank::after {
+  inset-inline-end: calc(var(--ss-knob-inset) * var(--ss-u));
 }
 
 .seesaw__shine {
   position: absolute;
   inset-inline: calc(var(--ss-beam-shine-inset-x) * var(--ss-u));
-  inset-block-start: calc((var(--ss-beam-shine-inset-y) - var(--ss-border)) * var(--ss-u));
+  inset-block-start: calc(var(--ss-beam-shine-inset-y) * var(--ss-u));
   block-size: calc(var(--ss-beam-shine-h) * var(--ss-u));
   border-radius: var(--radius-full);
-  background: var(--beam-shine);
+  background: var(--ss-plank-shine);
 }
 
 .seesaw__item {
@@ -110,14 +129,33 @@
   --bubble-shift: var(--bubble-shift-right);
 }
 
-.seesaw__stand {
+/* ---- bagian diam: langit (awan + bintang), tanah, rumput, penumpu, baut. Statis, dekoratif (aria-hidden), tanpa animasi ---- */
+.seesaw__sky,
+.seesaw__grass {
   position: absolute;
-  inset-inline-start: calc((var(--ss-design-w) / 2 - var(--ss-stand-w) / 2) * var(--ss-u));
-  inset-block-start: calc(var(--ss-stand-y) * var(--ss-u));
-  inline-size: calc(var(--ss-stand-w) * var(--ss-u));
-  block-size: calc(var(--ss-stand-h) * var(--ss-u));
-  filter: var(--shadow-stand);
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
   pointer-events: none;
+}
+
+.seesaw__cloud {
+  fill: var(--ss-cloud);
+}
+
+.seesaw__cloud-shade {
+  fill: var(--ss-cloud-shade);
+}
+
+.seesaw__star {
+  fill: var(--ss-star);
+  stroke: var(--ss-star);
+  stroke-width: 5;
+  stroke-linejoin: round;
+}
+
+.seesaw__tuft {
+  fill: var(--ss-grass);
 }
 
 .seesaw__base {
@@ -126,10 +164,61 @@
   inset-block-start: calc(var(--ss-base-y) * var(--ss-u));
   inline-size: calc(var(--ss-base-w) * var(--ss-u));
   block-size: calc(var(--ss-base-h) * var(--ss-u));
-  border: calc(var(--ss-border) * var(--ss-u)) solid var(--base-line);
-  border-radius: var(--radius-full);
-  background: var(--base-bg);
-  box-shadow: var(--shadow-base);
+  border-radius: 50%;
+  background: var(--ss-ground-outer);
+  pointer-events: none;
+}
+
+.seesaw__base::before,
+.seesaw__base::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+}
+
+.seesaw__base::before {
+  inset-inline: calc(var(--ss-base-inner-inset) * var(--ss-u));
+  inset-block-start: 0;
+  block-size: calc(var(--ss-base-inner-h) * var(--ss-u));
+  background: var(--ss-ground-inner);
+}
+
+.seesaw__base::after {
+  inset-inline-start: calc((var(--ss-base-w) - var(--ss-base-shadow-w)) / 2 * var(--ss-u));
+  inset-block-start: calc(var(--ss-base-shadow-y) * var(--ss-u));
+  inline-size: calc(var(--ss-base-shadow-w) * var(--ss-u));
+  block-size: calc(var(--ss-base-shadow-h) * var(--ss-u));
+  background: var(--ss-ground-shadow);
+}
+
+.seesaw__stand {
+  position: absolute;
+  inset-inline-start: calc((var(--ss-design-w) / 2 - var(--ss-stand-w) / 2) * var(--ss-u));
+  inset-block-start: calc(var(--ss-stand-y) * var(--ss-u));
+  inline-size: calc(var(--ss-stand-w) * var(--ss-u));
+  block-size: calc(var(--ss-stand-h) * var(--ss-u));
+  pointer-events: none;
+}
+
+.seesaw__stand-main {
+  fill: var(--ss-stand-main);
+  stroke: var(--ss-stand-main);
+  stroke-width: 14;
+  stroke-linejoin: round;
+}
+
+.seesaw__stand-dark {
+  fill: var(--ss-stand-dark);
+  stroke: var(--ss-stand-dark);
+  stroke-width: 14;
+  stroke-linejoin: round;
+}
+
+.seesaw__stand-light {
+  fill: none;
+  stroke: var(--ss-stand-light);
+  stroke-width: 7;
+  stroke-linecap: round;
 }
 
 .seesaw__pin {
@@ -138,10 +227,20 @@
   inset-block-start: calc(var(--ss-pin-y) * var(--ss-u));
   inline-size: calc(var(--ss-pin-w) * var(--ss-u));
   block-size: calc(var(--ss-pin-h) * var(--ss-u));
-  border: calc(var(--ss-border) * var(--ss-u)) solid var(--pin-line);
   border-radius: var(--radius-full);
-  background: var(--pin-bg);
+  background: var(--ss-pin-fill);
   box-shadow: var(--shadow-pin);
+}
+
+.seesaw__pin::after {
+  content: '';
+  position: absolute;
+  inset-inline-start: calc(var(--ss-pin-shine-x) * var(--ss-u));
+  inset-block-start: calc(var(--ss-pin-shine-y) * var(--ss-u));
+  inline-size: calc(var(--ss-pin-shine-size) * var(--ss-u));
+  block-size: calc(var(--ss-pin-shine-size) * var(--ss-u));
+  border-radius: var(--radius-full);
+  background: var(--ss-pin-shine);
 }
 
 /* pil hasil "✓ Benar!" / "✗ Salah" di atas titik tumpu */
