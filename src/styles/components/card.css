@@ -15,7 +15,6 @@
   flex-direction: column;
   align-items: center;
   min-inline-size: 0;
-  min-block-size: var(--bubble-min-h);
   padding: var(--bubble-pad);
   border: var(--border-1) solid var(--_line);
   border-radius: var(--radius-xl);
@@ -72,7 +71,6 @@
 
 .expr-card__expr {
   display: block;
-  margin-block: auto; /* ekspresi di tengah ruang di bawah tag, bila kartu lebih tinggi dari isinya */
   max-inline-size: 100%;
   padding-block: var(--space-4);
   color: var(--color-question-text); /* satu warna untuk semua teks soal (kiri/kanan, semua tipe) */
@@ -102,16 +100,30 @@
   text-wrap: balance;
 }
 
-/* baris nilai hasil hitungan di dalam box; ruangnya selalu dicadangkan (tampil lewat opacity) sehingga tinggi box stabil */
+/* baris nilai hasil hitungan: SEBELUM menjawab tingginya 0 (box hanya setinggi isi + padding, tanpa ruang cadangan); saat
+   data-result dipasang, baris melebar ke tinggi nilai + --question-answer-gap (grid 0fr → 1fr, --dur-base). Box terpaku di
+   tepi bawah/ekor (jangkar di seesaw.css), jadi ia tumbuh ke ATAS; ekor, objek, dan elemen lain tidak bergeser. Menciut
+   (ronde baru, set()) langsung: transisi hanya ada di keadaan [data-result]. */
 .expr-card__value {
-  display: block;
-  min-block-size: var(--bubble-value-h);
+  display: grid;
+  grid-template-rows: 0fr;
   text-align: center;
   pointer-events: none;
 }
 
+.expr-card[data-result] .expr-card__value {
+  grid-template-rows: 1fr;
+  transition: grid-template-rows var(--dur-base) var(--ease-out);
+}
+
+.expr-card__value-clip {
+  min-block-size: 0;
+  overflow: hidden;
+}
+
 .expr-card__value-text {
   display: inline-block;
+  padding-block-start: var(--question-answer-gap); /* jarak ekspresi ke nilai; ikut menciut bersama baris */
   color: var(--color-question-text);
   font-size: var(--fs-body);
   font-weight: var(--fw-semibold);

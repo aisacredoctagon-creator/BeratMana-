@@ -38,7 +38,7 @@ export function createExpressionCard(side: Side, id: string): ExpressionCard {
     { id, class: `expr-card expr-card--${side}`, role: 'group', 'data-size': 's' },
     h('span', { class: 'tag' }, side === 'left' ? 'Sisi kiri' : 'Sisi kanan'),
     expr,
-    h('span', { class: 'expr-card__value', 'aria-hidden': 'true' }, valueText),
+    h('span', { class: 'expr-card__value', 'aria-hidden': 'true' }, h('span', { class: 'expr-card__value-clip' }, valueText)),
     h('span', { class: 'expr-card__tail', 'aria-hidden': 'true' }),
   );
   return {
