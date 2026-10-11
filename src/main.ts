@@ -32,7 +32,7 @@ import { createGameScreen } from './ui/screens/game-screen';
 import { createHowtoModal, createPauseModal } from './ui/screens/overlays';
 import { createOverScreen, shareMessage } from './ui/screens/over-screen';
 import type { OverData } from './ui/screens/over-screen';
-import { currentScreen, showScreen } from './ui/screens/router';
+import { currentScreen, setTitleImpact, showScreen } from './ui/screens/router';
 import { createTitleScreen } from './ui/screens/title-screen';
 
 installSpringEasing();
@@ -63,6 +63,7 @@ $('app').append(
   h('div', { id: 'flash', class: 'flash', 'aria-hidden': 'true' }),
   h('div', { id: 'sr-status', class: 'sr-only', role: 'status', 'aria-live': 'polite' }),
 );
+setTitleImpact(() => audio.play('thud')); // SFX "buk" saat judul jatuh (mengikuti toggle SFX)
 showScreen('title');
 
 /* ================= audio ================= */

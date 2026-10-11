@@ -30,4 +30,29 @@
   color: var(--title-accent);
   font-weight: var(--font-weight-title-heavy);
   text-transform: uppercase;
+  transform-origin: var(--title-tilt-origin);
+}
+
+/* ---- animasi miring (DESIGN.md §4.14). Keadaan awal = lurus (tanpa atribut / data-tilt="idle"), jadi tidak ada kilatan miring.
+   data-tilt diatur oleh playTitleTilt() (components/title.ts) tiap layar masuk: idle → play → done. Hanya transform/translate. ---- */
+.title-line[data-tilt='play'] .title-line__accent {
+  will-change: transform, translate; /* hanya selama animasi; dilepas saat data-tilt="done" */
+  animation:
+    title-tilt-fall var(--title-tilt-fall) var(--title-tilt-ease) var(--title-tilt-delay) both,
+    title-tilt-settle var(--title-tilt-settle) var(--title-tilt-ease-settle) calc(var(--title-tilt-delay) + var(--title-tilt-fall)) forwards,
+    title-tilt-shake var(--title-shake-duration) var(--ease-out) calc(var(--title-tilt-delay) + var(--title-tilt-fall)) forwards;
+}
+
+.title-line[data-tilt='done'] .title-line__accent {
+  transform: rotate(var(--title-tilt-angle));
+}
+
+/* reduced-motion: tanpa gerak; langsung miring statis di sudut akhir (sesuai gambar referensi) */
+@media (prefers-reduced-motion: reduce) {
+  .title-line .title-line__accent,
+  .title-line[data-tilt] .title-line__accent {
+    transform: rotate(var(--title-tilt-angle));
+    animation: none;
+    will-change: auto;
+  }
 }

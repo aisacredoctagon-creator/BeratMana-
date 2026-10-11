@@ -13,6 +13,46 @@
   animation: screen-in var(--dur-base) var(--ease-out) both;
 }
 
+/* judul: "BERAT?" jatuh ke sudut miring (fall → overshoot), memantul kembali ke sudut akhir (settle), getaran halus saat benturan */
+@keyframes title-tilt-fall {
+  from {
+    transform: none;
+  }
+
+  to {
+    transform: rotate(calc(var(--title-tilt-angle) * var(--title-tilt-overshoot)));
+  }
+}
+
+@keyframes title-tilt-settle {
+  from {
+    transform: rotate(calc(var(--title-tilt-angle) * var(--title-tilt-overshoot)));
+  }
+
+  to {
+    transform: rotate(var(--title-tilt-angle));
+  }
+}
+
+@keyframes title-tilt-shake {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+
+  25% {
+    translate: 0 var(--title-shake-amp);
+  }
+
+  55% {
+    translate: 0 calc(var(--title-shake-amp) * -0.5);
+  }
+
+  80% {
+    translate: 0 calc(var(--title-shake-amp) * 0.25);
+  }
+}
+
 @keyframes item-in {
   from {
     opacity: 0;

@@ -474,6 +474,20 @@
   /* ---------- OPASITAS ---------- */
   --opacity-faded: 0.65; /* turunan: sisi benar saat jawaban salah (box + objek); 0,65 = kontras teks soal 4,7:1 */
 
+  /* ---------- JUDUL BERANIMASI ("BERAT?" miring karena keberatan; DESIGN.md §4.14) ---------- */
+  --title-tilt-angle: 5.3deg; /* sudut akhir, searah jarum jam; diukur dari gambar referensi (5,1–5,4°) */
+  --title-tilt-origin: 0% 100%; /* titik tumpu: sudut kiri-bawah huruf B */
+  --title-tilt-delay: 700ms; /* fase 1: tetap lurus supaya sempat terbaca */
+  --title-tilt-duration: 450ms; /* fase 2: total jatuh + pantulan */
+  --title-tilt-impact: 0.6; /* bagian durasi sampai benturan (puncak overshoot); sisanya = pantulan kembali ke sudut akhir */
+  --title-tilt-overshoot: 1.35; /* puncak = sudut akhir × ini (≈ 7,2°), lalu kembali ke sudut akhir: satu pantulan */
+  --title-tilt-ease: cubic-bezier(0.4, 0, 0.9, 0.6); /* jatuh: makin cepat */
+  --title-tilt-ease-settle: var(--ease-out); /* pantulan: mengerem lalu menetap */
+  --title-tilt-fall: calc(var(--title-tilt-duration) * var(--title-tilt-impact));
+  --title-tilt-settle: calc(var(--title-tilt-duration) * (1 - var(--title-tilt-impact)));
+  --title-shake-amp: calc(3 * var(--u)); /* getaran halus saat benturan (hanya "BERAT?") */
+  --title-shake-duration: 240ms;
+
   /* ---------- Z-INDEX ---------- */
   --z-bar: 10;
   --z-overlay: 30;

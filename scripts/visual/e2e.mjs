@@ -38,6 +38,8 @@ const types = () => page.$$eval('#chips input:checked', (els) => els.map((e) => 
 const saved = () => page.evaluate(() => JSON.parse(localStorage.getItem('bm.settings') ?? 'null'));
 check('tidak ada teks info di bawah kesulitan maupun di bawah Main, dan tidak ada tombol Pengaturan', !(await page.$('#difficulty-hint')) && !(await page.$('#play-summary')) && !(await page.$('#btn-settings')));
 check('judul menu: komponen .title-line (Montserrat 700 + 900 kapital), deskripsi "Berat = hasil hitungan…" tidak ada di menu', await page.evaluate(() => { const t = document.querySelector('#game-title'); const lead = t.querySelector('.title-line__lead'), acc = t.querySelector('.title-line__accent'); const cs = getComputedStyle; return t.tagName === 'H1' && t.classList.contains('title-line') && cs(lead).fontWeight === '700' && cs(acc).fontWeight === '900' && cs(acc).textTransform === 'uppercase' && /Montserrat/.test(cs(lead).fontFamily) && !document.querySelector('#screen-title .tagline') && !/hasil hitungan|ukuran visual/.test(document.querySelector('#screen-title').textContent); }));
+await page.waitForFunction(() => document.querySelector('#game-title').dataset.tilt === 'done', null, { timeout: 8000 });
+check('animasi judul menu: "BERAT?" berakhir miring ±5,3° (data-tilt=done), will-change dilepas, "Mana yang lebih" tetap lurus', await page.evaluate(() => { const t = document.querySelector('#game-title'); const ang = (el) => { const m = new DOMMatrix(getComputedStyle(el).transform); return Math.atan2(m.b, m.a) * 180 / Math.PI; }; return Math.abs(ang(t.querySelector('.title-line__accent')) - 5.3) < 0.1 && ang(t.querySelector('.title-line__lead')) === 0 && getComputedStyle(t.querySelector('.title-line__accent')).willChange === 'auto'; }));
 check('"Cara Main" = tombol ikon "?" (aria-label, title, tanpa teks) di baris Musik/SFX', (await page.getAttribute('#btn-howto', 'aria-label')) === 'Cara Main' && (await page.getAttribute('#btn-howto', 'title')) === 'Cara Main' && (await page.textContent('#btn-howto')).trim() === '' && (await page.evaluate(() => { const t = [...document.querySelectorAll('#screen-title .toggles > *')].map((e) => Math.round(e.getBoundingClientRect().top)); return t.length === 3 && new Set(t).size === 1; })));
 check('default: Penjumlahan + Perkalian', JSON.stringify(await types()) === JSON.stringify(['add', 'mul']));
 check('tidak ada chip Mix, Pilih semua, atau Hapus semua', (await page.$$eval('#chips label', (e) => e.length)) === 6 && (await page.$$('#chips input[value="mix"], #btn-all, #btn-none')).length === 0 && !(await page.textContent('#settings')).match(/mix|pilih semua|hapus semua/i));
@@ -62,7 +64,9 @@ check('pengaturan tersimpan setelah reload', (await page.isChecked('input[name="
 await page.click('#btn-play');
 await ready();
 check('layar game tampil + HUD mode Normal (hati, tanpa pil waktu)', (await page.getAttribute('#screen-game', 'data-mode')) === 'normal' && (await page.isVisible('.hearts')) && !(await page.isVisible('.hud-time')));
-check('judul game: komponen yang sama dengan menu, satu baris, "Mana yang lebih BERAT?"', await page.evaluate(() => { const t = document.querySelector('#question'); const m = document.querySelector('#game-title'); const cs = getComputedStyle; const same = ['fontFamily', 'fontWeight', 'color', 'textTransform'].every((k) => cs(t.querySelector('.title-line__lead'))[k] === cs(m.querySelector('.title-line__lead'))[k] && cs(t.querySelector('.title-line__accent'))[k] === cs(m.querySelector('.title-line__accent'))[k]); const r = t.getBoundingClientRect(); const l = t.querySelector('.title-line__lead').getBoundingClientRect(), a = t.querySelector('.title-line__accent').getBoundingClientRect(); return t.className === m.className && same && t.textContent === 'Mana yang lebih Berat?' && Math.abs(l.bottom - a.bottom) < r.height && a.left >= l.right && t.scrollWidth <= t.clientWidth + 1; }));
+await page.waitForFunction(() => document.querySelector('#question').dataset.tilt === 'done', null, { timeout: 8000 });
+await page.evaluate(() => { window.__tiltEv = 0; document.addEventListener('animationend', (ev) => { if (ev.animationName.startsWith('title-tilt')) window.__tiltEv++; }, true); });
+check('judul game: komponen yang sama dengan menu, satu baris, "Mana yang lebih BERAT?"', await page.evaluate(() => { const t = document.querySelector('#question'); const m = document.querySelector('#game-title'); const cs = getComputedStyle; const same = ['fontFamily', 'fontWeight', 'color', 'textTransform'].every((k) => cs(t.querySelector('.title-line__lead'))[k] === cs(m.querySelector('.title-line__lead'))[k] && cs(t.querySelector('.title-line__accent'))[k] === cs(m.querySelector('.title-line__accent'))[k]); const r = t.getBoundingClientRect(); const l = t.querySelector('.title-line__lead').getBoundingClientRect(), a = t.querySelector('.title-line__accent').getBoundingClientRect(); return t.className === m.className && same && t.textContent === 'Mana yang lebih Berat?' && Math.abs(l.bottom - a.bottom) < r.height && a.left >= l.right && document.documentElement.scrollWidth <= innerWidth + 1; }));
 check('HUD hanya skor, hati, jeda: elemen lama hilang', (await page.$$eval('#screen-game .pill--level, #screen-game .pill--mode, #screen-game .pill--combo, #screen-game .pill__badge, #screen-game .pill--lives, #screen-game #btn-sound, #screen-game .tagline', (e) => e.length)) === 0);
 check('hati: 2 nyawa Hard, aria-label tersembunyi', (await page.getAttribute('.hearts', 'aria-label')) === 'Nyawa 2 dari 2' && (await page.$$eval('.heart[data-state="full"]', (e) => e.length)) === 2);
 const side = await answer(false);
@@ -71,6 +75,7 @@ const fb = await page.getAttribute(side === 'left' ? '#btn-left' : '#btn-right',
 check('jawaban benar → feedback good + skor naik', fb === 'good' && (await page.textContent('#hud-score')) !== '0');
 check('benar: overlay hijau di box yang dipilih (lebih berat), box lain memudar, tanpa ikon ✓/✗ di box/tombol/pil', (await page.$$eval('.expr-card__mark, .answer__badge, #screen-game .seesaw__verdict .icon, .expr-card .icon, .answer[data-feedback] .icon--check, .answer[data-feedback] .icon--cross', (e) => e.length)) === 0 && (await page.$eval(side === 'left' ? '#card-left' : '#card-right', (e) => e.dataset.result)) === 'win' && (await page.$$eval('.expr-card[data-result="wrong"], .expr-card[data-result="faded"], .seesaw__item[data-faded]', (e) => e.length)) === 0);
 check('benar: aria-live mengumumkan "Benar" dan pil hanya teks', (await page.textContent('#sr-status')).startsWith('Benar') && (await page.textContent('#screen-game .seesaw__verdict')) === 'Benar!');
+check('animasi judul game tidak berulang saat ronde berganti', (await page.evaluate(() => window.__tiltEv)) === 0 && (await page.getAttribute('#question', 'data-tilt')) === 'done');
 check('kartu pemenang ditandai', (await page.$$eval('.expr-card[data-result="win"]', (e) => e.length)) === 1 && (await page.$$eval('.expr-card[data-result="lose"]', (e) => e.length)) === 1);
 await page.waitForTimeout(1300);
 await ready();
@@ -326,6 +331,17 @@ await ready();
 await answer(true);
 await page.waitForSelector('#screen-over:not([hidden])', { timeout: 8000 });
 check('game over berikutnya (skor 0): tanpa REKOR BARU, rekor tidak turun', !(await page.isVisible('#over-record')) && (await stored('normal', 'hard')) === firstBest);
+
+// reduced-motion: "BERAT?" langsung miring statis (5,3°), tanpa animasi, di menu dan game
+const rm = await (await browser.newContext({ viewport: { width: 1280, height: 992 }, reducedMotion: 'reduce' })).newPage();
+await rm.goto(APP_URL);
+await rm.waitForSelector('#btn-play');
+const rmState = (sel) => rm.evaluate((s) => { const el = document.querySelector(s + ' .title-line__accent'); const m = new DOMMatrix(getComputedStyle(el).transform); return { ang: Math.atan2(m.b, m.a) * 180 / Math.PI, anim: getComputedStyle(el).animationName }; }, sel);
+const rmMenu = await rmState('#screen-title');
+await rm.click('#btn-play');
+await rm.waitForTimeout(150);
+const rmGame = await rmState('#screen-game');
+check('reduced-motion: "BERAT?" miring statis 5,3° sejak frame pertama, tanpa animasi (menu dan game)', Math.abs(rmMenu.ang - 5.3) < 0.1 && rmMenu.anim === 'none' && Math.abs(rmGame.ang - 5.3) < 0.1 && rmGame.anim === 'none');
 
 check('tidak ada error konsol/halaman', errors.filter((e) => !/vibrate/.test(e)).length === 0, errors.join(' | '));
 console.log(fails === 0 ? '\nSEMUA LULUS' : `\n${fails} GAGAL`);
