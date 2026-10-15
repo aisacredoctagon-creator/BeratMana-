@@ -24,7 +24,9 @@ export type IconName =
   | 'music'
   | 'target'
   | 'streak'
-  | 'clock';
+  | 'clock'
+  | 'close'
+  | 'strike';
 
 interface IconDef {
   viewBox: string;
@@ -105,10 +107,10 @@ const ICONS: Record<IconName, IconDef> = {
     viewBox: '0 0 24 24',
     body: `<path d="M5 12h14" ${STROKE} stroke-width="2.4"/><circle cx="12" cy="5.8" r="1.9" fill="currentColor"/><circle cx="12" cy="18.2" r="1.9" fill="currentColor"/>`,
   },
-  /** Pie dengan satu bagian kosong (pecahan = sebagian dari utuh). */
+  /** Pecahan bersusun: 1 di atas 2 dengan garis pecahan (sama seperti ikon + − × ÷: garis, ujung bulat). */
   fraction: {
     viewBox: '0 0 24 24',
-    body: `<circle cx="12" cy="12" r="8.8" ${STROKE} stroke-width="2.1"/><path d="M12 12V3.2M12 12h8.8" ${STROKE} stroke-width="2.1"/><path d="M12 12h6.2A6.2 6.2 0 1 1 12 5.8z" fill="currentColor"/>`,
+    body: `<path d="M9.4 6.4l2.6-2v7.4M5.5 13h13M8.9 16.6c.3-1.5 1.4-2.2 2.9-2.2 1.6 0 2.7.9 2.7 2.3 0 1.2-.8 2-2 3L8.8 21h5.8" ${STROKE} stroke-width="2.2"/>`,
   },
   decimal: {
     viewBox: '0 0 24 24',
@@ -129,6 +131,19 @@ const ICONS: Record<IconName, IconDef> = {
   streak: {
     viewBox: '0 0 20 20',
     body: '<path fill="currentColor" d="M10 18.73c-3.9 0-6.88-2.8-6.88-6.82 0-1 .24-2 .7-3 .46-.9 1.1-1.7 1.97-2.38.34-.26.65-.56.92-.9.4-.48.7-1 .93-1.6.18-.47.25-1.03.22-1.67l-.04-.94c0-.12.13-.2.24-.14l.8.47c1.1.65 2 1.6 2.63 2.8.77 1.44 1.12 2.77 1.05 3.95 0 .03.01.07.04.1.03.03.06.03.08.03.02 0 .05-.01.08-.04.41-.46.7-.93.86-1.4l.26-.73c.03-.1.15-.14.24-.06l.57.52a7.6 7.6 0 012.14 3.8c.16.76.19 1.5.1 2.2-.2 2.8-3.1 6.8-6.9 6.8z"/>',
+  },
+  close: {
+    viewBox: '0 0 24 24',
+    body: `<path d="M6.5 6.5l11 11M17.5 6.5l-11 11" ${STROKE} stroke-width="2.4"/>`,
+  },
+  /**
+   * Coretan diagonal untuk tombol yang dimatikan (ditumpuk di atas ikon). Garis bawah `.strike__halo` (warna latar tombol,
+   * diatur CSS) memotong ikon di bawahnya supaya coretan tetap terbaca; `.strike__line` memakai currentColor.
+   */
+  strike: {
+    viewBox: '0 0 24 24',
+    body: `<path class="strike__halo" d="M4.5 4.5l15 15" fill="none" stroke-linecap="round" stroke-width="5.6"/><path d="M4.5 4.5l15 15" ${STROKE} stroke-width="2.4"/>`,
+    className: 'icon--strike',
   },
   clock: {
     viewBox: '0 0 24 24',

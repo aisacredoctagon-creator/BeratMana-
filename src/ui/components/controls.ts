@@ -57,28 +57,39 @@ export function createChip(o: { value: string; label: string; icon?: IconName })
   return { el, input };
 }
 
-/** Tombol ikon bergaya toggle (mis. "?" Cara Main di samping Musik dan SFX). Lihat DESIGN.md §4.6. */
-export function createSwitchIconButton(o: { id: string; label: string; icon: IconName }): HTMLButtonElement {
+/**
+ * Tombol simbol persegi (tanpa teks): "?" Cara Main, X Tutup, dan dasar toggle Musik/SFX. Satu ukuran untuk semuanya
+ * (`--control-min-h`, area sentuh 48px). `aria-label` + `title` = nama tombol. Lihat DESIGN.md §4.6.
+ */
+export function createSymbolButton(o: { id: string; label: string; icon: IconName }): HTMLButtonElement {
   return h(
     'button',
-    { type: 'button', id: o.id, class: 'switch switch--icon', 'aria-label': o.label, title: o.label },
+    { type: 'button', id: o.id, class: 'sym-btn', 'aria-label': o.label, title: o.label },
     icon(o.icon),
   );
 }
 
-/** Toggle (role="switch") dengan ikon, label, dan teks status Nyala/Mati. Lihat DESIGN.md §4.6. */
-export function createSwitch(o: { id: string; label: string; icon: IconName; dataHud?: string }): HTMLButtonElement {
+export type AudioKind = 'music' | 'sfx';
+
+const AUDIO_TOGGLE: Record<AudioKind, { label: string; icon: IconName }> = {
+  music: { label: 'Musik', icon: 'music' },
+  sfx: { label: 'Efek suara', icon: 'sound' },
+};
+
+/**
+ * Toggle Musik / Efek suara: SATU komponen untuk beranda dan pop-up Dijeda. Hanya simbol; status lewat `aria-pressed`
+ * (true = nyala). Mati = ikon memudar (`--opacity-faded`) + coretan diagonal. Lihat DESIGN.md §4.6.
+ */
+export function createAudioToggle(o: { id: string; kind: AudioKind }): HTMLButtonElement {
+  const def = AUDIO_TOGGLE[o.kind];
   return h(
     'button',
-    { type: 'button', id: o.id, class: 'switch', role: 'switch', 'aria-checked': 'true', 'data-hud': o.dataHud },
-    icon(o.icon),
-    h('span', {}, o.label),
-    h('span', { class: 'switch__state', 'aria-hidden': 'true' }, 'Nyala'),
+    { type: 'button', id: o.id, class: 'sym-btn sym-btn--audio', 'aria-label': def.label, title: def.label, 'aria-pressed': 'true' },
+    icon(def.icon),
+    icon('strike'),
   );
 }
 
-export function setSwitch(el: HTMLElement, on: boolean): void {
-  el.setAttribute('aria-checked', String(on));
-  const state = el.querySelector('.switch__state');
-  if (state) state.textContent = on ? 'Nyala' : 'Mati';
+export function setAudioToggle(el: HTMLElement, on: boolean): void {
+  el.setAttribute('aria-pressed', String(on));
 }

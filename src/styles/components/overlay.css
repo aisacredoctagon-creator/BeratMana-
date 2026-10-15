@@ -11,8 +11,9 @@
 }
 
 .sheet {
+  --_gap: var(--space-16);
   display: grid;
-  gap: var(--space-16);
+  gap: var(--_gap);
   inline-size: min(100%, var(--sheet-max-w));
   max-block-size: 100%;
   overflow-y: auto;
@@ -26,6 +27,38 @@
 
 .sheet--wide {
   inline-size: min(100%, var(--sheet-wide-max-w));
+}
+
+/*
+ * Tombol X (Tutup): elemen lengket setinggi 0 di baris pertama, sehingga tetap di pojok kanan atas walau isi panel
+ * di-scroll (panel tidak pernah tanpa tombol tutup). Digeser ke pojok lewat transform; judul diberi ruang di kedua sisi.
+ */
+.sheet__close {
+  position: sticky;
+  inset-block-start: var(--space-24);
+  z-index: var(--z-sheet-close);
+  display: flex;
+  justify-content: flex-end;
+  block-size: 0;
+  margin-block-end: calc(-1 * var(--_gap));
+}
+
+.sheet__close > .sym-btn {
+  transform: translate(var(--space-12), calc(-1 * var(--space-12)));
+}
+
+@media (hover: hover) {
+  .sheet__close > .sym-btn:hover {
+    transform: translate(var(--space-12), calc(-1 * var(--space-12) + var(--lift)));
+  }
+}
+
+.sheet__close > .sym-btn:active {
+  transform: translate(var(--space-12), calc(-1 * var(--space-12) + var(--press-travel-sm)));
+}
+
+.sheet--closable .sheet__title {
+  padding-inline: calc(var(--control-min-h) + var(--space-8));
 }
 
 .sheet__title {
@@ -52,7 +85,7 @@
 
 .sheet__list {
   display: grid;
-  gap: var(--space-8);
+  gap: var(--space-16);
   margin: 0;
   padding-inline-start: var(--space-22);
   color: var(--text-body);

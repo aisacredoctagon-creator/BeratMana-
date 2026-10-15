@@ -20,11 +20,14 @@ export function createModal(o: {
   wide?: boolean;
   body?: Child[];
   actions?: Child[];
+  /** Tombol X di pojok kanan atas (disarankan untuk panel panjang). Penutupannya dipasang pemanggil lewat `close()`. */
+  closeButton?: HTMLButtonElement;
   onClose?: () => void;
 }): Modal {
   const sheet = h(
     'div',
-    { class: o.wide ? 'sheet sheet--wide' : 'sheet' },
+    { class: ['sheet', o.wide ? 'sheet--wide' : '', o.closeButton ? 'sheet--closable' : ''].filter(Boolean).join(' ') },
+    o.closeButton ? h('div', { class: 'sheet__close' }, o.closeButton) : null,
     h('h2', { id: `${o.id}-title`, class: 'sheet__title' }, o.title),
     ...(o.body ?? []),
     ...(o.actions ?? []),

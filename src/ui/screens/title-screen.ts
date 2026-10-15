@@ -3,7 +3,7 @@ import type { Item } from '../../config/items';
 import type { GameSettings } from '../../game/settings';
 import { getBest } from '../../services/records';
 import { createButton } from '../components/button';
-import { createSwitch, createSwitchIconButton } from '../components/controls';
+import { createAudioToggle, createSymbolButton } from '../components/controls';
 import { createTitle } from '../components/title';
 import { h } from '../dom';
 import { Seesaw } from '../seesaw';
@@ -14,8 +14,8 @@ export interface TitleScreen {
   panel: SettingsPanel;
   playBtn: HTMLButtonElement;
   howtoBtn: HTMLButtonElement;
-  musicSwitch: HTMLButtonElement;
-  sfxSwitch: HTMLButtonElement;
+  musicToggle: HTMLButtonElement;
+  sfxToggle: HTMLButtonElement;
   /** Memperbarui rekor sesuai pengaturan aktif. */
   refresh(): void;
 }
@@ -29,9 +29,9 @@ export function createTitleScreen(settings: GameSettings, onChange: (s: GameSett
 
   const bestValue = h('strong', { id: 'title-best' }, '0');
   const playBtn = createButton({ id: 'btn-play', label: 'Main', variant: 'primary' });
-  const howtoBtn = createSwitchIconButton({ id: 'btn-howto', label: 'Cara Main', icon: 'help' });
-  const musicSwitch = createSwitch({ id: 'tgl-music', label: 'Musik', icon: 'music' });
-  const sfxSwitch = createSwitch({ id: 'tgl-sfx', label: 'SFX', icon: 'sound' });
+  const howtoBtn = createSymbolButton({ id: 'btn-howto', label: 'Cara Main', icon: 'help' });
+  const musicToggle = createAudioToggle({ id: 'tgl-music', kind: 'music' });
+  const sfxToggle = createAudioToggle({ id: 'tgl-sfx', kind: 'sfx' });
 
   const panel = new SettingsPanel(settings, (s) => {
     onChange(s);
@@ -49,13 +49,13 @@ export function createTitleScreen(settings: GameSettings, onChange: (s: GameSett
         { class: 'title__hero' },
         createTitle('game-title', 'menu'),
         deco.el,
-        h('div', { class: 'play-block' }, playBtn, h('p', { class: 'best' }, 'Rekor: ', bestValue)),
+        h('div', { class: 'play-block' }, playBtn, h('p', { class: 'best' }, 'Rekor Saya: ', bestValue)),
       ),
       h(
         'section',
         { class: 'title__panel' },
         panel.el,
-        h('div', { class: 'toggles' }, musicSwitch, sfxSwitch, howtoBtn),
+        h('div', { class: 'toggles' }, musicToggle, sfxToggle, howtoBtn),
       ),
     ),
   );
@@ -71,8 +71,8 @@ export function createTitleScreen(settings: GameSettings, onChange: (s: GameSett
     panel,
     playBtn,
     howtoBtn,
-    musicSwitch,
-    sfxSwitch,
+    musicToggle,
+    sfxToggle,
     refresh,
   };
   return api;
