@@ -61,7 +61,7 @@ describe('skor & combo', () => {
     wrongAnswer(e);
     e.end('quit');
     const s = e.summary();
-    expect(s).toMatchObject({ correct: 3, wrong: 1, accuracy: 75, maxStreak: 3, reason: 'quit' });
+    expect(s).toMatchObject({ correct: 3, wrong: 1, answered: 4, accuracy: 75, maxStreak: 3, reason: 'quit' });
   });
 });
 
@@ -175,5 +175,60 @@ describe('level intensitas', () => {
     expect(e.answer(q.heavier)).not.toBeNull();
     expect(e.answer(q.heavier)).toBeNull();
     expect(e.correct).toBe(1);
+  });
+});
+
+describe('ringkasan akhir: satu counter untuk akurasi, panel akhir, dan jalur keluar', () => {
+  it('belum ada yang dijawab → 0 benar dari 0 dijawab, akurasi 0 (bukan NaN)', () => {
+    const e = make();
+    e.end('quit');
+    const s = e.summary();
+    expect(s.correct).toBe(0);
+    expect(s.answered).toBe(0);
+    expect(s.accuracy).toBe(0);
+    expect(Number.isNaN(s.accuracy)).toBe(false);
+  });
+
+  it('answered = benar + salah, benar ≤ answered, akurasi dihitung dari counter yang sama', () => {
+    for (const seed of [1, 2, 3, 4, 5]) {
+      const e = make({ mode: 'normal', difficulty: 'easy' }, seed);
+      const pattern = [true, true, false, true, true, true, false, true];
+      for (const ok of pattern) {
+        if (e.over) break;
+        if (ok) right(e);
+        else wrongAnswer(e);
+      }
+      e.end('quit');
+      const s = e.summary();
+      expect(s.answered).toBe(s.correct + s.wrong);
+      expect(s.correct).toBeLessThanOrEqual(s.answered);
+      expect(s.accuracy).toBe(s.answered === 0 ? 0 : Math.round((s.correct / s.answered) * 100));
+    }
+  });
+
+  it('soal yang tampil tetapi belum dijawab (waktu habis di tengah ronde) TIDAK dihitung', () => {
+    const e = make();
+    right(e);
+    right(e);
+    wrongAnswer(e);
+    e.nextQuestion(); // soal ketiga-lalu-keempat tampil, tidak pernah dijawab
+    e.end('time');
+    const s = e.summary();
+    expect({ correct: s.correct, wrong: s.wrong, answered: s.answered }).toEqual({ correct: 2, wrong: 1, answered: 3 });
+    expect(s.reason).toBe('time');
+  });
+
+  it('keluar lebih awal: end() berulang dan summary() berulang tidak menghitung ganda', () => {
+    const e = make({ mode: 'normal', difficulty: 'easy' });
+    right(e);
+    wrongAnswer(e);
+    right(e);
+    e.end('quit');
+    const first = e.summary();
+    e.end('quit');
+    e.end('time');
+    expect(e.summary()).toEqual(first);
+    expect(first.answered).toBe(3);
+    expect(first.correct).toBe(2);
   });
 });

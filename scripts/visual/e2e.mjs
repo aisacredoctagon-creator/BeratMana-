@@ -141,7 +141,9 @@ check('ronde berikut: overlay, faded, dan feedback dilepas', (await page.$$eval(
 await answer(true);
 await page.waitForSelector('#screen-over:not([hidden])', { timeout: 8000 });
 check('game over: nyawa habis', (await page.textContent('#over-title')) === 'Nyawa Habis!');
-check('ringkasan pengaturan di game over', (await page.textContent('#over-summary')).includes('Hard • Normal • Semua tipe'));
+check('ringkasan pengaturan di game over: isinya tetap, TANPA label "Pengaturan"', (await page.textContent('#over-summary')).includes('Hard • Normal • Semua tipe') && !/Pengaturan/.test(await page.textContent('#screen-over')));
+check('panel akhir: tanpa info kecil di bawah judul, label "Combo maks" (bukan Streak) dan "Benar" (bukan "Benar / Salah")', await page.evaluate(() => { const t = document.querySelector('#screen-over').textContent; return !document.querySelector('#over-reason') && !/Streak/i.test(t) && t.includes('Combo maks') && t.includes('Benar') && !t.includes('Benar / Salah'); }));
+check('panel akhir: hitungan "benar / dijawab" (kiri ≤ kanan) dan akurasi memakai counter yang sama', await page.evaluate(() => { const m = /^(\d+) \/ (\d+)$/.exec(document.querySelector('#over-counts').textContent.trim()); if (!m) return false; const c = +m[1], n = +m[2]; const acc = +document.querySelector('#over-accuracy').textContent.replace('%', ''); return c <= n && acc === (n === 0 ? 0 : Math.round((c / n) * 100)); }));
 const scoreText = await page.textContent('#over-score');
 check('rekor baru tampil bila skor > 0', (scoreText !== '0') === (await page.isVisible('#over-record')), `skor=${scoreText}`);
 await page.click('#btn-again');

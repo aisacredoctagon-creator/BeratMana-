@@ -156,7 +156,7 @@ Aturan pasangan: kedua sisi tidak boleh objek yang sama, dan objek tidak boleh s
 
 ## Audio
 
-Dua toggle terpisah (Musik, SFX), masing-masing hanya mute/unmute dan tersimpan. Semua suara disintesis di `src/services/audio.ts` (benar, salah, combo, game over, klik, tick 10 detik terakhir; nada arpeggio combo di `src/services/combo-sfx.ts`, volume di `src/config/combo.ts`). `AudioContext` baru dibuat setelah interaksi pertama pengguna dan ditangguhkan saat jeda atau tab disembunyikan.
+Dua toggle terpisah (Musik, SFX), masing-masing hanya mute/unmute dan tersimpan. Semua suara disintesis di `src/services/audio.ts` (benar, salah, combo, game over, klik, tick 10 detik terakhir; nada arpeggio combo di `src/services/combo-sfx.ts`, volume di `src/config/combo.ts`). **Default Musik ON dan SFX ON** (key `bm.audio` yang belum ada = ON; hanya pilihan mute eksplisit yang disimpan, membaca tidak menulis, dan bila `localStorage` tidak tersedia dipakai memori dengan default ON). Browser memblokir audio sebelum interaksi, jadi `AudioContext` dibuat dan di-`resume()` DI DALAM handler gestur pertama (tap/klik/tombol apa pun, termasuk Main; `click`, `touchend`, dan `keydown` — `touchend` wajib untuk iOS Safari): musik fade-in ±1,2 detik dan SFX berfungsi tanpa menyentuh toggle. Bila gestur belum dianggap browser, pembuka tetap terpasang dan mencoba lagi di gestur berikutnya. Audio ditangguhkan saat jeda atau tab disembunyikan.
 
 ## Catatan teknis
 

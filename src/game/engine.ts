@@ -27,7 +27,9 @@ export interface RunSummary {
   score: number;
   correct: number;
   wrong: number;
-  /** 0–100, dibulatkan. */
+  /** Soal yang DIJAWAB (benar + salah). Soal yang tampil tetapi belum dijawab (waktu habis di tengah ronde) tidak dihitung. */
+  answered: number;
+  /** 0–100, dibulatkan; benar / answered (0 bila belum ada yang dijawab). */
   accuracy: number;
   maxStreak: number;
   reason: EndReason;
@@ -178,12 +180,13 @@ export class GameEngine {
   }
 
   summary(): RunSummary {
-    const total = this.correct + this.wrong;
+    const answered = this.correct + this.wrong; // satu-satunya sumber hitungan: dipakai akurasi DAN panel akhir
     return {
       score: this.score,
       correct: this.correct,
       wrong: this.wrong,
-      accuracy: total === 0 ? 0 : Math.round((this.correct / total) * 100),
+      answered,
+      accuracy: answered === 0 ? 0 : Math.round((this.correct / answered) * 100),
       maxStreak: this.maxStreak,
       reason: this.reason ?? 'quit',
     };

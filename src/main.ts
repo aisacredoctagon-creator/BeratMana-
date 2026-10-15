@@ -86,11 +86,9 @@ for (const pair of switchPairs) {
   });
 }
 
-// audio hanya aktif setelah gestur pertama
-const unlock = (): void => audio.unlock();
-for (const type of ['pointerdown', 'keydown', 'touchend'] as const) {
-  document.addEventListener(type, unlock, { capture: true, passive: true });
-}
+// audio dibuka pada gestur pertama (tap/klik/tombol apa pun): AudioContext dibuat + di-resume di dalam handler gestur,
+// lalu musik fade-in dan SFX berfungsi tanpa pemain menyentuh toggle (default Musik ON dan SFX ON)
+audio.armGestureUnlock();
 
 // bunyi klik untuk tombol UI (tombol jawab, jeda, dan toggle SFX punya bunyi/aturan sendiri)
 document.addEventListener('click', (e) => {

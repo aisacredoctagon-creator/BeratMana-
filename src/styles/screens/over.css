@@ -13,10 +13,6 @@
   text-align: center;
 }
 
-.over__reason {
-  min-block-size: var(--lh-body);
-}
-
 /* pita "REKOR BARU!" */
 .ribbon {
   display: inline-flex;

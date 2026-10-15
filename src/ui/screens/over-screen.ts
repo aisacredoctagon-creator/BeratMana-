@@ -1,4 +1,3 @@
-import { DIFFICULTY_CONFIG, MODE_INFO } from '../../config/difficulty';
 import type { RunSummary } from '../../game/engine';
 import { settingsSummary } from '../../game/settings';
 import type { GameSettings } from '../../game/settings';
@@ -22,9 +21,12 @@ export function shareMessage(d: OverData): string {
   const { summary: s, settings } = d;
   return (
     `Aku dapat ${fmt(s.score)} poin di Berat Mana? (${settingsSummary(settings)}) — ` +
-    `akurasi ${s.accuracy}%, streak terpanjang ${s.maxStreak}. Bisa kalahkan aku?`
+    `akurasi ${s.accuracy}%, combo terpanjang ${s.maxStreak}. Bisa kalahkan aku?`
   );
 }
+
+/** Isi box "Benar": soal benar / soal yang dijawab (benar + salah), mis. "12 / 15"; "0 / 0" bila belum ada yang dijawab. */
+export const countsText = (s: Pick<RunSummary, 'correct' | 'answered'>): string => `${s.correct} / ${s.answered}`;
 
 export interface OverScreen {
   el: HTMLElement;
@@ -37,7 +39,6 @@ export interface OverScreen {
 /** Layar game over: skor, rekor, statistik, ringkasan pengaturan, aksi. Lihat DESIGN.md §10 (A14). */
 export function createOverScreen(): OverScreen {
   const title = h('h2', { id: 'over-title', class: 'h2' }, 'Game Over');
-  const reason = h('p', { id: 'over-reason', class: 'muted over__reason' });
   const record = h('div', { id: 'over-record', class: 'ribbon', hidden: true }, icon('trophy'), 'REKOR BARU!');
   const score = createPill({ variant: 'score', lead: createStarTile(), label: 'Skor', value: '0' });
   score.el.classList.add('score-hero');
@@ -48,8 +49,8 @@ export function createOverScreen(): OverScreen {
   };
   const best = stat('score', 'trophy', 'Rekor terbaik');
   const accuracy = stat('time', 'target', 'Akurasi');
-  const streak = stat('combo', 'streak', 'Streak maks');
-  const counts = stat('level', 'check', 'Benar / Salah');
+  const streak = stat('combo', 'streak', 'Combo maks');
+  const counts = stat('level', 'check', 'Benar');
   score.value!.id = 'over-score';
   best.value!.id = 'over-best';
   accuracy.value!.id = 'over-accuracy';
@@ -68,7 +69,6 @@ export function createOverScreen(): OverScreen {
       'div',
       { class: 'panel over' },
       title,
-      reason,
       record,
       score.el,
       h('div', { class: 'stats' }, best.el, accuracy.el, streak.el, counts.el),
@@ -85,14 +85,13 @@ export function createOverScreen(): OverScreen {
     render(d) {
       const s = d.summary;
       setText(title, s.reason === 'time' ? 'Waktu Habis!' : s.reason === 'lives' ? 'Nyawa Habis!' : 'Game Over');
-      setText(reason, `${MODE_INFO[d.settings.mode].name} • ${DIFFICULTY_CONFIG[d.settings.difficulty].label}`);
       record.hidden = !d.isRecord;
       setText(score.value!, fmt(s.score));
       setText(best.value!, fmt(d.best));
       setText(accuracy.value!, `${s.accuracy}%`);
       setText(streak.value!, String(s.maxStreak));
-      setText(counts.value!, `${s.correct} / ${s.wrong}`);
-      setText(summary, `Pengaturan: ${settingsSummary(d.settings)}`);
+      setText(counts.value!, countsText(s));
+      setText(summary, settingsSummary(d.settings));
     },
   };
 }

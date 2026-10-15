@@ -6,6 +6,8 @@ export type Sfx = 'click' | 'correct' | 'wrong' | 'combo' | 'gameover' | 'tick' 
 
 const MUSIC_VOLUME = 0.16;
 const SFX_VOLUME = 0.9;
+/** Detik: musik masuk perlahan (fade-in) begitu AudioContext benar-benar berjalan setelah gestur pertama. */
+const MUSIC_FADE_IN = 1.2;
 
 // Akor latar (C – Am – F – G), tiap akor = satu bar 8 not.
 const CHORDS: number[][] = [
@@ -23,7 +25,10 @@ const LOOKAHEAD = 0.25;
 /**
  * Audio sepenuhnya disintesis dengan Web Audio API (tanpa file aset).
  * - Dua bus terpisah: Musik dan SFX, masing-masing hanya mute/unmute, tersimpan di localStorage.
- * - AudioContext baru dibuat setelah interaksi pengguna pertama (aturan autoplay).
+ * - Default: Musik ON dan SFX ON (key yang belum ada = ON; hanya pilihan mute eksplisit yang disimpan).
+ * - Browser memblokir audio sebelum gestur: AudioContext dibuat dan di-resume DI DALAM handler gestur pertama
+ *   (armGestureUnlock: click / touchend / keydown; touchend + click wajib untuk iOS Safari), bukan diakali. Selama belum
+ *   berjalan, handler tetap terpasang dan mencoba lagi di gestur berikutnya; musik fade-in begitu context 'running'.
  * - setActive(false) menangguhkan semuanya (pause / tab tersembunyi).
  */
 export class AudioManager {
@@ -37,6 +42,9 @@ export class AudioManager {
   private bar = 0;
   private active = true;
   private musicWanted = false;
+  private fadePending = true; // musik belum fade-in (menunggu context 'running')
+  private resuming: Promise<void> | null = null;
+  private disarm: (() => void) | null = null;
   private listeners = new Set<(p: AudioPrefs) => void>();
   prefs: AudioPrefs = loadAudioPrefs();
 
@@ -53,12 +61,16 @@ export class AudioManager {
     if (!this.ctx) {
       const Ctor =
         window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-      if (!Ctor) return;
+      if (!Ctor) {
+        this.disarm?.(); // tidak ada Web Audio: tidak ada yang bisa dicoba lagi
+        return;
+      }
       try {
         this.ctx = new Ctor();
       } catch {
         return;
       }
+      this.ctx.addEventListener?.('statechange', () => this.onState());
       this.musicBus = this.ctx.createGain();
       this.sfxBus = this.ctx.createGain();
       this.musicBus.connect(this.ctx.destination);
@@ -72,8 +84,42 @@ export class AudioManager {
       s.connect(this.ctx.destination);
       s.start(0);
     }
-    if (this.active) void this.ctx.resume();
+    // resume() HARUS dipanggil di dalam handler gestur (iOS Safari); promise-nya dipakai SFX gestur pertama
+    if (this.active) this.resuming = this.ctx.resume().then(() => this.onState(), () => undefined);
+    this.onState();
+  }
+
+  /** Dipanggil bila state context berubah atau resume() selesai: begitu 'running' → fade-in musik, mulai musik, lepas listener gestur. */
+  private onState(): void {
+    const ctx = this.ctx;
+    if (!ctx || ctx.state !== 'running') return;
+    if (this.fadePending) {
+      this.fadePending = false;
+      if (this.musicBus && this.prefs.music) {
+        const g = this.musicBus.gain;
+        const t = ctx.currentTime;
+        g.cancelScheduledValues(t);
+        g.setValueAtTime(0, t);
+        g.linearRampToValueAtTime(MUSIC_VOLUME, t + MUSIC_FADE_IN);
+      }
+    }
     if (this.musicWanted) this.startScheduler();
+    this.disarm?.();
+    this.disarm = null;
+  }
+
+  /**
+   * Memasang pembuka audio pada gestur pengguna: click, touchend (iOS), keydown. Tetap terpasang sampai context
+   * benar-benar 'running' (gestur yang tidak dianggap browser, mis. Tab, tidak menggagalkan percobaan berikutnya).
+   */
+  armGestureUnlock(target: Pick<EventTarget, 'addEventListener' | 'removeEventListener'> = document): void {
+    this.disarm?.();
+    const handler = (): void => this.unlock();
+    const events = ['click', 'touchend', 'keydown'] as const;
+    for (const e of events) target.addEventListener(e, handler, { capture: true, passive: true });
+    this.disarm = () => {
+      for (const e of events) target.removeEventListener(e, handler, { capture: true });
+    };
   }
 
   setMusic(on: boolean): void {
@@ -100,7 +146,7 @@ export class AudioManager {
       if (immediate) g.gain.setValueAtTime(v, t);
       else g.gain.setTargetAtTime(v, t, 0.03);
     };
-    set(this.musicBus, this.prefs.music ? MUSIC_VOLUME : 0);
+    set(this.musicBus, this.prefs.music && !this.fadePending ? MUSIC_VOLUME : 0); // sebelum fade-in selesai dijadwalkan: 0
     set(this.sfxBus, this.prefs.sfx ? SFX_VOLUME : 0);
   }
 
@@ -219,7 +265,18 @@ export class AudioManager {
   /** Memainkan efek. `level` (1–5, tingkat combo) hanya dipakai untuk 'combo'. */
   play(name: Sfx, level = 1): void {
     const ctx = this.ctx;
-    if (!ctx || !this.prefs.sfx || !this.active || ctx.state !== 'running') return;
+    if (!ctx || !this.prefs.sfx || !this.active) return;
+    if (ctx.state === 'running') {
+      this.playNow(ctx, name, level);
+      return;
+    }
+    // gestur pertama: resume() masih berjalan → bunyikan begitu running (bila tak kunjung running, dibuang)
+    void this.resuming?.then(() => {
+      if (this.ctx === ctx && ctx.state === 'running' && this.prefs.sfx && this.active) this.playNow(ctx, name, level);
+    });
+  }
+
+  private playNow(ctx: AudioContext, name: Sfx, level: number): void {
     const t = ctx.currentTime + 0.005;
     const bus = this.sfxBus;
     switch (name) {
