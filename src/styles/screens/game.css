@@ -29,9 +29,30 @@
   margin-block: var(--gap-title-cards) var(--gap-seesaw-answers); /* judul → papan (box soal ada di dalam papan) */
 }
 
-/* seesaw mengecil bila kotak lebih pendek dari tingginya */
+/* seesaw mengecil bila kotak lebih pendek dari tingginya.
+   Margin atas = tinggi box soal yang menjorok di atas papan (--ss-overhang) + selisih jarak judul/tombol, sehingga BLOK VISUAL
+   (box soal + papan) yang terpusat di papan-area dan jaraknya ke judul = jaraknya ke tombol jawab (desktop). */
 .game__board > .seesaw {
-  inline-size: min(var(--ss-w), var(--ss-fit-h));
+  --_w: min(calc(var(--ss-w) * var(--ss-scale)), var(--ss-fit-h));
+  inline-size: var(--_w);
+}
+
+/* desktop (landscape bukan HP): lihat komentar di atas */
+@media (orientation: landscape) and (min-height: 521px) {
+  .game__board > .seesaw {
+    margin-block-start: calc(var(--_w) * var(--ss-overhang) + var(--gap-seesaw-answers) - var(--gap-title-cards));
+  }
+}
+
+/* HP portrait: papan menempel ke bawah papan-area dengan jarak ke tombol = --ss-bottom-share × tinggi papan-area */
+@media (max-width: 720px) and (orientation: portrait) {
+  .game__board {
+    place-items: end center;
+  }
+
+  .game__board > .seesaw {
+    margin-block-end: var(--ss-bottom-gap);
+  }
 }
 
 .game__answers {

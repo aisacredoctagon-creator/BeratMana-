@@ -75,12 +75,17 @@
   transform-origin: 50% 100%;
 }
 
+/* papan in-game: titik dudukan objek digeser ke dalam sejauh --game-item-inset (0 di desktop); jungkat-jungkit beranda tidak ikut */
+.seesaw--game {
+  --item-inset: var(--game-item-inset);
+}
+
 .seesaw__item--left {
-  inset-inline-start: calc(var(--ss-item-left-x) * var(--ss-u));
+  inset-inline-start: calc((var(--ss-item-left-x) + var(--item-inset, 0)) * var(--ss-u));
 }
 
 .seesaw__item--right {
-  inset-inline-start: calc(var(--ss-item-right-x) * var(--ss-u));
+  inset-inline-start: calc((var(--ss-item-right-x) - var(--item-inset, 0)) * var(--ss-u));
 }
 
 /* gambar objek: kotak (--item-scale × slot) terpusat dan menempel di dasar slot; objek di dalamnya muat (contain) dan duduk di dasar */
@@ -281,9 +286,16 @@
   opacity: 1;
 }
 
-/* jawaban salah: sisi benar (box + objek) di-fade; hanya opacity, tanpa pergeseran */
-.seesaw[data-state='revealing'] .seesaw__item[data-faded] {
+/* jawaban salah: sisi benar (box + objek) di-fade; hanya opacity, tanpa pergeseran.
+   Opacity dipasang pada DAUN (gambar dan box), BUKAN pada .seesaw__item: item membungkus box yang menjorok keluar
+   kotaknya dan berputar balik (-tilt) di dalam papan yang berputar (+tilt). Grup opacity di atas anak berputar seperti itu
+   dipotong WebKit/Safari menurut batas layer-nya (box tampak terpotong diagonal). */
+.seesaw[data-state='revealing'] .seesaw__item[data-faded] img,
+.seesaw[data-state='revealing'] .seesaw__item[data-faded] .expr-card {
   opacity: var(--opacity-faded);
+}
+
+.seesaw__item img {
   transition: opacity var(--dur-base) var(--ease-out);
 }
 

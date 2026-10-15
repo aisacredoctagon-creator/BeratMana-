@@ -382,10 +382,11 @@
   --bubble-tail-depth: calc(var(--bubble-tail) * 0.71); /* ekor menonjol ±0,71 × sisi persegi di bawah tepi box */
   --bubble-tail-min: calc(30 * var(--u)); /* ekor tidak boleh lebih dekat ke sudut box dari ini */
   --bubble-edge: var(--space-4); /* sisa jarak ke tepi jungkat-jungkit saat box digeser */
+  --bubble-screen-margin: calc(22 * var(--u)); /* turunan: jarak minimum box ke tepi LAYAR di HP (≈16px di 360px) */
   --bubble-gap: var(--space-6); /* jarak ujung ekor ke puncak objek */
   /* posisi ekor (persen lebar box) dan geseran box agar tidak keluar tepi jungkat-jungkit (cqi = lebar jungkat-jungkit) */
-  --bubble-anchor-x-left: calc((var(--ss-item-left-x) + var(--ss-item-size) / 2) * var(--ss-u));
-  --bubble-anchor-x-right: calc((var(--ss-item-right-x) + var(--ss-item-size) / 2) * var(--ss-u));
+  --bubble-anchor-x-left: calc((var(--ss-item-left-x) + var(--game-item-inset) + var(--ss-item-size) / 2) * var(--ss-u));
+  --bubble-anchor-x-right: calc((var(--ss-item-right-x) - var(--game-item-inset) + var(--ss-item-size) / 2) * var(--ss-u));
   --bubble-shift-left: max(0px, calc(var(--bubble-w) / 2 - var(--bubble-anchor-x-left) + var(--bubble-edge)));
   --bubble-shift-right: min(0px, calc(100cqi - var(--bubble-anchor-x-right) - var(--bubble-w) / 2 - var(--bubble-edge)));
   --bubble-shadow-y: calc(4 * var(--u));
@@ -461,6 +462,11 @@
   --ss-design-h: 260;
   --ss-u: calc(100cqw / var(--ss-design-w));
   --ss-w: min(calc(576 * var(--u)), 100%);
+  --ss-scale: 1; /* pengali ukuran jungkat-jungkit di layar game (desktop: lihat di bawah) */
+  --ss-overhang: 0.0995; /* turunan: tinggi box soal (+ ekor) yang menjorok di atas jungkat-jungkit ≈ 0,096 × lebar jungkat-jungkit (rata-rata semua objek, ±0,04 tergantung puncak objek, diukur di 1280–1920px) + 2/576 sisa tanah di dasar kotak */
+  --ss-bottom-share: 0; /* turunan: HP portrait menurunkan papan; jarak dasar papan ke tombol = bagian ini × tinggi papan-area */
+  --ss-bottom-gap: calc(var(--ss-bottom-share) * 100cqh); /* cqh = tinggi papan-area (container .game__board) */
+  --game-item-inset: 0; /* turunan: HP portrait menggeser titik dudukan objek (satuan desain) ke dalam */
   --ss-fit-h: calc(100cqh * var(--ss-design-w) / var(--ss-design-h)); /* lebar maksimum agar muat di tinggi kotak (cqh) */
   --ss-beam-x: 24;
   --ss-beam-w: 528;
@@ -580,6 +586,26 @@
     --bubble-pad: calc(12 * var(--u));
     --fs-expr: clamp(1.125rem, 24cqi, calc(48 * var(--u)));
     --gutter: max(var(--space-12), var(--safe-left));
+  }
+}
+
+/* Game di HP portrait (turunan; permintaan pemilik proyek): judul sedikit turun, papan turun mendekati tombol jawab, objek dan
+   box soal bergeser ke tengah supaya box tidak mepet tepi layar (termasuk saat papan miring). Landscape HP tidak berubah. */
+@media (max-width: 720px) and (orientation: portrait) {
+  :root {
+    --game-pad-top: calc(28 * var(--u));
+    --ss-bottom-share: 0.2;
+    --game-item-inset: 16;
+    --bubble-tilt-room: 20; /* satuan desain: box terdorong keluar ±16 satuan saat papan miring ±12°, +4 untuk lonjakan pegas */
+    --bubble-edge: calc(var(--bubble-screen-margin) - var(--gutter) + var(--bubble-tilt-room) * var(--ss-u));
+    --bubble-w: min(42cqi, max(40cqi, calc(200 * var(--u)))); /* batas atas 48cqi → 42cqi: di layar ≤ 330px box mengecil agar dua box tidak bertumpuk; ≥ 360px tidak berubah */
+  }
+}
+
+/* Game di desktop (landscape bukan HP): area utama sedikit lebih besar */
+@media (orientation: landscape) and (min-height: 521px) {
+  :root {
+    --ss-scale: 1.1; /* turunan: 8–12% sesuai permintaan, dipilih 10% */
   }
 }
 

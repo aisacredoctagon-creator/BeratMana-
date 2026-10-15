@@ -33,7 +33,7 @@ export class Seesaw {
     this.verdict = h('div', { class: 'seesaw__verdict', 'aria-hidden': 'true' });
     this.el = h(
       'div',
-      { id: opts.id, class: opts.rock ? 'seesaw seesaw--rock' : 'seesaw', 'data-state': 'idle', role: opts.bubbles ? 'group' : 'img' },
+      { id: opts.id, class: ['seesaw', opts.rock ? 'seesaw--rock' : '', opts.bubbles ? 'seesaw--game' : ''].filter(Boolean).join(' '), 'data-state': 'idle', role: opts.bubbles ? 'group' : 'img' },
       skyArt(),
       h('div', { class: 'seesaw__base', 'aria-hidden': 'true' }),
       grassArt(),
