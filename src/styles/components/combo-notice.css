@@ -162,6 +162,24 @@
   background: var(--combo-spark-5);
 }
 
+/* DESKTOP (lebar > 720px dan tinggi > 520px; A66): titik asal = tepi kiri tombol Pause (--combo-anchor-inset, di dalam kolom
+   konten), BUKAN tepi monitor. Teks rata-kanan di titik itu dan mekar dari tepinya; masuk/keluar bergeser pendek ke kiri (satu aliran).
+   Mobile (portrait ≤ 720px dan landscape HP) memakai aturan di atas tanpa perubahan. */
+@media (min-width: 721px) and (min-height: 521px) {
+  .combo-notice__slot {
+    inset-inline-end: var(--combo-anchor-inset);
+    transform-origin: 100% 50%;
+  }
+
+  .combo-notice.is-enter .combo-notice__slot {
+    animation-name: combo-notice-appear;
+  }
+
+  .combo-notice.is-swap .combo-notice__slot {
+    animation-name: combo-notice-swap-desktop;
+  }
+}
+
 /* prefers-reduced-motion: hanya fade singkat di posisinya (tanpa luncuran, denyut, atau partikel). !important diperlukan
    karena aturan global di motion.css mempersingkat semua animasi menjadi instan. */
 @media (prefers-reduced-motion: reduce) {

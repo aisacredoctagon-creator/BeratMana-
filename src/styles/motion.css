@@ -242,6 +242,55 @@
   }
 }
 
+/* DESKTOP (A66): muncul dari tidak terlihat di titik asal (tepi Pause) sambil bergeser pendek ke kiri dan mekar dengan overshoot,
+   tahan ±1 dtk, lalu bergeser sedikit lagi ke kiri (searah) sambil memudar dan mengecil. Jarak geser = --combo-slide-x. */
+@keyframes combo-notice-appear {
+  0% {
+    opacity: 0;
+    transform: translateX(var(--combo-slide-x)) scale(var(--combo-scale-from));
+    animation-timing-function: var(--ease-out);
+  }
+  14% {
+    opacity: 1;
+    transform: translateX(0) scale(var(--combo-scale-overshoot));
+    animation-timing-function: var(--ease-out);
+  }
+  20%,
+  78% {
+    opacity: 1;
+    transform: none;
+    animation-timing-function: ease-in;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(calc(-1 * var(--combo-slide-x))) scale(var(--combo-scale-out));
+  }
+}
+
+/* desktop: menggantikan yang masih tampil (satu elemen, tidak menumpuk): hantam kecil di tempat, lalu tahan dan keluar searah */
+@keyframes combo-notice-swap-desktop {
+  0% {
+    opacity: 1;
+    transform: scale(var(--combo-swap-scale-from));
+    animation-timing-function: var(--ease-pop);
+  }
+  12% {
+    opacity: 1;
+    transform: scale(var(--combo-scale-overshoot));
+    animation-timing-function: var(--ease-out);
+  }
+  20%,
+  78% {
+    opacity: 1;
+    transform: none;
+    animation-timing-function: ease-in;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(calc(-1 * var(--combo-slide-x))) scale(var(--combo-scale-out));
+  }
+}
+
 /* menggantikan notifikasi yang masih tampil: tetap di tempat, "hantam" kecil lalu tahan dan keluar */
 @keyframes combo-notice-swap {
   0% {
