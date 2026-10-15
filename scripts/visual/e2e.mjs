@@ -132,7 +132,7 @@ const wrongSide = await answer(true);
 await page.waitForTimeout(400);
 const other = wrongSide === 'left' ? '#card-right' : '#card-left';
 check('salah: overlay merah HANYA di box yang dipilih; sisi benar faded, tanpa overlay hijau', (await page.$eval(wrongSide === 'left' ? '#card-left' : '#card-right', (e) => e.dataset.result)) === 'wrong' && (await page.$eval(other, (e) => e.dataset.result)) === 'faded' && (await page.$$eval('.expr-card[data-result="win"]', (e) => e.length)) === 0 && (await page.$$eval('.expr-card[data-result="lose"]', (e) => e.length)) === 0);
-check('salah: sisi benar (box + objek) faded ≈ --opacity-faded, sisi dipilih penuh, tombol tidak ikut', await page.evaluate(([f, c]) => { const side = (id) => document.querySelector(id).closest('.seesaw__item'); const o = (el) => +getComputedStyle(el).opacity; const tok = +getComputedStyle(document.documentElement).getPropertyValue('--opacity-faded'); return Math.abs(o(side(f)) - tok) < 0.02 && o(side(c)) === 1 && o(document.querySelector('#btn-left')) === 1 && o(document.querySelector('#btn-right')) === 1; }, [other, wrongSide === 'left' ? '#card-left' : '#card-right']));
+check('salah: sisi benar (box + objek) faded ≈ --opacity-faded (pada box dan gambar, bukan pada .seesaw__item), sisi dipilih penuh, tombol tidak ikut', await page.evaluate(([f, c]) => { const item = (id) => document.querySelector(id).closest('.seesaw__item'); const o = (el) => +getComputedStyle(el).opacity; const tok = +getComputedStyle(document.documentElement).getPropertyValue('--opacity-faded'); const fi = item(f), ci = item(c); return Math.abs(o(fi.querySelector('.expr-card')) - tok) < 0.02 && Math.abs(o(fi.querySelector('img')) - tok) < 0.02 && o(fi) === 1 && o(ci) === 1 && o(ci.querySelector('.expr-card')) === 1 && o(ci.querySelector('img')) === 1 && o(document.querySelector('#btn-left')) === 1 && o(document.querySelector('#btn-right')) === 1; }, [other, wrongSide === 'left' ? '#card-left' : '#card-right']));
 check('salah: tanpa ikon ✓/✗, tombol terpilih beranimasi goyang, aria-live "Salah"', (await page.$$eval('.expr-card__mark, .answer__badge, #screen-game .seesaw__verdict .icon, .expr-card .icon, .answer[data-feedback] .icon--check, .answer[data-feedback] .icon--cross', (e) => e.length)) === 0 && (await page.getAttribute(wrongSide === 'left' ? '#btn-left' : '#btn-right', 'data-feedback')) === 'bad' && (await page.textContent('#sr-status')).startsWith('Salah') && (await page.textContent('#screen-game .seesaw__verdict')) === 'Salah');
 check('salah: overlay merah terbaca (latar box dipilih ≠ box benar ≠ default)', await page.evaluate(([a, b]) => { const bg = (q) => getComputedStyle(document.querySelector(q)).backgroundColor; return bg(a) !== bg(b); }, [wrongSide === 'left' ? '#card-left' : '#card-right', other]));
 await page.waitForTimeout(1100);
@@ -344,6 +344,56 @@ await page.waitForSelector('#screen-over:not([hidden])', { timeout: 8000 });
 check('game over berikutnya (skor 0): tanpa REKOR BARU, rekor tidak turun', !(await page.isVisible('#over-record')) && (await stored('normal', 'hard')) === firstBest);
 
 // reduced-motion: "BERAT?" langsung miring statis (5,3°), tanpa animasi, di menu dan game
+// ---- layout in-game: desktop seimbang, HP portrait lebih dekat ke tombol, box tidak mepet/bertumpuk, fade tidak memotong ----
+{
+  const open = async (w, h, mobile) => {
+    const p = await (await browser.newContext({ viewport: { width: w, height: h }, hasTouch: mobile, isMobile: mobile })).newPage();
+    await p.goto(APP_URL);
+    await p.evaluate(() => localStorage.clear());
+    await p.reload();
+    await p.click('#btn-play');
+    await p.waitForFunction(() => !document.querySelector('#btn-left').disabled, null, { timeout: 8000 });
+    await p.waitForTimeout(900);
+    return p;
+  };
+  const geo = (p) => p.evaluate(() => {
+    const r = (e) => e.getBoundingClientRect();
+    const L = r(document.querySelector('#card-left')), R = r(document.querySelector('#card-right'));
+    const head = r(document.querySelector('.game__head')), ss = r(document.querySelector('#screen-game .seesaw'));
+    return {
+      margin: Math.min(L.left, innerWidth - L.right, R.left, innerWidth - R.right),
+      overlap: !(L.right <= R.left || R.right <= L.left || L.bottom <= R.top || R.bottom <= L.top),
+      gapTitle: Math.min(L.top, R.top) - head.bottom,
+      gapBtn: r(document.querySelector('#btn-left')).top - (ss.top + (ss.height * 258) / 260),
+      scroll: Math.max(document.documentElement.scrollHeight - innerHeight, document.documentElement.scrollWidth - innerWidth),
+    };
+  });
+  for (const [w, h] of [[1280, 720], [1366, 768], [1440, 900], [1920, 1080]]) {
+    const p = await open(w, h, false);
+    const g = await geo(p);
+    check(`desktop ${w}×${h}: jarak judul→area utama ≈ area utama→tombol (selisih ≤ 16px; tergantung puncak objek), tanpa scroll`, Math.abs(g.gapTitle - g.gapBtn) <= 16 && g.scroll <= 0, `${g.gapTitle.toFixed(0)} vs ${g.gapBtn.toFixed(0)}`);
+    await p.context().close();
+  }
+  for (const [w, h] of [[360, 640], [390, 844], [430, 932]]) {
+    const p = await open(w, h, true);
+    let worst = 1e9, overlap = false, gapBtn = 0, scroll = 0, titleGap = 1e9;
+    for (let i = 0; i < 4; i++) {
+      const flat = await geo(p);
+      gapBtn = flat.gapBtn;
+      await p.click(i % 2 ? '#btn-left' : '#btn-right');
+      await p.waitForTimeout(1000); // papan miring + nilai terbuka (keadaan tetap)
+      const tilt = await geo(p);
+      for (const g of [flat, tilt]) { worst = Math.min(worst, g.margin); overlap ||= g.overlap; scroll = Math.max(scroll, g.scroll); titleGap = Math.min(titleGap, g.gapTitle); }
+      await p.waitForTimeout(1500);
+      await p.waitForFunction(() => !document.querySelector('#btn-left').disabled, null, { timeout: 8000 });
+      await p.waitForTimeout(700);
+    }
+    check(`${w}×${h}: box ≥ 15px dari tepi layar (datar dan miring, kiri dan kanan), dua box tidak bertumpuk, tanpa scroll, tidak menabrak judul`, worst >= 15 && !overlap && scroll <= 0 && titleGap > 8, `margin min ${worst.toFixed(1)}px, jarak judul ${titleGap.toFixed(0)}px`);
+    check(`${w}×${h}: jarak area utama ke tombol ≤ 20% tinggi layar (sebelumnya ±22–28%)`, gapBtn <= 0.2 * h, `${gapBtn.toFixed(0)}px`);
+    await p.context().close();
+  }
+}
+
 const rm = await (await browser.newContext({ viewport: { width: 1280, height: 992 }, reducedMotion: 'reduce' })).newPage();
 await rm.goto(APP_URL);
 await rm.waitForSelector('#btn-play');
