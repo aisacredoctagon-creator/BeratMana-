@@ -21,7 +21,7 @@ import { AudioManager } from './services/audio';
 import { getBest, migrateLegacyBest, submitScore } from './services/records';
 import { shareText } from './services/share';
 import { loadSettings, saveSettings } from './services/storage';
-import { setSwitch } from './ui/components/controls';
+import { setAudioToggle } from './ui/components/controls';
 import { toast } from './ui/components/toast';
 import { $, h } from './ui/dom';
 import { installSpringEasing } from './ui/effects';
@@ -66,19 +66,19 @@ showScreen('title');
 
 /* ================= audio ================= */
 // toggle Musik/SFX ada di dua tempat (beranda dan pop-up Dijeda) dan selalu searah
-const switchPairs = [
-  { music: title.musicSwitch, sfx: title.sfxSwitch },
-  { music: pause.musicSwitch, sfx: pause.sfxSwitch },
+const togglePairs = [
+  { music: title.musicToggle, sfx: title.sfxToggle },
+  { music: pause.musicToggle, sfx: pause.sfxToggle },
 ];
 const syncAudio = (): void => {
-  for (const pair of switchPairs) {
-    setSwitch(pair.music, audio.prefs.music);
-    setSwitch(pair.sfx, audio.prefs.sfx);
+  for (const pair of togglePairs) {
+    setAudioToggle(pair.music, audio.prefs.music);
+    setAudioToggle(pair.sfx, audio.prefs.sfx);
   }
 };
 audio.onChange(syncAudio);
 syncAudio();
-for (const pair of switchPairs) {
+for (const pair of togglePairs) {
   pair.music.addEventListener('click', () => audio.setMusic(!audio.prefs.music));
   pair.sfx.addEventListener('click', () => {
     audio.setSfx(!audio.prefs.sfx);

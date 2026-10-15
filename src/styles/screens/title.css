@@ -55,14 +55,14 @@
 }
 
 .best strong {
-  color: var(--pill-score-value);
+  color: var(--color-question-text); /* hitam kebiruan yang sama dengan teks soal (13,9:1) */
   font-variant-numeric: tabular-nums;
 }
 
 .toggles {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
-  gap: var(--space-8);
+  display: flex;
+  justify-content: center;
+  gap: var(--space-16);
   inline-size: 100%;
 }
 

@@ -116,15 +116,15 @@ check('tombol Lanjut', !(await page.isVisible('#overlay-pause')));
 await page.keyboard.press('p');
 check('Dijeda punya toggle Musik dan SFX', (await page.isVisible('#tgl-music-pause')) && (await page.isVisible('#tgl-sfx-pause')));
 await page.click('#tgl-music-pause');
-check('Musik mati, SFX tetap nyala (terpisah)', (await page.getAttribute('#tgl-music-pause', 'aria-checked')) === 'false' && (await page.getAttribute('#tgl-sfx-pause', 'aria-checked')) === 'true' && (await page.getAttribute('#tgl-music', 'aria-checked')) === 'false');
+check('Musik mati, SFX tetap nyala (terpisah)', (await page.getAttribute('#tgl-music-pause', 'aria-pressed')) === 'false' && (await page.getAttribute('#tgl-sfx-pause', 'aria-pressed')) === 'true' && (await page.getAttribute('#tgl-music', 'aria-pressed')) === 'false');
 await page.click('#tgl-sfx-pause');
 check('SFX mati, tersimpan di localStorage', (await page.evaluate(() => localStorage.getItem('bm.audio'))) === '{"music":false,"sfx":false}');
 await page.click('#tgl-music-pause');
 await page.click('#tgl-sfx-pause');
-check('kedua toggle dinyalakan lagi', (await page.getAttribute('#tgl-music-pause', 'aria-checked')) === 'true' && (await page.getAttribute('#tgl-sfx-pause', 'aria-checked')) === 'true');
+check('kedua toggle dinyalakan lagi', (await page.getAttribute('#tgl-music-pause', 'aria-pressed')) === 'true' && (await page.getAttribute('#tgl-sfx-pause', 'aria-pressed')) === 'true');
 await page.click('#btn-resume');
 await page.keyboard.press('m');
-check('tombol M tidak lagi mengubah suara', (await page.getAttribute('#tgl-music', 'aria-checked')) === 'true');
+check('tombol M tidak lagi mengubah suara', (await page.getAttribute('#tgl-music', 'aria-pressed')) === 'true');
 
 // ---- game over (2 nyawa Hard) ----
 await ready().catch(() => {});
@@ -156,9 +156,34 @@ check('Keluar ke Menu → layar judul', await page.isVisible('#btn-play'));
 // ---- Cara Main ----
 await page.click('#btn-howto');
 check('Cara Main tetap menjelaskan "Berat = hasil hitungan"', (await page.textContent('#overlay-howto')).includes('Berat = hasil hitungan'));
-check('modal Cara Main + fokus', (await page.evaluate(() => document.activeElement.id)) === 'btn-howto-close');
+check('modal Cara Main + fokus di tombol X', (await page.evaluate(() => document.activeElement.id)) === 'btn-howto-close');
 await page.keyboard.press('Escape');
 check('Esc menutup Cara Main', !(await page.isVisible('#overlay-howto')));
+check('fokus kembali ke tombol "?" setelah Esc', (await page.evaluate(() => document.activeElement.id)) === 'btn-howto');
+await page.click('#btn-howto');
+await page.waitForTimeout(500); // animasi masuk panel selesai
+check('Cara Main: tombol "Mengerti" sudah tidak ada; X punya aria-label "Tutup", ikon SVG, tanpa teks', !(await page.textContent('#overlay-howto')).includes('Mengerti') && (await page.getAttribute('#btn-howto-close', 'aria-label')) === 'Tutup' && (await page.$('#btn-howto-close svg')) !== null && (await page.textContent('#btn-howto-close')).trim() === '');
+check('Cara Main: X ≥ 48px, di pojok kanan atas panel, panel tidak meluap layar', await page.evaluate(() => { const x = document.querySelector('#btn-howto-close').getBoundingClientRect(); const sh = document.querySelector('#overlay-howto .sheet').getBoundingClientRect(); return x.width >= 48 && x.height >= 48 && x.right <= sh.right && x.top >= sh.top - 1 && x.left > sh.left + sh.width / 2 && sh.bottom <= innerHeight + 1 && sh.top >= 0; }));
+await page.click('#btn-howto-close');
+check('X menutup Cara Main dan fokus kembali ke "?"', !(await page.isVisible('#overlay-howto')) && (await page.evaluate(() => document.activeElement.id)) === 'btn-howto');
+await page.click('#btn-howto');
+await page.mouse.click(4, 4);
+check('klik backdrop menutup Cara Main', !(await page.isVisible('#overlay-howto')));
+await page.setViewportSize({ width: 360, height: 300 });
+await page.click('#btn-howto');
+await page.waitForTimeout(500);
+check('layar sangat pendek: panel scroll di dalam dan X tetap terlihat setelah di-scroll', await page.evaluate(async () => { const sh = document.querySelector('#overlay-howto .sheet'); sh.scrollTop = sh.scrollHeight; await new Promise((r) => requestAnimationFrame(r)); const x = document.querySelector('#btn-howto-close').getBoundingClientRect(); return sh.scrollHeight > sh.clientHeight && x.top >= 0 && x.bottom <= innerHeight; }));
+await page.click('#btn-howto-close');
+check('layar sangat pendek: X tetap menutup', !(await page.isVisible('#overlay-howto')));
+await page.setViewportSize({ width: 1280, height: 992 });
+check('Musik/SFX: hanya simbol (tanpa teks), aria-label "Musik"/"Efek suara", title, aria-pressed, ukuran sama dengan "?"', await page.evaluate(() => { const g = (id) => document.getElementById(id); const m = g('tgl-music'), f = g('tgl-sfx'), q = g('btn-howto'); const r = (e) => { const b = e.getBoundingClientRect(); return [Math.round(b.width), Math.round(b.height)].join('x'); }; return m.textContent.trim() === '' && f.textContent.trim() === '' && m.getAttribute('aria-label') === 'Musik' && f.getAttribute('aria-label') === 'Efek suara' && m.title === 'Musik' && f.title === 'Efek suara' && m.getAttribute('aria-pressed') === 'true' && r(m) === r(q) && r(f) === r(q) && m.offsetWidth >= 48; }));
+await page.click('#tgl-music');
+await page.waitForTimeout(400); // transisi opacity selesai
+check('Musik mati: aria-pressed=false, ikon memudar (opacity token) dan coretan terlihat', await page.evaluate(() => { const m = document.getElementById('tgl-music'); const [ic, st] = m.querySelectorAll('svg'); return m.getAttribute('aria-pressed') === 'false' && parseFloat(getComputedStyle(ic).opacity) < 1 && parseFloat(getComputedStyle(st).opacity) === 1; }));
+await page.click('#tgl-music');
+check('Musik nyala lagi: ikon penuh dan coretan hilang', await page.evaluate(async () => { await new Promise((r) => setTimeout(r, 400)); const m = document.getElementById('tgl-music'); const [ic, st] = m.querySelectorAll('svg'); return m.getAttribute('aria-pressed') === 'true' && parseFloat(getComputedStyle(ic).opacity) === 1 && parseFloat(getComputedStyle(st).opacity) === 0; }));
+check('rekor beranda: "Rekor Saya" dan nilai berwarna hitam token (bukan cokelat)', await page.evaluate(() => { const p = document.querySelector('.best'); const v = document.querySelector('#title-best'); const q = getComputedStyle(document.documentElement).getPropertyValue('--color-question-text'); const probe = document.createElement('i'); probe.style.color = q; document.body.append(probe); const want = getComputedStyle(probe).color; probe.remove(); return p.textContent.startsWith('Rekor Saya') && getComputedStyle(v).color === want; }));
+check('chip Pecahan: glyph 1/2 bersusun (SVG), aria-label "Pecahan"', await page.evaluate(() => { const i = document.querySelector('#chips input[value="fraction"]'); const svg = i.closest('label').querySelector('.chip__icon svg'); return i.getAttribute('aria-label') === 'Pecahan' && !!svg && !svg.querySelector('circle'); }));
 
 // ---- area sentuh ----
 const small = await page.evaluate(() => {
@@ -176,7 +201,7 @@ console.log('  (info) elemen < 48px di desktop:', small.join(', ') || 'tidak ada
 // 2) satu nilai radius untuk semua tombol (di viewport desktop ini)
 const radii = await page.evaluate(() => {
   const set = new Set();
-  for (const el of document.querySelectorAll('.btn, .icon-btn, .answer, .switch, .seg__face, .chip__face')) {
+  for (const el of document.querySelectorAll('.btn, .icon-btn, .answer, .sym-btn, .seg__face, .chip__face')) {
     if (el.getBoundingClientRect().width === 0) continue;
     set.add(getComputedStyle(el).borderTopLeftRadius);
   }

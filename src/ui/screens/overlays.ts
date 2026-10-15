@@ -1,5 +1,5 @@
 import { createButton } from '../components/button';
-import { createSwitch } from '../components/controls';
+import { createAudioToggle, createSymbolButton } from '../components/controls';
 import { createModal } from '../components/modal';
 import type { Modal } from '../components/modal';
 import { icon } from '../components/icons';
@@ -10,9 +10,9 @@ export interface PauseModal {
   resumeBtn: HTMLButtonElement;
   restartBtn: HTMLButtonElement;
   quitBtn: HTMLButtonElement;
-  /** Toggle Musik/SFX (sama dengan beranda, terpisah, tersimpan di localStorage). */
-  musicSwitch: HTMLButtonElement;
-  sfxSwitch: HTMLButtonElement;
+  /** Toggle Musik/SFX (komponen sama dengan beranda, terpisah, tersimpan di localStorage). */
+  musicToggle: HTMLButtonElement;
+  sfxToggle: HTMLButtonElement;
 }
 
 /** Modal jeda (bottom sheet di layar sempit): toggle Musik/SFX lalu Lanjut / Ulangi / Keluar. */
@@ -20,19 +20,20 @@ export function createPauseModal(): PauseModal {
   const resumeBtn = createButton({ id: 'btn-resume', label: 'Lanjut', variant: 'primary', block: true });
   const restartBtn = createButton({ id: 'btn-restart', label: 'Ulangi', block: true });
   const quitBtn = createButton({ id: 'btn-quit', label: 'Keluar ke Menu', block: true });
-  const musicSwitch = createSwitch({ id: 'tgl-music-pause', label: 'Musik', icon: 'music' });
-  const sfxSwitch = createSwitch({ id: 'tgl-sfx-pause', label: 'SFX', icon: 'sound' });
+  const musicToggle = createAudioToggle({ id: 'tgl-music-pause', kind: 'music' });
+  const sfxToggle = createAudioToggle({ id: 'tgl-sfx-pause', kind: 'sfx' });
   const modal = createModal({
     id: 'overlay-pause',
     title: 'Dijeda',
-    body: [h('div', { class: 'toggles' }, musicSwitch, sfxSwitch)],
+    body: [h('div', { class: 'toggles' }, musicToggle, sfxToggle)],
     actions: [h('div', { class: 'sheet__actions' }, resumeBtn, restartBtn, quitBtn)],
   });
-  return { modal, resumeBtn, restartBtn, quitBtn, musicSwitch, sfxSwitch };
+  return { modal, resumeBtn, restartBtn, quitBtn, musicToggle, sfxToggle };
 }
 
 export interface HowtoModal {
   modal: Modal;
+  /** Tombol X (Tutup) di pojok kanan atas; fokus awal saat panel dibuka. */
   closeBtn: HTMLButtonElement;
 }
 
@@ -44,7 +45,7 @@ const arrowChip = (side: 'left' | 'right') =>
 
 /** Modal "Cara Main". */
 export function createHowtoModal(): HowtoModal {
-  const closeBtn = createButton({ id: 'btn-howto-close', label: 'Mengerti', variant: 'primary', block: true });
+  const closeBtn = createSymbolButton({ id: 'btn-howto-close', label: 'Tutup', icon: 'close' });
   const list = h(
     'ol',
     { class: 'sheet__list' },
@@ -55,6 +56,6 @@ export function createHowtoModal(): HowtoModal {
     h('li', {}, 'Combo naik tiap 5 jawaban benar berturut-turut (×2, ×3, … maks ×5). Salah = combo kembali ke ×1.'),
     h('li', {}, 'Keyboard: ', key('←'), ' ', key('→'), ' atau ', key('A'), ' ', key('D'), ' menjawab, ', key('Spasi'), ' / ', key('P'), ' jeda.'),
   );
-  const modal = createModal({ id: 'overlay-howto', title: 'Cara Main', wide: true, body: [list], actions: [closeBtn] });
+  const modal = createModal({ id: 'overlay-howto', title: 'Cara Main', wide: true, body: [list], closeButton: closeBtn });
   return { modal, closeBtn };
 }

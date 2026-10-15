@@ -500,6 +500,7 @@
   --ss-verdict-size: 16;
 
   /* ---------- OPASITAS ---------- */
+  --strike-from-scale: 0.6; /* turunan: coretan toggle mati muncul dari skala ini (transform) */
   --opacity-faded: 0.65; /* turunan: sisi benar saat jawaban salah (box + objek); 0,65 = kontras teks soal 4,7:1 */
 
   /* ---------- JUDUL BERANIMASI ("BERAT?" miring karena keberatan; DESIGN.md §4.14) ---------- */
@@ -519,6 +520,7 @@
   /* ---------- Z-INDEX ---------- */
   --z-bar: 10;
   --z-overlay: 30;
+  --z-sheet-close: 1; /* tombol X di dalam panel: di atas isi panel yang di-scroll */
   --z-combo-notice: 20; /* di atas isi game, di bawah modal */
   --z-toast: 40;
   --z-flash: 50;

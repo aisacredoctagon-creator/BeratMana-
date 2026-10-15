@@ -30,81 +30,75 @@
   text-transform: uppercase;
 }
 
-/* ---------- .switch (toggle) ---------- */
-.switch {
+/* ---------- .sym-btn (tombol simbol: "?", X Tutup, toggle Musik/SFX) ---------- */
+.sym-btn {
   --_depth: var(--depth-3d);
   --_bg: var(--surface-card);
   --_line: var(--line-control);
   --_text: var(--text-muted-on-app);
-  display: flex;
-  align-items: center;
-  gap: var(--space-8);
-  min-block-size: var(--control-min-h);
+  display: grid;
+  place-items: center;
+  flex: none;
+  inline-size: var(--control-min-h);
+  block-size: var(--control-min-h);
   margin-block-end: var(--_depth);
-  padding: var(--space-8) var(--space-14);
+  padding: var(--space-8);
   border: var(--border-2) solid var(--_line);
   border-radius: var(--radius-button);
   background: var(--_bg);
   color: var(--_text);
   box-shadow: var(--shadow-key);
-  font-size: var(--fs-body);
-  font-weight: var(--fw-semibold);
-  line-height: var(--lh-body);
-  text-align: start;
-  transition:
-    transform var(--dur-fast) var(--ease-out),
-    box-shadow var(--dur-fast) var(--ease-out),
-    background-color var(--dur-base) var(--ease-out);
+  transition: transform var(--dur-fast) var(--ease-out);
 }
 
-.switch[aria-checked='true'] {
+.sym-btn .icon {
+  grid-area: 1 / 1;
+  inline-size: var(--icon-md);
+  block-size: var(--icon-md);
+}
+
+/* toggle nyala (aria-pressed="true") = keluarga hijau; penuh */
+.sym-btn[aria-pressed='true'] {
   --_bg: var(--pill-level-bg);
   --_line: var(--pill-level-line);
   --_text: var(--pill-level-text);
 }
 
 @media (hover: hover) {
-  .switch:hover {
+  .sym-btn:hover {
     transform: translateY(var(--lift));
   }
 }
 
-.switch:active {
+.sym-btn:active {
   transform: translateY(var(--press-travel-sm));
   box-shadow: var(--shadow-key-pressed);
 }
 
-.switch__state {
-  margin-inline-start: auto;
-  padding: var(--space-2) var(--space-10);
-  border: var(--border-1) solid var(--_text);
-  border-radius: var(--radius-full);
-  background: var(--_text);
-  color: var(--text-on-accent);
-  font-size: var(--fs-tag);
-  line-height: var(--lh-tag);
+/* mati: ikon memudar + coretan diagonal (bentuk, bukan hanya warna); keduanya hanya opacity/transform */
+.sym-btn--audio .icon {
+  transition: opacity var(--dur-base) var(--ease-out);
 }
 
-.switch[aria-checked='false'] .switch__state {
-  background: transparent;
-  color: var(--_text);
-  text-decoration: line-through;
+.sym-btn--audio[aria-pressed='false'] .icon:not(.icon--strike) {
+  opacity: var(--opacity-faded);
 }
 
-.switch[aria-checked='false'] .icon {
-  opacity: 0.55;
+.sym-btn--audio .icon--strike {
+  opacity: 0;
+  transform: scale(var(--strike-from-scale));
+  transition:
+    opacity var(--dur-base) var(--ease-out),
+    transform var(--dur-base) var(--ease-out);
 }
 
-/* tombol ikon bergaya toggle (mis. "?" Cara Main): persegi, tanpa label */
-.switch--icon {
-  justify-content: center;
-  aspect-ratio: 1;
-  padding: var(--space-8);
+.sym-btn--audio[aria-pressed='false'] .icon--strike {
+  opacity: 1;
+  transform: none;
 }
 
-.switch--icon .icon {
-  inline-size: var(--icon-md);
-  block-size: var(--icon-md);
+.strike__halo {
+  stroke: var(--_bg);
 }
 
 /* ---------- .seg (segmented control, radio asli) ---------- */
@@ -312,10 +306,6 @@
 
   /* tanpa kotak centang; garis chip tercentang sama tebal dengan versi web (aturan .chip input:checked di atas) */
   .chip__box {
-    display: none;
-  }
-
-  .switch__state {
     display: none;
   }
 }
