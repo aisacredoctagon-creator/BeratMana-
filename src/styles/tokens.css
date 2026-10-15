@@ -438,6 +438,15 @@
   --combo-notice-scale-5: 1.24;
   /* posisi: tepat di bawah judul. Tinggi judul = ukuran × lh; + tinta "BERAT?" yang miring turun ±0,28 × ukuran di bawah kotaknya */
   --combo-notice-top: calc(var(--game-pad-top) + var(--fs-title-heavy) * (var(--lh-title) + 0.28) + var(--space-8));
+  /* desktop (A66): muncul dari tepi kiri tombol Pause (dibatasi kolom konten), geser pendek, bukan dari tepi monitor */
+  --combo-pause-inset: max(max(var(--space-64), var(--safe-right)), calc(50vw - var(--hud-max-w) / 2)); /* jarak tepi KANAN tombol Pause dari tepi kanan viewport (tata letak .hud) */
+  --combo-column-inset: calc((100vw - min(100vw, var(--main-max-w))) / 2 + var(--gutter)); /* jarak tepi kanan isi kolom game dari tepi kanan viewport */
+  --combo-anchor-inset: max(calc(var(--combo-pause-inset) + var(--icon-btn)), var(--combo-column-inset)); /* titik asal = tepi kiri Pause, tidak melewati kolom konten */
+  --combo-slide-x: clamp(24px, calc(40 * var(--u)), 48px); /* jarak geser masuk dan keluar (pendek) */
+  --combo-scale-from: 0.4; /* skala awal saat masuk */
+  --combo-scale-overshoot: 1.12; /* overshoot kecil saat mekar */
+  --combo-scale-out: 0.7; /* skala akhir saat keluar */
+  --combo-swap-scale-from: 0.88; /* combo baru menggantikan yang masih tampil: hantam kecil di tempat */
   --combo-notice-in-x: 140%;
   --combo-notice-out-x: 120%;
   --combo-notice-overshoot-x: -6%;

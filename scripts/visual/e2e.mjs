@@ -96,7 +96,7 @@ await answer(false);
 await page.waitForTimeout(350);
 check('notifikasi combo muncul di streak 3 ("COMBO" + angka 3), teks sumber sama, aria-hidden, diumumkan lewat live region', (await page.$eval('.combo-notice', (n) => n.classList.contains('is-on'))) && (await page.textContent('.combo-notice__word')) === 'COMBO' && (await page.textContent('.combo-notice__num')) === '3' && (await page.getAttribute('.combo-notice', 'aria-hidden')) === 'true' && (await page.textContent('#sr-status')).includes('COMBO 3'));
 check('combo arcade: tanpa pil/wadah (tanpa latar, border, radius, bayangan wadah, ikon), angka lebih besar dari kata, font arcade', await page.evaluate(() => { const f = document.querySelector('.combo-notice__face'); const cs = getComputedStyle; const w = cs(document.querySelector('.combo-notice__word')), n = cs(document.querySelector('.combo-notice__num')); return cs(f).backgroundColor === 'rgba(0, 0, 0, 0)' && cs(f).borderTopWidth === '0px' && cs(f).borderTopLeftRadius === '0px' && cs(f).boxShadow === 'none' && !document.querySelector('.combo-notice svg, .combo-notice .icon') && parseFloat(n.fontSize) > parseFloat(w.fontSize) * 1.4 && /Titan One/.test(w.fontFamily); }));
-check('combo arcade: diletakkan tepat di bawah judul (relatif judul), menempel di tepi kanan, tanpa scroll horizontal saat tampil', await page.evaluate(() => { const n = document.querySelector('.combo-notice').getBoundingClientRect(); const t = document.querySelector('#question').getBoundingClientRect(); const s = document.querySelector('.combo-notice__slot').getBoundingClientRect(); return n.top >= t.bottom && innerWidth - s.right < innerWidth * 0.1 && document.documentElement.scrollWidth <= innerWidth + 1 && document.body.scrollWidth <= innerWidth + 1; }));
+check('combo arcade (desktop): tepat di bawah judul (relatif judul), tepi kanannya di titik asal (tepi kiri Pause, dibatasi kolom konten), tanpa scroll horizontal saat tampil', await page.evaluate(() => { const n = document.querySelector('.combo-notice').getBoundingClientRect(); const t = document.querySelector('#question').getBoundingClientRect(); const s = document.querySelector('.combo-notice__slot').getBoundingClientRect(); const pl = document.querySelector('#btn-pause').getBoundingClientRect().left, cr = document.querySelector('#screen-game .game').getBoundingClientRect().right; return n.top >= t.bottom && s.right <= Math.min(pl, cr) + 2 && s.right > Math.min(pl, cr) * 0.8 && document.documentElement.scrollWidth <= innerWidth + 1 && document.body.scrollWidth <= innerWidth + 1; }));
 check('notifikasi combo tidak menangkap sentuhan (lapisan dan slot)', (await page.$eval('.combo-notice', (n) => getComputedStyle(n).pointerEvents)) === 'none' && (await page.$eval('.combo-notice__slot', (n) => getComputedStyle(n).pointerEvents)) === 'none');
 await page.waitForTimeout(2000);
 check('notifikasi combo hilang sendiri (~1,8 dtk) dan dibersihkan (tanpa kelas aktif, tanpa partikel)', !(await page.$eval('.combo-notice', (n) => n.classList.contains('is-on'))) && (await page.$$eval('.combo-notice__spark', (e) => e.length)) === 0 && (await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)));
@@ -415,6 +415,81 @@ check('game over berikutnya (skor 0): tanpa REKOR BARU, rekor tidak turun', !(aw
     }
     check(`${w}×${h}: box ≥ 15px dari tepi layar (datar dan miring, kiri dan kanan), dua box tidak bertumpuk, tanpa scroll, tidak menabrak judul`, worst >= 15 && !overlap && scroll <= 0 && titleGap > 8, `margin min ${worst.toFixed(1)}px, jarak judul ${titleGap.toFixed(0)}px`);
     check(`${w}×${h}: jarak area utama ke tombol ≤ 20% tinggi layar (sebelumnya ±22–28%)`, gapBtn <= 0.2 * h, `${gapBtn.toFixed(0)}px`);
+    await p.context().close();
+  }
+}
+
+// ---- notifikasi combo desktop (A66): asal dari tepi Pause di dalam kolom konten, geser pendek; mobile tidak berubah ----
+{
+  const KIND = { 1: ['warmup', 3], 2: ['rise', 5], 3: ['rise', 10], 4: ['rise', 15], 5: ['max', 25] };
+  const openGame = async (w, h, mobile, reduced = false) => {
+    const p = await (await browser.newContext({ viewport: { width: w, height: h }, hasTouch: mobile, isMobile: mobile, reducedMotion: reduced ? 'reduce' : 'no-preference' })).newPage();
+    await p.goto(APP_URL);
+    await p.evaluate(() => localStorage.clear());
+    await p.reload();
+    await p.click('#btn-play');
+    await p.waitForFunction(() => !document.querySelector('#btn-left').disabled, null, { timeout: 8000 });
+    await p.waitForTimeout(500);
+    return p;
+  };
+  // memasang notifikasi baru, menjeda animasinya di waktu t (ms) lalu membaca geometri
+  const showAt = (p, level, t) => p.evaluate(async ([level, kind, streak, t]) => {
+    const m = await import('/BeratMana-/src/ui/components/combo-notice.ts');
+    window.__cn?.el.remove();
+    const v = m.createComboNotice();
+    window.__cn = v;
+    document.querySelector('#screen-game .game').append(v.el);
+    v.show({ kind, level, mult: level === 1 ? 1 : level, streak });
+    await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+    const slot = v.el.querySelector('.combo-notice__slot');
+    for (const a of v.el.getAnimations({ subtree: true })) { a.pause(); a.currentTime = t; }
+    await new Promise((r) => requestAnimationFrame(r));
+    const r = (e) => e.getBoundingClientRect();
+    const f = r(v.el.querySelector('.combo-notice__face'));
+    const head = r(document.querySelector('.game__head')), pause = r(document.querySelector('#btn-pause')), col = r(document.querySelector('#screen-game .game'));
+    const cards = ['#card-left', '#card-right'].map((q) => r(document.querySelector(q)));
+    const cs = getComputedStyle(slot);
+    const gutter = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--gutter')) || 0;
+    return { face: { l: f.left, t: f.top, r: f.right, b: f.bottom }, pauseL: pause.left, colR: col.right, headB: head.bottom, cards: cards.map((c) => ({ l: c.left, t: c.top, r: c.right, b: c.bottom })), anim: cs.animationName, op: +cs.opacity, tf: cs.transform, sw: document.documentElement.scrollWidth - innerWidth, on: v.el.classList.contains('is-on'), vw: innerWidth };
+  }, [level, ...KIND[level], t]);
+  const overlap = (a, b) => !(a.r <= b.l || b.r <= a.l || a.b <= b.t || b.b <= a.t);
+
+  for (const [w, h] of [[1280, 720], [1440, 900], [1920, 1080], [2560, 1080]]) {
+    const p = await openGame(w, h, false);
+    let ok = true, why = '';
+    for (const lv of [1, 2, 3, 4, 5]) {
+      const g = await showAt(p, lv, 900);
+      const right = Math.min(g.pauseL, g.colR);
+      if (!(g.face.r <= right + 2 && g.face.l >= 0 && g.sw <= 0 && g.face.t >= g.headB && !g.cards.some((c) => overlap(g.face, c)))) { ok = false; why += ` L${lv}: face ${Math.round(g.face.l)}–${Math.round(g.face.r)} (batas ${Math.round(right)}), atas ${Math.round(g.face.t)} vs judul ${Math.round(g.headB)}`; }
+    }
+    check(`combo desktop ${w}×${h}: semua tingkat 1–5 berhenti di dalam kolom konten (≤ tepi kiri Pause), tidak menutupi judul dan box soal, tanpa scroll horizontal`, ok, why);
+    const a0 = await showAt(p, 3, 0), a1 = await showAt(p, 3, 900), a2 = await showAt(p, 3, 1700);
+    const mat = (tf) => (tf === 'none' ? [1, 0, 0, 1, 0, 0] : tf.slice(7, -1).split(',').map(Number));
+    const tx = (tf) => mat(tf)[4];
+    const sc = (tf) => mat(tf)[0];
+    check(`combo desktop ${w}×${h}: muncul dari tak terlihat (opacity 0, skala kecil) bergeser pendek dari kanan, tertahan, lalu bergeser ke kiri sambil memudar dan mengecil (searah)`, a0.anim === 'combo-notice-appear' && a0.op === 0 && sc(a0.tf) < 0.6 && tx(a0.tf) > 20 && tx(a0.tf) <= 49 && a1.op === 1 && a1.tf === 'none' && a2.op < 0.8 && tx(a2.tf) < 0 && tx(a2.tf) >= -49 && sc(a2.tf) < 1, `mulai tx=${tx(a0.tf).toFixed(0)} skala=${sc(a0.tf).toFixed(2)}; akhir tx=${tx(a2.tf).toFixed(0)}`);
+    check(`combo desktop ${w}×${h}: titik asal (mulai) di dalam viewport, bukan dari luar layar`, a0.face.r <= a0.vw && a0.face.l >= 0);
+    const end = await showAt(p, 2, 1800);
+    check(`combo desktop ${w}×${h}: elemen dibersihkan setelah selesai`, !end.on && (await p.evaluate(() => !window.__cn.el.classList.contains('is-enter') && window.__cn.el.querySelectorAll('.combo-notice__spark').length === 0)));
+    await p.context().close();
+  }
+  {
+    const p = await openGame(1280, 720, false);
+    await showAt(p, 2, 600);
+    const swapped = await p.evaluate(() => { const v = window.__cn; v.show({ kind: 'rise', level: 3, mult: 3, streak: 10 }); return { cls: v.el.className, faces: v.el.querySelectorAll('.combo-notice__face').length, anim: getComputedStyle(v.el.querySelector('.combo-notice__slot')).animationName, n: document.querySelectorAll('#screen-game .combo-notice').length }; });
+    check('combo desktop: combo baru saat yang lama masih tampil mengganti di tempat (satu elemen, animasi swap searah), tidak menumpuk', swapped.cls.includes('is-swap') && swapped.faces === 1 && swapped.anim === 'combo-notice-swap-desktop');
+    await p.context().close();
+  }
+  {
+    const p = await openGame(1280, 720, false, true);
+    const a0 = await showAt(p, 5, 0), a1 = await showAt(p, 5, 600);
+    check('combo desktop reduced-motion: hanya fade di posisi akhir (tanpa geser/skala/partikel)', a0.anim === 'combo-notice-fade' && a0.tf === 'none' && a0.op === 0 && a1.tf === 'none' && a1.op === 1 && (await p.evaluate(() => getComputedStyle(window.__cn.el.querySelector('.combo-notice__sparks')).display)) === 'none');
+    await p.context().close();
+  }
+  for (const [w, h, label] of [[390, 844, 'portrait'], [360, 740, 'portrait'], [844, 390, 'landscape HP']]) {
+    const p = await openGame(w, h, true);
+    const g = await showAt(p, 3, 900), s0 = await showAt(p, 3, 0);
+    check(`combo mobile ${w}×${h} (${label}) tidak berubah: masih meluncur dari tepi kanan layar (animasi combo-notice-in)`, s0.anim === 'combo-notice-in' && g.sw <= 0 && (s0.tf === 'none' ? 0 : Number(s0.tf.slice(7, -1).split(',')[4])) > 100);
     await p.context().close();
   }
 }
